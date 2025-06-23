@@ -85,4 +85,4 @@ class TimeSliceManager:
         Returns:
             List[Dict[str, Any]]: 按时间戳排序的所有帖子
         """
-        return self._posts.copy() 
+        return self._posts.copy()
