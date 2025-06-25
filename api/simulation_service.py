@@ -122,6 +122,8 @@ def start_simulation():
     """启动仿真API"""
     try:
         data = request.json
+        if not data:
+            return jsonify({'error': '请求体不能为空'}), 400
         config = data.get("config", {})
         agent_configs = data.get("agents", [])
         
@@ -151,6 +153,8 @@ def inject_event():
     """注入突发事件"""
     try:
         data = request.json
+        if not data:
+            return jsonify({'error': '请求体不能为空'}), 400
         simulation_id = data.get("simulation_id")
         event_content = data.get("content")
         event_heat = data.get("heat", 80)
@@ -200,6 +204,8 @@ def load_simulation():
     """加载历史仿真配置"""
     try:
         data = request.json
+        if not data:
+            return jsonify({'error': '请求体不能为空'}), 400
         simulation_id = data.get("simulation_id")
         
         status = simulation_manager.get_simulation_status(simulation_id)
@@ -222,6 +228,8 @@ def compare_simulations():
     """对比多次仿真结果"""
     try:
         data = request.json
+        if not data:
+            return jsonify({'error': '请求体不能为空'}), 400
         simulation_ids = data.get("simulation_ids", [])
         
         if len(simulation_ids) < 2:

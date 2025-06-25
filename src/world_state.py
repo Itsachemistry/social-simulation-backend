@@ -17,7 +17,9 @@ class WorldState:
         "likes": int,          # 点赞数
         "shares": int,         # 分享数
         "is_event": bool,      # 是否为突发事件
-        "priority": int        # 优先级 (普通帖子=0, 事件帖子>0)
+        "priority": int,       # 优先级 (普通帖子=0, 事件帖子>0)
+        "is_repost": bool,     # 是否为转发
+        "parent_post_id": str|None  # 新增：转发自哪条帖子
     }
     """
     
@@ -56,6 +58,8 @@ class WorldState:
         post_object.setdefault("shares", 0)
         post_object.setdefault("is_event", False)
         post_object.setdefault("priority", 0)
+        post_object.setdefault("is_repost", False)
+        post_object.setdefault("parent_post_id", None)
         
         # 添加到帖子池
         self.posts_pool.append(post_object)
@@ -66,7 +70,7 @@ class WorldState:
         """
         强制插入一个高权重的突发事件帖子
         
-        Args:
+        Args
             event_post_object (Dict[str, Any]): 事件帖子对象
             
         Returns:

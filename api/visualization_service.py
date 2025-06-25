@@ -190,6 +190,8 @@ def filter_posts():
     """综合帖子筛选接口"""
     try:
         data = request.json
+        if not data:
+            return jsonify({'error': '请求体不能为空'}), 400
         simulation_id = data.get('simulation_id')
         
         # 筛选参数
@@ -282,6 +284,8 @@ def search_posts():
     """关键词搜索帖子"""
     try:
         data = request.json
+        if not data:
+            return jsonify({'error': '请求体不能为空'}), 400
         simulation_id = data.get('simulation_id')
         keywords = data.get('keywords')
         search_fields = data.get('search_fields', ['content', 'author_id'])
@@ -323,6 +327,8 @@ def get_posts_summary():
     """获取帖子摘要统计"""
     try:
         data = request.json
+        if not data:
+            return jsonify({'error': '请求体不能为空'}), 400
         simulation_id = data.get('simulation_id')
         time_range = data.get('time_range')
         filter_type = data.get('filter_type', 'all')
@@ -385,4 +391,33 @@ def get_visualization_options():
             {'value': 'author_id', 'label': '作者ID'},
             {'value': 'id', 'label': '帖子ID'}
         ]
-    }) 
+    })
+
+@visualization_bp.route('/posts/repost_tree', methods=['POST'])
+def get_repost_tree():
+    """获取转播树结构"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': '请求体不能为空'}), 400
+        simulation_id = data.get('simulation_id')
+        if not simulation_id:
+            return jsonify({'error': '缺少simulation_id参数'}), 400
+        from .simulation_service import simulation_manager
+        status = simulation_manager.get_simulation_status(simulation_id)
+        if not status or status['status'] != 'completed':
+            return jsonify({'error': '仿真不存在或未完成'}), 404
+        all_posts = status['results'].get('final_posts', [])
+        # 构建节点映射
+        nodes = {p['id']: dict(p, children=[]) for p in all_posts}
+        root_nodes = []
+        for post in all_posts:
+            parent_id = post.get('parent_post_id')
+            if parent_id and parent_id in nodes:
+                nodes[parent_id]['children'].append(nodes[post['id']])
+            else:
+                root_nodes.append(nodes[post['id']])
+        tree = {'id': 'virtual_root', 'children': root_nodes}
+        return jsonify(tree)
+    except Exception as e:
+        return jsonify({'error': f'生成转播树失败: {str(e)}'}), 500 

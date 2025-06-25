@@ -38,6 +38,8 @@ def get_agents():
 def add_agent():
     agents = load_agents()
     new_agent = request.json
+    if not new_agent:
+        return jsonify({'error': '请求体不能为空'}), 400
     # 检查agent_id唯一性
     if any(a['agent_id'] == new_agent['agent_id'] for a in agents):
         return jsonify({'error': 'agent_id已存在'}), 400
@@ -62,6 +64,8 @@ def add_agent():
 def update_agent(agent_id):
     agents = load_agents()
     update_data = request.json
+    if not update_data:
+        return jsonify({'error': '请求体不能为空'}), 400
     # 校验join_time范围
     join_ts = update_data.get('join_time') or update_data.get('join_timestamp')
     if join_ts:

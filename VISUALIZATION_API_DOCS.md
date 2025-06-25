@@ -230,6 +230,52 @@ http://localhost:5000/api/visualization
 }
 ```
 
+### 5. 获取转播树结构
+
+**接口**: `POST /posts/repost_tree`
+
+**描述**: 获取指定仿真的转播树（Repost Tree）结构数据，便于前端可视化信息扩散路径。
+
+**请求参数**:
+```json
+{
+  "simulation_id": "string" // 必需：仿真ID
+}
+```
+
+**响应示例**:
+```json
+{
+  "id": "virtual_root",
+  "children": [
+    {
+      "id": "post_001",
+      "content": "原始帖子内容...",
+      "author_id": "user_001",
+      "timestamp": "2024-01-01T10:00:00",
+      "is_repost": false,
+      "parent_post_id": null,
+      "children": [
+        {
+          "id": "post_002",
+          "content": "转发内容...",
+          "author_id": "user_002",
+          "timestamp": "2024-01-01T10:30:00",
+          "is_repost": true,
+          "parent_post_id": "post_001",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
+```
+
+**说明**:
+- 根节点为虚拟节点，所有 parent_post_id 为 null 的帖子为一级子节点。
+- 每个节点包含原始帖子字段和 children 数组，children 为空表示叶子节点。
+- 前端可递归渲染该结构实现转播树可视化。
+
 ## 使用场景示例
 
 ### 场景1: 时间刷选交互

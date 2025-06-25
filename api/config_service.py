@@ -67,6 +67,47 @@ def get_posts_timeline():
         'all_timestamps': timestamps
     })
 
+@config_bp.route('/initial-params', methods=['GET'])
+def get_initial_params():
+    """
+    提供给前端用于初始化配置界面的参数。
+    """
+    if not os.path.exists(POSTS_PATH):
+        return jsonify({'error': '未找到帖子数据文件'}), 404
+
+    with open(POSTS_PATH, 'r', encoding='utf-8') as f:
+        posts = json.load(f)
+
+    if not posts:
+        return jsonify({
+            'total_quantity': 0,
+            'available_stances': [],
+            'available_sentiments': [],
+            'stance_distribution': {},
+            'sentiment_distribution': {}
+        })
+
+    all_stances = [p.get('stance') for p in posts if p.get('stance')]
+    all_sentiments = [p.get('sentiment') for p in posts if p.get('sentiment')]
+    stance_set = sorted(set(all_stances))
+    sentiment_set = sorted(set(all_sentiments))
+
+    # 统计比例
+    from collections import Counter
+    stance_counter = Counter(all_stances)
+    sentiment_counter = Counter(all_sentiments)
+    total = len(posts)
+    stance_distribution = {k: round(v / total, 4) for k, v in stance_counter.items()}
+    sentiment_distribution = {k: round(v / total, 4) for k, v in sentiment_counter.items()}
+
+    return jsonify({
+        'total_quantity': total,
+        'available_stances': stance_set,
+        'available_sentiments': sentiment_set,
+        'stance_distribution': stance_distribution,
+        'sentiment_distribution': sentiment_distribution
+    })
+
 # 复合配额填充算法：支持情感+立场+规模
 def sample_posts_by_quota(posts, stance_distribution, sentiment_distribution, quantity):
     """
@@ -147,40 +188,6 @@ def sample_posts_by_quota(posts, stance_distribution, sentiment_distribution, qu
     random.shuffle(selected_posts)
     return selected_posts, warning_msgs
 
-# 兼容原有采样逻辑（立场单独采样）
-def sample_posts_by_stance(posts, stance_distribution, quantity=None):
-    stance_groups = defaultdict(list)
-    for post in posts:
-        stance = post.get('stance')
-        if stance in stance_distribution:
-            stance_groups[stance].append(post)
-    stance_counts = {k: len(v) for k, v in stance_groups.items()}
-    if quantity is None:
-        max_stance = max(stance_distribution, key=lambda k: stance_distribution[k])
-        max_count = stance_counts.get(max_stance, 0)
-        result = []
-        result.extend(stance_groups[max_stance])
-        for stance, ratio in stance_distribution.items():
-            if stance == max_stance:
-                continue
-            target_num = int(max_count * (ratio / stance_distribution[max_stance]))
-            if stance_counts.get(stance, 0) < target_num:
-                return {
-                    "error": f"立场 {stance} 的帖子数量不足，目标{target_num}，实际{stance_counts.get(stance, 0)}，请调整比例或减少总量。"
-                }
-            result.extend(random.sample(stance_groups[stance], target_num))
-        return result
-    else:
-        result = []
-        for stance, ratio in stance_distribution.items():
-            target_num = int(quantity * ratio)
-            if stance_counts.get(stance, 0) < target_num:
-                return {
-                    "error": f"立场 {stance} 的帖子数量不足，目标{target_num}，实际{stance_counts.get(stance, 0)}，请调整比例或减少总量。"
-                }
-            result.extend(random.sample(stance_groups[stance], target_num))
-        return result
-
 # 用于仿真初始化时筛选初始帖子池的函数示例
 def build_initial_post_pool(all_posts, config):
     # 1. 时间筛选
@@ -188,18 +195,12 @@ def build_initial_post_pool(all_posts, config):
     stance_distribution = config.get('stance_distribution', {})
     sentiment_distribution = config.get('sentiment_distribution', {})
     quantity = config.get('quantity', None)
-    # 优先复合采样
+    # 只保留三项都存在时的采样逻辑
     if stance_distribution and sentiment_distribution and quantity:
         sampled, warnings = sample_posts_by_quota(posts, stance_distribution, sentiment_distribution, quantity)
         return {"posts": sampled, "warnings": warnings}
-    # 兼容只采样立场/情感/数量的情况
-    if stance_distribution:
-        sampled = sample_posts_by_stance(posts, stance_distribution, quantity)
-        if isinstance(sampled, dict) and 'error' in sampled:
-            return sampled
-        posts = sampled
-    # TODO: 按config['sentiment_distribution']加权采样（如有需求可补充）
-    return posts
+    # 如果三项不全，直接返回空列表或报错
+    return {"error": "配置缺少必要的采样参数（立场、情感、数量）"}
 
 # Agent决策时注入事件描述的示例
 def build_agent_prompt(agent, posts, config):

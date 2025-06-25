@@ -221,7 +221,10 @@ class SimulationEngine:
             print(f"\n--- 时间片 {self.current_slice + 1}/{self.total_slices} ---")
             
             # 获取当前时间片的帖子
-            current_slice_posts = self.time_manager.get_slice(self.current_slice)
+            if self.time_manager:
+                current_slice_posts = self.time_manager.get_slice(self.current_slice)
+            else:
+                current_slice_posts = []
             
             # 获取所有历史帖子
             all_posts = self.world_state.get_all_posts()

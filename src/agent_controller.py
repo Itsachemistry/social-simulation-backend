@@ -220,7 +220,9 @@ class AgentController:
                         "likes": 0,
                         "shares": 0,
                         "is_event": False,
-                        "priority": 0
+                        "priority": 0,
+                        "is_repost": True if hasattr(agent, 'repost_source_id') and agent.repost_source_id else False,
+                        "parent_post_id": getattr(agent, 'repost_source_id', None)
                     }
                     
                     # 添加到世界状态
