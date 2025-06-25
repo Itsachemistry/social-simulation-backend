@@ -1,0 +1,388 @@
+from flask import Blueprint, request, jsonify
+from datetime import datetime, timedelta
+import json
+from collections import defaultdict
+import re
+
+visualization_bp = Blueprint('visualization', __name__)
+
+class InteractiveVisualizer:
+    """交互式可视化数据处理器"""
+    
+    def __init__(self):
+        self.sort_options = ['time', 'popularity', 'heat', 'likes', 'shares']
+        self.filter_options = ['all', 'original', 'reposted', 'events']
+    
+    def filter_posts_by_time_range(self, posts, time_range):
+        """按时间范围筛选帖子"""
+        if not time_range:
+            return posts
+        
+        start_time = datetime.fromisoformat(time_range['start'])
+        end_time = datetime.fromisoformat(time_range['end'])
+        
+        filtered_posts = []
+        for post in posts:
+            post_time = datetime.fromisoformat(post.get('timestamp', ''))
+            if start_time <= post_time <= end_time:
+                filtered_posts.append(post)
+        
+        return filtered_posts
+    
+    def search_posts_by_keywords(self, posts, keywords, search_fields=None):
+        """按关键词搜索帖子"""
+        if not keywords:
+            return posts
+        
+        if search_fields is None:
+            search_fields = ['content', 'author_id']
+        
+        keywords = keywords.lower().split()
+        matched_posts = []
+        
+        for post in posts:
+            match_score = 0
+            for field in search_fields:
+                field_value = str(post.get(field, '')).lower()
+                for keyword in keywords:
+                    if keyword in field_value:
+                        match_score += 1
+            
+            if match_score > 0:
+                post['_search_score'] = match_score
+                matched_posts.append(post)
+        
+        # 按搜索匹配度排序
+        matched_posts.sort(key=lambda x: x.get('_search_score', 0), reverse=True)
+        return matched_posts
+    
+    def sort_posts(self, posts, sort_by='time', reverse=False):
+        """排序帖子"""
+        if sort_by == 'time':
+            return sorted(posts, key=lambda x: x.get('timestamp', ''), reverse=reverse)
+        elif sort_by == 'popularity':
+            return sorted(posts, key=lambda x: x.get('likes', 0) + x.get('shares', 0), reverse=reverse)
+        elif sort_by == 'heat':
+            return sorted(posts, key=lambda x: x.get('heat', 0), reverse=reverse)
+        elif sort_by == 'likes':
+            return sorted(posts, key=lambda x: x.get('likes', 0), reverse=reverse)
+        elif sort_by == 'shares':
+            return sorted(posts, key=lambda x: x.get('shares', 0), reverse=reverse)
+        else:
+            return posts
+    
+    def filter_posts_by_popularity(self, posts, min_popularity=0):
+        """按热度阈值筛选帖子"""
+        if min_popularity <= 0:
+            return posts
+        
+        filtered_posts = []
+        for post in posts:
+            popularity = post.get('likes', 0) + post.get('shares', 0) + post.get('heat', 0)
+            if popularity >= min_popularity:
+                filtered_posts.append(post)
+        
+        return filtered_posts
+    
+    def filter_posts_by_type(self, posts, filter_type='all', include_reposts=True):
+        """按类型筛选帖子"""
+        if filter_type == 'all':
+            if include_reposts:
+                return posts
+            else:
+                # 过滤掉转发内容
+                return [post for post in posts if not post.get('is_repost', False)]
+        
+        elif filter_type == 'original':
+            return [post for post in posts if not post.get('is_repost', False)]
+        
+        elif filter_type == 'reposted':
+            return [post for post in posts if post.get('is_repost', False)]
+        
+        elif filter_type == 'events':
+            return [post for post in posts if post.get('is_event', False)]
+        
+        else:
+            return posts
+    
+    def get_posts_summary(self, posts):
+        """获取帖子摘要统计"""
+        if not posts:
+            return {
+                'total_posts': 0,
+                'time_range': None,
+                'popularity_stats': {},
+                'type_distribution': {},
+                'top_authors': [],
+                'hot_topics': []
+            }
+        
+        # 时间范围
+        timestamps = [post.get('timestamp') for post in posts if post.get('timestamp')]
+        if timestamps:
+            start_time = min(timestamps)
+            end_time = max(timestamps)
+            time_range = {'start': start_time, 'end': end_time}
+        else:
+            time_range = None
+        
+        # 热度统计
+        likes = [post.get('likes', 0) for post in posts]
+        shares = [post.get('shares', 0) for post in posts]
+        heats = [post.get('heat', 0) for post in posts]
+        
+        popularity_stats = {
+            'total_likes': sum(likes),
+            'total_shares': sum(shares),
+            'avg_heat': sum(heats) / len(heats) if heats else 0,
+            'max_heat': max(heats) if heats else 0,
+            'avg_likes': sum(likes) / len(likes) if likes else 0,
+            'avg_shares': sum(shares) / len(shares) if shares else 0
+        }
+        
+        # 类型分布
+        type_counts = defaultdict(int)
+        author_counts = defaultdict(int)
+        
+        for post in posts:
+            if post.get('is_event'):
+                type_counts['events'] += 1
+            elif post.get('is_repost'):
+                type_counts['reposts'] += 1
+            else:
+                type_counts['original'] += 1
+            
+            author = post.get('author_id', 'unknown')
+            author_counts[author] += 1
+        
+        type_distribution = dict(type_counts)
+        top_authors = sorted(author_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+        
+        # 热门话题
+        hot_topics = self._extract_hot_topics(posts)
+        
+        return {
+            'total_posts': len(posts),
+            'time_range': time_range,
+            'popularity_stats': popularity_stats,
+            'type_distribution': type_distribution,
+            'top_authors': top_authors,
+            'hot_topics': hot_topics
+        }
+    
+    def _extract_hot_topics(self, posts, top_n=10):
+        """提取热门话题"""
+        keyword_counts = defaultdict(int)
+        for post in posts:
+            content = post.get('content', '').lower()
+            # 简单的分词和过滤
+            words = re.findall(r'\b\w{3,}\b', content)
+            for word in words:
+                keyword_counts[word] += 1
+        
+        return sorted(keyword_counts.items(), key=lambda x: x[1], reverse=True)[:top_n]
+
+# 创建全局可视化器
+interactive_visualizer = InteractiveVisualizer()
+
+@visualization_bp.route('/posts/filter', methods=['POST'])
+def filter_posts():
+    """综合帖子筛选接口"""
+    try:
+        data = request.json
+        simulation_id = data.get('simulation_id')
+        
+        # 筛选参数
+        time_range = data.get('time_range')
+        keywords = data.get('keywords')
+        search_fields = data.get('search_fields', ['content', 'author_id'])
+        sort_by = data.get('sort_by', 'time')
+        sort_reverse = data.get('sort_reverse', False)
+        min_popularity = data.get('min_popularity', 0)
+        filter_type = data.get('filter_type', 'all')
+        include_reposts = data.get('include_reposts', True)
+        limit = data.get('limit', 100)  # 限制返回数量
+        
+        if not simulation_id:
+            return jsonify({'error': '缺少simulation_id参数'}), 400
+        
+        # 获取仿真结果
+        from .simulation_service import simulation_manager
+        status = simulation_manager.get_simulation_status(simulation_id)
+        
+        if not status:
+            return jsonify({'error': '仿真不存在'}), 404
+        
+        if status['status'] != 'completed':
+            return jsonify({'error': '仿真尚未完成'}), 400
+        
+        # 获取所有帖子
+        all_posts = status['results'].get('final_posts', [])
+        
+        # 应用筛选
+        filtered_posts = all_posts
+        
+        # 1. 时间范围筛选
+        if time_range:
+            filtered_posts = interactive_visualizer.filter_posts_by_time_range(
+                filtered_posts, time_range
+            )
+        
+        # 2. 关键词搜索
+        if keywords:
+            filtered_posts = interactive_visualizer.search_posts_by_keywords(
+                filtered_posts, keywords, search_fields
+            )
+        
+        # 3. 类型筛选
+        filtered_posts = interactive_visualizer.filter_posts_by_type(
+            filtered_posts, filter_type, include_reposts
+        )
+        
+        # 4. 热度阈值筛选
+        filtered_posts = interactive_visualizer.filter_posts_by_popularity(
+            filtered_posts, min_popularity
+        )
+        
+        # 5. 排序
+        filtered_posts = interactive_visualizer.sort_posts(
+            filtered_posts, sort_by, sort_reverse
+        )
+        
+        # 6. 限制数量
+        if limit and limit > 0:
+            filtered_posts = filtered_posts[:limit]
+        
+        # 7. 获取摘要统计
+        summary = interactive_visualizer.get_posts_summary(filtered_posts)
+        
+        return jsonify({
+            'status': 'success',
+            'simulation_id': simulation_id,
+            'filter_params': {
+                'time_range': time_range,
+                'keywords': keywords,
+                'sort_by': sort_by,
+                'sort_reverse': sort_reverse,
+                'min_popularity': min_popularity,
+                'filter_type': filter_type,
+                'include_reposts': include_reposts,
+                'limit': limit
+            },
+            'summary': summary,
+            'posts': filtered_posts,
+            'total_filtered': len(filtered_posts)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'筛选失败: {str(e)}'}), 500
+
+@visualization_bp.route('/posts/search', methods=['POST'])
+def search_posts():
+    """关键词搜索帖子"""
+    try:
+        data = request.json
+        simulation_id = data.get('simulation_id')
+        keywords = data.get('keywords')
+        search_fields = data.get('search_fields', ['content', 'author_id'])
+        limit = data.get('limit', 50)
+        
+        if not simulation_id or not keywords:
+            return jsonify({'error': '缺少必要参数'}), 400
+        
+        # 获取仿真结果
+        from .simulation_service import simulation_manager
+        status = simulation_manager.get_simulation_status(simulation_id)
+        
+        if not status or status['status'] != 'completed':
+            return jsonify({'error': '仿真不存在或未完成'}), 404
+        
+        # 搜索帖子
+        all_posts = status['results'].get('final_posts', [])
+        search_results = interactive_visualizer.search_posts_by_keywords(
+            all_posts, keywords, search_fields
+        )
+        
+        # 限制数量
+        if limit and limit > 0:
+            search_results = search_results[:limit]
+        
+        return jsonify({
+            'status': 'success',
+            'keywords': keywords,
+            'search_fields': search_fields,
+            'results': search_results,
+            'total_found': len(search_results)
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'搜索失败: {str(e)}'}), 500
+
+@visualization_bp.route('/posts/summary', methods=['POST'])
+def get_posts_summary():
+    """获取帖子摘要统计"""
+    try:
+        data = request.json
+        simulation_id = data.get('simulation_id')
+        time_range = data.get('time_range')
+        filter_type = data.get('filter_type', 'all')
+        include_reposts = data.get('include_reposts', True)
+        
+        if not simulation_id:
+            return jsonify({'error': '缺少simulation_id参数'}), 400
+        
+        # 获取仿真结果
+        from .simulation_service import simulation_manager
+        status = simulation_manager.get_simulation_status(simulation_id)
+        
+        if not status or status['status'] != 'completed':
+            return jsonify({'error': '仿真不存在或未完成'}), 404
+        
+        # 获取并筛选帖子
+        all_posts = status['results'].get('final_posts', [])
+        
+        if time_range:
+            all_posts = interactive_visualizer.filter_posts_by_time_range(
+                all_posts, time_range
+            )
+        
+        all_posts = interactive_visualizer.filter_posts_by_type(
+            all_posts, filter_type, include_reposts
+        )
+        
+        # 生成摘要
+        summary = interactive_visualizer.get_posts_summary(all_posts)
+        
+        return jsonify({
+            'status': 'success',
+            'simulation_id': simulation_id,
+            'summary': summary
+        })
+        
+    except Exception as e:
+        return jsonify({'error': f'获取摘要失败: {str(e)}'}), 500
+
+@visualization_bp.route('/options', methods=['GET'])
+def get_visualization_options():
+    """获取可视化选项"""
+    return jsonify({
+        'status': 'success',
+        'sort_options': [
+            {'value': 'time', 'label': '按时间'},
+            {'value': 'popularity', 'label': '按热度'},
+            {'value': 'heat', 'label': '按热度值'},
+            {'value': 'likes', 'label': '按点赞数'},
+            {'value': 'shares', 'label': '按分享数'}
+        ],
+        'filter_options': [
+            {'value': 'all', 'label': '全部帖子'},
+            {'value': 'original', 'label': '原创内容'},
+            {'value': 'reposted', 'label': '转发内容'},
+            {'value': 'events', 'label': '事件帖子'}
+        ],
+        'search_fields': [
+            {'value': 'content', 'label': '帖子内容'},
+            {'value': 'author_id', 'label': '作者ID'},
+            {'value': 'id', 'label': '帖子ID'}
+        ]
+    }) 

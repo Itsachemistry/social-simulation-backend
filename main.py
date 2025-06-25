@@ -212,6 +212,11 @@ class SimulationEngine:
         
         start_time = time.time()
         
+        # 获取所有Agent对象池（含未激活）
+        all_agents = []
+        for agent_type, agent_list in self.agent_controller.agents.items():
+            all_agents.extend(agent_list)
+        
         while self.current_slice < self.total_slices:
             print(f"\n--- 时间片 {self.current_slice + 1}/{self.total_slices} ---")
             
@@ -221,12 +226,15 @@ class SimulationEngine:
             # 获取所有历史帖子
             all_posts = self.world_state.get_all_posts()
             
-            # 执行时间片调度
+            # 1. 只筛选本轮已激活的Agent
+            active_agents = [agent for agent in all_agents if getattr(agent, 'is_active', True)]
+            
+            # 2. 执行时间片调度（只对活跃Agent）
             slice_results = self.agent_controller.run_time_slice(
-                current_slice_posts, all_posts
+                active_agents, self.world_state, self.llm_service
             )
             
-            # 记录结果
+            # 3. 记录结果
             self.simulation_results.append({
                 "slice_index": self.current_slice,
                 "results": slice_results,
@@ -234,7 +242,19 @@ class SimulationEngine:
                 "new_posts_count": len(current_slice_posts)
             })
             
-            # 移动到下一个时间片
+            # 4. 时间片结束后，检查是否有Agent需要激活（下轮生效）
+            if current_slice_posts:
+                last_post = current_slice_posts[-1]
+                anchor_ts = last_post.get("timestamp")
+                if anchor_ts:
+                    from datetime import datetime
+                    anchor_dt = datetime.fromisoformat(str(anchor_ts))
+                    for agent in all_agents:
+                        if not getattr(agent, 'is_active', True) and getattr(agent, 'join_timestamp', None):
+                            if agent.join_timestamp <= anchor_dt:
+                                agent.is_active = True  # 下轮生效
+            
+            # 5. 移动到下一个时间片
             self.current_slice += 1
             
             # 简单的进度显示
