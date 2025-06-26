@@ -185,6 +185,12 @@
         * 仿真过程中，所有转发帖需写入 parent_post_id。
         * 新增 API `/api/visualization/posts/repost_tree`，返回树形嵌套 JSON。
         * 后端算法：遍历所有帖子，按 parent_post_id 组织成树，根节点为虚拟节点，所有 parent_post_id 为 null 的为一级子节点。
+    * **Agent发帖parent_post_id判据**：
+        * 每个Agent在每个时间片内，浏览个性化信息流时，会为每条帖子计算一个"多因素加权分数"：
+          `score = 0.5 * |emotion_change| + 0.3 * |confidence_change| + 0.2 * base_impact`
+        * 该分数综合反映了情绪波动、置信度变化和外部刺激强度。
+        * Agent发帖时，其新帖的parent_post_id会被设置为本时间片内分数最高的那条帖子ID，实现"对影响最大的帖子进行回复/评论"。
+        * 这样，Agent的发言会自然嵌入传播树结构，真实反映其在扩散链条中的作用。
     * **前端集成建议**: 前端可用 D3.js 等库渲染树形结构，支持节点高亮、层级展开等交互。
 
 ---

@@ -85,6 +85,8 @@ class Agent:
         """重置时间片相关的计数器"""
         self.current_posts_count = 0
         self.viewed_posts = []
+        self.max_impact_post_id = None  # 本时间片影响最大的帖子ID
+        self.max_impact_score = float('-inf')  # 新增：最大影响分数
     
     def update_state(self, post_object: dict, llm_service=None) -> dict:
         """
@@ -126,6 +128,16 @@ class Agent:
             "new_confidence": self.confidence
         }
         self.interaction_history.append(interaction_record)
+        
+        # 计算多因素加权分数
+        score = (
+            0.5 * abs(impact.get('emotion_change', 0)) +
+            0.3 * abs(impact.get('confidence_change', 0)) +
+            0.2 * impact.get('base_impact', 0)
+        )
+        if score > getattr(self, 'max_impact_score', float('-inf')):
+            self.max_impact_score = score
+            self.max_impact_post_id = post_object.get('id', None)
         
         return {
             "status": "updated",

@@ -222,7 +222,7 @@ class AgentController:
                         "is_event": False,
                         "priority": 0,
                         "is_repost": True if hasattr(agent, 'repost_source_id') and agent.repost_source_id else False,
-                        "parent_post_id": getattr(agent, 'repost_source_id', None)
+                        "parent_post_id": getattr(agent, 'max_impact_post_id', None)
                     }
                     
                     # 添加到世界状态
@@ -230,6 +230,9 @@ class AgentController:
                         world_state.add_post(new_post)
                     
                     generated_posts.append(new_post)
+                # 时间片结束后重置影响记录
+                agent.max_impact_post_id = None
+                agent.max_impact_value = float('-inf')
         
         return generated_posts
     
