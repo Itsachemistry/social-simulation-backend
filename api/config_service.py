@@ -33,6 +33,8 @@ def get_post_time_range():
 @config_bp.route('/config', methods=['POST', 'PUT'])
 def set_simulation_config():
     data = request.json
+    if not data:
+        return jsonify({'error': '请求体不能为空或不是合法JSON'}), 400
     # 参数校验与更新
     if "start_time" in data:
         simulation_config["start_time"] = data["start_time"]

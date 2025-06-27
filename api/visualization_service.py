@@ -281,7 +281,7 @@ def filter_posts():
 
 @visualization_bp.route('/posts/search', methods=['POST'])
 def search_posts():
-    """关键词搜索帖子"""
+    """关键词搜索帖子，支持分页"""
     try:
         data = request.json
         if not data:
@@ -289,7 +289,9 @@ def search_posts():
         simulation_id = data.get('simulation_id')
         keywords = data.get('keywords')
         search_fields = data.get('search_fields', ['content', 'author_id'])
-        limit = data.get('limit', 50)
+        # 新增分页参数
+        page = int(data.get('page', 1))
+        page_size = int(data.get('page_size', 20))
         
         if not simulation_id or not keywords:
             return jsonify({'error': '缺少必要参数'}), 400
@@ -307,16 +309,21 @@ def search_posts():
             all_posts, keywords, search_fields
         )
         
-        # 限制数量
-        if limit and limit > 0:
-            search_results = search_results[:limit]
+        total_found = len(search_results)
+        # 分页
+        start = (page - 1) * page_size
+        end = start + page_size
+        paged_results = search_results[start:end]
         
         return jsonify({
             'status': 'success',
             'keywords': keywords,
             'search_fields': search_fields,
-            'results': search_results,
-            'total_found': len(search_results)
+            'results': paged_results,
+            'total_found': total_found,
+            'page': page,
+            'page_size': page_size,
+            'total_pages': (total_found + page_size - 1) // page_size
         })
         
     except Exception as e:
@@ -408,8 +415,26 @@ def get_repost_tree():
         if not status or status['status'] != 'completed':
             return jsonify({'error': '仿真不存在或未完成'}), 404
         all_posts = status['results'].get('final_posts', [])
-        # 构建节点映射
-        nodes = {p['id']: dict(p, children=[]) for p in all_posts}
+        agent_states = status['results'].get('agent_states', {})
+
+        # 收集所有Agent的浏览过的post_id
+        viewed_map = {}  # post_id -> [agent_id, ...]
+        for agent_type, agents in agent_states.items():
+            for agent in agents:
+                for pid in agent.get("viewed_posts", []):
+                    if isinstance(pid, str):
+                        if pid not in viewed_map:
+                            viewed_map[pid] = []
+                        if isinstance(agent["agent_id"], str):
+                            viewed_map[pid].append(agent["agent_id"])
+        # 构建节点，增加is_agent_post和viewed_by_agents
+        nodes = {}
+        for p in all_posts:
+            node = dict(p)
+            node["children"] = []
+            node["is_agent_post"] = str(p.get("author_id", "")).startswith("agent_")
+            node["viewed_by_agents"] = viewed_map.get(p["id"], [])
+            nodes[p['id']] = node
         root_nodes = []
         for post in all_posts:
             parent_id = post.get('parent_post_id')

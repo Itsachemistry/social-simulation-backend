@@ -4,6 +4,7 @@ import uuid
 import threading
 import time
 from src.agent_controller import AgentController
+from src.main import SimulationEngine
 
 simulation_bp = Blueprint('simulation', __name__)
 
@@ -42,8 +43,6 @@ class SimulationManager:
     def _run_simulation_background(self, simulation_id, config, agent_configs):
         """后台运行仿真"""
         try:
-            from main import SimulationEngine
-            
             # 创建仿真引擎
             engine = SimulationEngine(config)
             

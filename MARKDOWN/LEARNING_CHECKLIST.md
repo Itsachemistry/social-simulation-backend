@@ -1,5 +1,4 @@
 # 社交仿真引擎学习检查清单
-
 ## 📋 学习进度跟踪
 
 ### 第一阶段：基础概念理解 ✅
@@ -236,3 +235,22 @@ A: 1) 在Agent配置中添加新类型，2) 在AgentController中添加新类型
 3. **算法基础**：了解排序、搜索、筛选算法
 4. **设计模式**：理解工厂模式、策略模式等
 5. **仿真理论**：了解离散事件仿真的基本原理 
+
+## 2024-06-09 Agent影响追踪与parent_post_id标准化实现记录
+
+### 主要内容
+1. 标准化了Agent在每个时间片内对每条帖子影响分数的计算方式：
+   - 影响分数 = abs(delta_emotion) + abs(delta_confidence)
+   - 在update_state中自动追踪本时间片影响最大的帖子ID（max_impact_post_id）及其分数。
+2. 优化了update_state的返回值，明确包含delta_emotion、delta_confidence，便于主流程追踪。
+3. 建议在Agent生成新帖子时，parent_post_id应指向max_impact_post_id，实现传播树的合理连接。
+
+### 设计思路
+- 帖子的情感和立场在仿真前已由LLM+人工标注，仿真过程中直接读取。
+- Agent每处理一条帖子，都会调用update_state，自动计算并记录本次状态变化量。
+- 影响分数用于追踪本时间片内对Agent影响最大的帖子，便于后续生成新帖时作为parent_post_id。
+- 该机制填补了论文中"Agent新发帖应回复谁"这一实现细节的空白，保证了传播链路的合理性和可追溯性。
+
+### 后续建议
+- 可在Agent基类中进一步模板化"坚定/不坚定"立场更新规则，便于开发者复用。
+- 可在主流程中自动将新帖parent_post_id赋值为max_impact_post_id。 

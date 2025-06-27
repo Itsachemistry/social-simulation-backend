@@ -297,3 +297,38 @@
 - **组合方式**：时间范围 + 关键词搜索 + 热度筛选 + 排序
 - **灵活配置**：用户可根据需要组合不同的筛选条件
 - **结果展示**：提供筛选参数回显和结果统计
+
+## 2024-06-09 Agent影响追踪与parent_post_id标准化实现记录
+
+### 主要内容
+- 标准化了Agent在每个时间片内对每条帖子影响分数的计算方式：
+  - 影响分数 = abs(delta_emotion) + abs(delta_confidence)
+  - 在update_state中自动追踪本时间片影响最大的帖子ID（max_impact_post_id）及其分数。
+- 优化了update_state的返回值，明确包含delta_emotion、delta_confidence，便于主流程追踪。
+- 建议在Agent生成新帖子时，parent_post_id应指向max_impact_post_id，实现传播树的合理连接。
+
+### 影响分数加权说明
+- 当前实现采用影响分数 = |delta_emotion| + |delta_confidence|，即对情绪和置信度变化量等权加和。
+- 如果需要更细致地反映不同因素的重要性，可采用加权公式：
+  - 影响分数 = w1 * |delta_emotion| + w2 * |delta_confidence| + w3 * base_impact
+- 其中w1、w2、w3为可调权重，base_impact为基础影响分数（如热度、兴趣匹配等）。
+- 目前采用等权加和是为了简化实现，后续可根据实际需求调整为加权方案。
+
+### 设计思路
+- 帖子的情感和立场在仿真前已由LLM+人工标注，仿真过程中直接读取。
+- Agent每处理一条帖子，都会调用update_state，自动计算并记录本次状态变化量。
+- 影响分数用于追踪本时间片内对Agent影响最大的帖子，便于后续生成新帖时作为parent_post_id。
+- 该机制填补了论文中"Agent新发帖应回复谁"这一实现细节的空白，保证了传播链路的合理性和可追溯性。
+
+### 后续建议
+- 可在Agent基类中进一步模板化"坚定/不坚定"立场更新规则，便于开发者复用。
+- 可在主流程中自动将新帖parent_post_id赋值为max_impact_post_id。
+
+### 2024-06-10 Agent编号、情感立场时序记录与转播树节点高亮实现
+
+- Agent编号统一加上'agent_'前缀，便于后端和前端区分Agent生成的内容。
+- 在Agent类中增加state_history属性，每次update_state时自动记录情感(emotion)和立场(stance)的时序变化。
+- 转播树API（/api/visualization/posts/repost_tree）每个节点增加：
+    - is_agent_post：author_id以'agent_'开头即为Agent生成。
+    - viewed_by_agents：该帖子被哪些Agent浏览过（Agent id列表），便于前端高亮和悬停交互。
+- 以上变更已落地到src/agent.py和api/visualization_service.py。

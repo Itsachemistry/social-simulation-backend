@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import json
 from collections import defaultdict
 import statistics
+import jieba
 
 analysis_bp = Blueprint('analysis', __name__)
 
@@ -148,17 +149,16 @@ class TemporalAnalyzer:
         }
     
     def _extract_hot_topics(self, posts, top_n=5):
-        """提取热门话题"""
-        # 简单的关键词统计（实际项目中可以使用更复杂的NLP）
+        """提取热门话题（适配中文微博文本，使用jieba分词）"""
         keyword_counts = defaultdict(int)
+        stopwords = set(["的", "了", "和", "是", "在", "我", "有", "就", "不", "人", "都", "一个", "上", "也", "很", "到", "说", "要", "去", "你", "会", "着", "没有", "看", "好", "自己", "这"])
         for post in posts:
-            content = post.get('content', '').lower()
-            # 简单的分词（按空格分割）
-            words = content.split()
+            content = post.get('content', '')
+            # 使用jieba分词
+            words = jieba.lcut(content)
             for word in words:
-                if len(word) > 2:  # 过滤短词
+                if len(word) > 1 and word not in stopwords:
                     keyword_counts[word] += 1
-        
         # 返回前N个热门关键词
         return sorted(keyword_counts.items(), key=lambda x: x[1], reverse=True)[:top_n]
 
@@ -170,6 +170,9 @@ def analyze_temporal():
     """按时间粒度分析仿真结果"""
     try:
         data = request.json
+        if data is None:
+            return jsonify({'error': '无效的JSON数据'}), 400
+            
         simulation_id = data.get('simulation_id')
         granularity = data.get('granularity', 'day')  # hour, day, week
         time_range = data.get('time_range')  # 可选的时间范围
@@ -208,6 +211,9 @@ def compare_temporal():
     """对比多个仿真的时间粒度分析"""
     try:
         data = request.json
+        if data is None:
+            return jsonify({'error': '无效的JSON数据'}), 400
+            
         simulation_ids = data.get('simulation_ids', [])
         granularity = data.get('granularity', 'day')
         time_range = data.get('time_range')

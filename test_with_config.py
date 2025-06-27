@@ -3,7 +3,7 @@
 使用配置文件的仿真测试
 """
 
-from main import SimulationEngine
+from src.main import SimulationEngine
 
 
 def test_with_config():

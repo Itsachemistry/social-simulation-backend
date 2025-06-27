@@ -31,7 +31,10 @@ class Agent:
         - 参数：agent_config (dict): 包含所有角色设定的配置字典
         - 你需要支持"态度坚定/不坚定"等性格特征
         """
-        self._agent_id = agent_config.get("agent_id", "unknown")
+        agent_id = agent_config.get("agent_id", "unknown")
+        if not agent_id.startswith("agent_"):
+            agent_id = f"agent_{agent_id}"
+        self._agent_id = agent_id
         self._agent_type = agent_config.get("type", "普通用户")
         self._stance = agent_config.get("stance", 0.5)  # 立场值 (0-1)
         self._interests = agent_config.get("interests", [])  # 兴趣标签列表
@@ -80,6 +83,7 @@ class Agent:
         self._firm_stance = agent_config.get("is_firm_stance", None)  # 供队友实现
         self._filter_opposite = agent_config.get("filter_opposite", None)  # 供队友实现
         self._activity_level = agent_config.get("activity_level", None)  # 供队友实现
+        self.state_history = []  # 新增：记录时序变化
     
     def _reset_slice_counters(self):
         """重置时间片相关的计数器"""
@@ -99,26 +103,22 @@ class Agent:
         - 你可以在内部自由设计Prompt和LLM调用方式
         """
         post_id = post_object.get("id", "")
-        
         # 避免重复处理同一帖子
         if post_id in self.viewed_posts:
             return {"status": "already_viewed", "post_id": post_id}
-        
         # 记录已浏览的帖子
         self.viewed_posts.append(post_id)
-        
         # 计算帖子对Agent的影响
         impact = self._calculate_post_impact(post_object)
-        
+        # 记录旧状态
+        old_emotion = self.emotion
+        old_confidence = self.confidence
         # 更新情绪
         self.emotion = max(0.0, min(1.0, self.emotion + impact["emotion_change"]))
-        
         # 更新置信度
         self.confidence = max(0.0, min(1.0, self.confidence + impact["confidence_change"]))
-        
         # 更新精力（浏览帖子消耗精力）
         self.energy = max(0.0, self.energy - 0.05)
-        
         # 记录交互历史
         interaction_record = {
             "post_id": post_id,
@@ -128,21 +128,26 @@ class Agent:
             "new_confidence": self.confidence
         }
         self.interaction_history.append(interaction_record)
-        
-        # 计算多因素加权分数
-        score = (
-            0.5 * abs(impact.get('emotion_change', 0)) +
-            0.3 * abs(impact.get('confidence_change', 0)) +
-            0.2 * impact.get('base_impact', 0)
-        )
-        if score > getattr(self, 'max_impact_score', float('-inf')):
-            self.max_impact_score = score
-            self.max_impact_post_id = post_object.get('id', None)
-        
+        # 计算本次状态变化量
+        delta_emotion = self.emotion - old_emotion
+        delta_confidence = self.confidence - old_confidence
+        # 计算影响分数
+        influence_score = abs(delta_emotion) + abs(delta_confidence)
+        if influence_score > getattr(self, 'max_impact_score', float('-inf')):
+            self.max_impact_score = influence_score
+            self.max_impact_post_id = post_id
+        # 状态变化后，记录一条历史
+        self.state_history.append({
+            "timestamp": post_object.get("timestamp", datetime.now().isoformat()),
+            "emotion": self.emotion,
+            "stance": self._stance
+        })
         return {
             "status": "updated",
             "post_id": post_id,
             "impact": impact,
+            "delta_emotion": delta_emotion,
+            "delta_confidence": delta_confidence,
             "new_state": {
                 "emotion": self.emotion,
                 "confidence": self.confidence,

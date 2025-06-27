@@ -97,8 +97,8 @@ def demo_time_brush_interaction():
             print(f"  错误: {str(e)}")
 
 def demo_keyword_search():
-    """演示关键词搜索"""
-    print("\n=== 关键词搜索演示 ===")
+    """演示关键词搜索（含分页）"""
+    print("\n=== 关键词搜索演示（含分页） ===")
     
     client = VisualizationClient()
     simulation_id = "demo_sim_001"
@@ -113,22 +113,32 @@ def demo_keyword_search():
     ]
     
     for keywords in keywords_list:
-        print(f"\n搜索关键词: '{keywords}'")
-        
+        print(f"\n搜索关键词: '{keywords}'（第一页）")
         try:
+            # 请求第一页
             result = client.search_posts(
                 simulation_id=simulation_id,
                 keywords=keywords,
                 search_fields=["content"],
-                limit=10
+                page=1,
+                page_size=5
             )
-            
-            print(f"  找到 {result['total_found']} 条相关帖子")
-            
-            # 显示前3条结果
-            for i, post in enumerate(result['results'][:3], 1):
+            print(f"  找到 {result['total_found']} 条相关帖子，共 {result['total_pages']} 页")
+            # 显示前5条结果
+            for i, post in enumerate(result['results'], 1):
                 print(f"  {i}. {post['content'][:50]}... (匹配度: {post.get('_search_score', 0)})")
-                
+            # 如果有多页，演示第二页
+            if result['total_pages'] > 1:
+                print(f"\n  —— 第二页 ——")
+                result2 = client.search_posts(
+                    simulation_id=simulation_id,
+                    keywords=keywords,
+                    search_fields=["content"],
+                    page=2,
+                    page_size=5
+                )
+                for i, post in enumerate(result2['results'], 1):
+                    print(f"  {i}. {post['content'][:50]}... (匹配度: {post.get('_search_score', 0)})")
         except Exception as e:
             print(f"  错误: {str(e)}")
 
