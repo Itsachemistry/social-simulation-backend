@@ -6,6 +6,45 @@ import re
 
 visualization_bp = Blueprint('visualization', __name__)
 
+def normalize_post(post):
+    """
+    统一标准化post对象的字段名，兼容不同来源的数据格式。
+    主要兼容以下字段：
+    - 'children'/'Children'：子节点列表，树结构用
+    - 'author_id'/'uid'：作者ID
+    - 'timestamp'/'t'：时间戳
+    - 'parent_post_id'/'pid'：父帖ID
+    - 其他字段如'content'、'id'、'tags'等保持不变
+    - 详细说明见每个字段注释
+    """
+    std = dict(post)  # 拷贝，避免原数据被修改
+    # 兼容children/Children
+    if 'children' not in std and 'Children' in std:
+        std['children'] = std['Children']
+    # 兼容author_id/uid
+    if 'author_id' not in std and 'uid' in std:
+        std['author_id'] = std['uid']
+    # 兼容timestamp/t
+    if 'timestamp' not in std and 't' in std:
+        std['timestamp'] = std['t']
+    # 兼容parent_post_id/pid
+    if 'parent_post_id' not in std and 'pid' in std:
+        std['parent_post_id'] = std['pid']
+    # 兼容tags为空的情况
+    if 'tags' not in std:
+        std['tags'] = []
+    # 兼容content为空的情况
+    if 'content' not in std:
+        std['content'] = ''
+    # 兼容id为空的情况
+    if 'id' not in std:
+        std['id'] = ''
+    # 兼容name字段（如有）
+    if 'name' not in std and 'user' in std and isinstance(std['user'], dict):
+        std['name'] = std['user'].get('name', '')
+    # 其他字段可按需扩展
+    return std
+
 class InteractiveVisualizer:
     """交互式可视化数据处理器"""
     
@@ -23,6 +62,7 @@ class InteractiveVisualizer:
         
         filtered_posts = []
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             post_time = datetime.fromisoformat(post.get('timestamp', ''))
             if start_time <= post_time <= end_time:
                 filtered_posts.append(post)
@@ -41,12 +81,20 @@ class InteractiveVisualizer:
         matched_posts = []
         
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             match_score = 0
             for field in search_fields:
-                field_value = str(post.get(field, '')).lower()
-                for keyword in keywords:
-                    if keyword in field_value:
-                        match_score += 1
+                if field == 'tags':
+                    # 特殊处理标签字段
+                    post_tags = post.get('tags', [])
+                    for keyword in keywords:
+                        if any(keyword in tag.lower() for tag in post_tags):
+                            match_score += 1
+                else:
+                    field_value = str(post.get(field, '')).lower()
+                    for keyword in keywords:
+                        if keyword in field_value:
+                            match_score += 1
             
             if match_score > 0:
                 post['_search_score'] = match_score
@@ -78,9 +126,41 @@ class InteractiveVisualizer:
         
         filtered_posts = []
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             popularity = post.get('likes', 0) + post.get('shares', 0) + post.get('heat', 0)
             if popularity >= min_popularity:
                 filtered_posts.append(post)
+        
+        return filtered_posts
+    
+    def filter_posts_by_tags(self, posts, tags=None, match_all=False):
+        """
+        按标签筛选帖子
+        
+        Args:
+            posts: 帖子列表
+            tags: 标签列表，如 ["科技", "创新"] 或 None（不过滤）
+            match_all: True表示必须匹配所有标签，False表示匹配任一标签
+            
+        Returns:
+            筛选后的帖子列表
+        """
+        if not tags:
+            return posts
+        
+        filtered_posts = []
+        for post in posts:
+            post = normalize_post(post)  # 字段标准化
+            post_tags = post.get('tags', [])
+            
+            if match_all:
+                # 必须匹配所有标签
+                if all(tag in post_tags for tag in tags):
+                    filtered_posts.append(post)
+            else:
+                # 匹配任一标签
+                if any(tag in post_tags for tag in tags):
+                    filtered_posts.append(post)
         
         return filtered_posts
     
@@ -114,6 +194,7 @@ class InteractiveVisualizer:
                 'popularity_stats': {},
                 'type_distribution': {},
                 'top_authors': [],
+                'top_tags': [],
                 'hot_topics': []
             }
         
@@ -143,8 +224,10 @@ class InteractiveVisualizer:
         # 类型分布
         type_counts = defaultdict(int)
         author_counts = defaultdict(int)
+        tag_counts = defaultdict(int)
         
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             if post.get('is_event'):
                 type_counts['events'] += 1
             elif post.get('is_repost'):
@@ -154,9 +237,14 @@ class InteractiveVisualizer:
             
             author = post.get('author_id', 'unknown')
             author_counts[author] += 1
+            
+            # 统计标签
+            for tag in post.get('tags', []):
+                tag_counts[tag] += 1
         
         type_distribution = dict(type_counts)
         top_authors = sorted(author_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+        top_tags = sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)[:10]
         
         # 热门话题
         hot_topics = self._extract_hot_topics(posts)
@@ -167,6 +255,7 @@ class InteractiveVisualizer:
             'popularity_stats': popularity_stats,
             'type_distribution': type_distribution,
             'top_authors': top_authors,
+            'top_tags': top_tags,
             'hot_topics': hot_topics
         }
     
@@ -174,6 +263,7 @@ class InteractiveVisualizer:
         """提取热门话题"""
         keyword_counts = defaultdict(int)
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             content = post.get('content', '').lower()
             # 简单的分词和过滤
             words = re.findall(r'\b\w{3,}\b', content)
@@ -184,6 +274,9 @@ class InteractiveVisualizer:
 
 # 创建全局可视化器
 interactive_visualizer = InteractiveVisualizer()
+
+
+#getposts接口，用于获取帖子
 
 @visualization_bp.route('/posts/filter', methods=['POST'])
 def filter_posts():
@@ -204,6 +297,9 @@ def filter_posts():
         filter_type = data.get('filter_type', 'all')
         include_reposts = data.get('include_reposts', True)
         limit = data.get('limit', 100)  # 限制返回数量
+        # 新增：标签筛选参数
+        tags = data.get('tags')  # 标签列表，如 ["科技", "创新"]
+        match_all_tags = data.get('match_all_tags', False)  # 是否必须匹配所有标签
         
         if not simulation_id:
             return jsonify({'error': '缺少simulation_id参数'}), 400
@@ -246,16 +342,22 @@ def filter_posts():
             filtered_posts, min_popularity
         )
         
-        # 5. 排序
+        # 5. 标签筛选
+        if tags:
+            filtered_posts = interactive_visualizer.filter_posts_by_tags(
+                filtered_posts, tags, match_all_tags
+            )
+        
+        # 6. 排序
         filtered_posts = interactive_visualizer.sort_posts(
             filtered_posts, sort_by, sort_reverse
         )
         
-        # 6. 限制数量
+        # 7. 限制数量
         if limit and limit > 0:
             filtered_posts = filtered_posts[:limit]
         
-        # 7. 获取摘要统计
+        # 8. 获取摘要统计
         summary = interactive_visualizer.get_posts_summary(filtered_posts)
         
         return jsonify({
@@ -269,7 +371,9 @@ def filter_posts():
                 'min_popularity': min_popularity,
                 'filter_type': filter_type,
                 'include_reposts': include_reposts,
-                'limit': limit
+                'limit': limit,
+                'tags': tags,
+                'match_all_tags': match_all_tags
             },
             'summary': summary,
             'posts': filtered_posts,
@@ -396,8 +500,17 @@ def get_visualization_options():
         'search_fields': [
             {'value': 'content', 'label': '帖子内容'},
             {'value': 'author_id', 'label': '作者ID'},
-            {'value': 'id', 'label': '帖子ID'}
-        ]
+            {'value': 'id', 'label': '帖子ID'},
+            {'value': 'tags', 'label': '标签'}
+        ],
+        'tag_options': {
+            'description': '支持微博标签筛选，标签格式为 #XXXX#',
+            'match_modes': [
+                {'value': False, 'label': '匹配任一标签'},
+                {'value': True, 'label': '匹配所有标签'}
+            ],
+            'example': ['科技', '创新', '产品']
+        }
     })
 
 @visualization_bp.route('/posts/repost_tree', methods=['POST'])

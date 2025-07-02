@@ -171,6 +171,7 @@ cython_debug/
 
 # 项目特定文件
 # 数据文件 - 包含真实世界的帖子数据和仿真结果
+/data/
 data/raw/
 data/processed/
 data/results/
@@ -265,3 +266,4 @@ world_states/
 time_slices/
 event_logs/
 interaction_records/ 
+data/check_tr_totalChildren.py

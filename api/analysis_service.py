@@ -7,6 +7,45 @@ import jieba
 
 analysis_bp = Blueprint('analysis', __name__)
 
+def normalize_post(post):
+    """
+    统一标准化post对象的字段名，兼容不同来源的数据格式。
+    主要兼容以下字段：
+    - 'children'/'Children'：子节点列表，树结构用
+    - 'author_id'/'uid'：作者ID
+    - 'timestamp'/'t'：时间戳
+    - 'parent_post_id'/'pid'：父帖ID
+    - 其他字段如'content'、'id'、'tags'等保持不变
+    - 详细说明见每个字段注释
+    """
+    std = dict(post)  # 拷贝，避免原数据被修改
+    # 兼容children/Children
+    if 'children' not in std and 'Children' in std:
+        std['children'] = std['Children']
+    # 兼容author_id/uid
+    if 'author_id' not in std and 'uid' in std:
+        std['author_id'] = std['uid']
+    # 兼容timestamp/t
+    if 'timestamp' not in std and 't' in std:
+        std['timestamp'] = std['t']
+    # 兼容parent_post_id/pid
+    if 'parent_post_id' not in std and 'pid' in std:
+        std['parent_post_id'] = std['pid']
+    # 兼容tags为空的情况
+    if 'tags' not in std:
+        std['tags'] = []
+    # 兼容content为空的情况
+    if 'content' not in std:
+        std['content'] = ''
+    # 兼容id为空的情况
+    if 'id' not in std:
+        std['id'] = ''
+    # 兼容name字段（如有）
+    if 'name' not in std and 'user' in std and isinstance(std['user'], dict):
+        std['name'] = std['user'].get('name', '')
+    # 其他字段可按需扩展
+    return std
+
 class TemporalAnalyzer:
     """时间粒度分析器"""
     
@@ -60,6 +99,7 @@ class TemporalAnalyzer:
         
         filtered_posts = []
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             post_time = datetime.fromisoformat(post.get('timestamp', ''))
             if start_time <= post_time <= end_time:
                 filtered_posts.append(post)
@@ -70,6 +110,7 @@ class TemporalAnalyzer:
         """按小时分组"""
         grouped = defaultdict(list)
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             post_time = datetime.fromisoformat(post.get('timestamp', ''))
             hour_key = post_time.strftime('%Y-%m-%d %H:00')
             grouped[hour_key].append(post)
@@ -79,6 +120,7 @@ class TemporalAnalyzer:
         """按天分组"""
         grouped = defaultdict(list)
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             post_time = datetime.fromisoformat(post.get('timestamp', ''))
             day_key = post_time.strftime('%Y-%m-%d')
             grouped[day_key].append(post)
@@ -88,6 +130,7 @@ class TemporalAnalyzer:
         """按周分组"""
         grouped = defaultdict(list)
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             post_time = datetime.fromisoformat(post.get('timestamp', ''))
             # 获取该周的周一作为周标识
             week_start = post_time - timedelta(days=post_time.weekday())
@@ -121,6 +164,7 @@ class TemporalAnalyzer:
         author_counts = defaultdict(int)
         
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             # 情感分析（如果有）
             emotion = post.get('emotion', 'neutral')
             emotion_counts[emotion] += 1
@@ -153,6 +197,7 @@ class TemporalAnalyzer:
         keyword_counts = defaultdict(int)
         stopwords = set(["的", "了", "和", "是", "在", "我", "有", "就", "不", "人", "都", "一个", "上", "也", "很", "到", "说", "要", "去", "你", "会", "着", "没有", "看", "好", "自己", "这"])
         for post in posts:
+            post = normalize_post(post)  # 字段标准化
             content = post.get('content', '')
             # 使用jieba分词
             words = jieba.lcut(content)
@@ -174,7 +219,7 @@ def analyze_temporal():
             return jsonify({'error': '无效的JSON数据'}), 400
             
         simulation_id = data.get('simulation_id')
-        granularity = data.get('granularity', 'day')  # hour, day, week
+        granularity = data.get('granularity', 'day')  # hour, day, week 默认值是day
         time_range = data.get('time_range')  # 可选的时间范围
         
         if not simulation_id:

@@ -30,8 +30,9 @@ class TimeSliceManager:
             if 'timestamp' not in post:
                 raise KeyError(f"帖子 {i} 缺少timestamp字段")
         
-        # 按时间戳排序帖子
-        self._posts = sorted(posts, key=lambda x: x['timestamp'])
+        # 过滤掉热度为0的帖子
+        filtered_posts = [p for p in posts if p.get('heat', 0) > 0]
+        self._posts = sorted(filtered_posts, key=lambda x: x['timestamp'])
         self._slice_size = slice_size
         
         # 计算总时间片数

@@ -16,7 +16,9 @@ http://localhost:5000/api/visualization
 
 **接口**: `GET /options`
 
-**描述**: 获取所有可用的排序、筛选和搜索选项
+**描述**: 获取可视化相关的选项配置，包括排序、筛选、搜索字段等选项
+
+**请求参数**: 无
 
 **响应示例**:
 ```json
@@ -38,8 +40,17 @@ http://localhost:5000/api/visualization
   "search_fields": [
     {"value": "content", "label": "帖子内容"},
     {"value": "author_id", "label": "作者ID"},
-    {"value": "id", "label": "帖子ID"}
-  ]
+    {"value": "id", "label": "帖子ID"},
+    {"value": "tags", "label": "标签"}        // 新增：标签搜索字段
+  ],
+  "tag_options": {                            // 新增：标签选项
+    "description": "支持微博标签筛选，标签格式为 #XXXX#",
+    "match_modes": [
+      {"value": false, "label": "匹配任一标签"},
+      {"value": true, "label": "匹配所有标签"}
+    ],
+    "example": ["科技", "创新", "产品"]
+  }
 }
 ```
 
@@ -47,7 +58,7 @@ http://localhost:5000/api/visualization
 
 **接口**: `POST /posts/filter`
 
-**描述**: 综合筛选帖子，支持时间范围、关键词搜索、排序、热度阈值等多种筛选条件
+**描述**: 综合筛选接口，支持多种筛选条件组合
 
 **请求参数**:
 ```json
@@ -57,16 +68,24 @@ http://localhost:5000/api/visualization
     "start": "2024-01-01T00:00:00",
     "end": "2024-01-02T00:00:00"
   },
-  "keywords": "string",                // 可选：搜索关键词
+  "keywords": "string",                // 可选：关键词搜索
   "search_fields": ["content", "author_id"], // 可选：搜索字段
-  "sort_by": "time",                   // 可选：排序方式 (time|popularity|heat|likes|shares)
-  "sort_reverse": false,               // 可选：是否倒序
-  "min_popularity": 0,                 // 可选：最小热度阈值
-  "filter_type": "all",                // 可选：筛选类型 (all|original|reposted|events)
+  "sort_by": "time|popularity|heat|likes|shares", // 可选：排序方式
+  "sort_reverse": false,               // 可选：是否降序
+  "min_popularity": 0,                 // 可选：最低热度阈值
+  "filter_type": "all|original|reposted|events", // 可选：内容类型
   "include_reposts": true,             // 可选：是否包含转发
-  "limit": 100                         // 可选：返回数量限制
+  "limit": 100,                        // 可选：返回数量限制
+  "tags": ["科技", "创新"],            // 新增：标签筛选
+  "match_all_tags": false              // 新增：是否必须匹配所有标签
 }
 ```
+
+**新增标签参数说明**:
+- `tags`: 标签列表，如 `["科技", "创新"]`。帖子内容中的标签格式为 `#XXXX#`，筛选时使用 `XXXX` 部分
+- `match_all_tags`: 
+  - `false` (默认): 匹配任一标签即可
+  - `true`: 必须匹配所有标签
 
 **响应示例**:
 ```json
@@ -81,7 +100,9 @@ http://localhost:5000/api/visualization
     "min_popularity": 10,
     "filter_type": "original",
     "include_reposts": false,
-    "limit": 100
+    "limit": 100,
+    "tags": ["科技", "创新"],
+    "match_all_tags": false
   },
   "summary": {
     "total_posts": 45,
@@ -104,6 +125,13 @@ http://localhost:5000/api/visualization
       ["user_002", 6],
       ["user_003", 5]
     ],
+    "top_tags": [                    // 新增：热门标签统计
+      ["科技", 15],
+      ["创新", 12],
+      ["产品", 8],
+      ["技术", 6],
+      ["市场", 5]
+    ],
     "hot_topics": [
       ["产品", 15],
       ["发布", 12],
@@ -115,14 +143,15 @@ http://localhost:5000/api/visualization
   "posts": [
     {
       "id": "post_001",
-      "content": "新产品发布内容...",
+      "content": "新产品发布内容 #科技# #创新#",
       "author_id": "user_001",
       "timestamp": "2024-01-01T10:30:00",
       "heat": 85,
       "likes": 45,
       "shares": 12,
       "is_event": false,
-      "is_repost": false
+      "is_repost": false,
+      "tags": ["科技", "创新"]        // 新增：帖子标签
     }
   ],
   "total_filtered": 45
@@ -133,37 +162,45 @@ http://localhost:5000/api/visualization
 
 **接口**: `POST /posts/search`
 
-**描述**: 专门用于关键词搜索的接口
+**描述**: 专门用于关键词搜索的接口，支持标签搜索
 
 **请求参数**:
 ```json
 {
   "simulation_id": "string",           // 必需：仿真ID
   "keywords": "string",                // 必需：搜索关键词
-  "search_fields": ["content", "author_id"], // 可选：搜索字段
-  "limit": 50                          // 可选：返回数量限制
+  "search_fields": ["content", "author_id", "tags"], // 可选：搜索字段，新增tags
+  "page": 1,                           // 可选：页码
+  "page_size": 20                      // 可选：每页数量
 }
 ```
+
+**新增搜索字段说明**:
+- `tags`: 在帖子标签中进行搜索，支持部分匹配
 
 **响应示例**:
 ```json
 {
   "status": "success",
-  "keywords": "产品 发布",
-  "search_fields": ["content"],
+  "keywords": "科技 创新",
+  "search_fields": ["content", "tags"],
   "results": [
     {
       "id": "post_001",
-      "content": "新产品发布内容...",
+      "content": "新产品发布内容 #科技# #创新#",
       "author_id": "user_001",
       "timestamp": "2024-01-01T10:30:00",
       "heat": 85,
       "likes": 45,
       "shares": 12,
+      "tags": ["科技", "创新"],
       "_search_score": 2
     }
   ],
-  "total_found": 15
+  "total_found": 15,
+  "page": 1,
+  "page_size": 20,
+  "total_pages": 1
 }
 ```
 
@@ -313,12 +350,14 @@ function onTimeBrushChange(startTime, endTime) {
 用户在搜索框中输入关键词：
 
 ```javascript
-function searchPosts(keywords) {
+// 前端搜索事件
+function onSearchSubmit(keywords) {
   const searchParams = {
     simulation_id: currentSimulationId,
     keywords: keywords,
-    search_fields: ['content', 'author_id'],
-    limit: 30
+    search_fields: ['content', 'tags'],  // 在内容和标签中搜索
+    page: 1,
+    page_size: 20
   };
   
   fetch('/api/visualization/posts/search', {
@@ -328,75 +367,25 @@ function searchPosts(keywords) {
   })
   .then(response => response.json())
   .then(data => {
-    displaySearchResults(data.results);
-    showSearchSummary(data.total_found);
+    updateSearchResults(data.results);
+    updatePagination(data.page, data.total_pages);
   });
 }
 ```
 
-### 场景3: 排序方式切换
+### 场景3: 标签筛选
 
-用户切换排序方式（时间/热度）：
-
-```javascript
-function changeSortOrder(sortBy, reverse = false) {
-  const filterParams = {
-    simulation_id: currentSimulationId,
-    sort_by: sortBy,
-    sort_reverse: reverse,
-    limit: 100
-  };
-  
-  fetch('/api/visualization/posts/filter', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(filterParams)
-  })
-  .then(response => response.json())
-  .then(data => {
-    updatePostList(data.posts);
-    highlightTopPosts(data.posts.slice(0, 5));
-  });
-}
-```
-
-### 场景4: 热度阈值调整
-
-用户调整热度阈值来过滤低质量内容：
+用户选择特定标签进行筛选：
 
 ```javascript
-function adjustPopularityThreshold(threshold) {
+// 前端标签筛选事件
+function onTagFilter(tags, matchAll = false) {
   const filterParams = {
     simulation_id: currentSimulationId,
-    min_popularity: threshold,
+    tags: tags,                    // 标签列表
+    match_all_tags: matchAll,      // 是否必须匹配所有标签
     sort_by: 'popularity',
     sort_reverse: true,
-    limit: 50
-  };
-  
-  fetch('/api/visualization/posts/filter', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(filterParams)
-  })
-  .then(response => response.json())
-  .then(data => {
-    updatePostList(data.posts);
-    updateFilterStats(data.total_filtered, threshold);
-  });
-}
-```
-
-### 场景5: 转发内容控制
-
-用户控制是否显示转发内容：
-
-```javascript
-function toggleReposts(includeReposts) {
-  const filterParams = {
-    simulation_id: currentSimulationId,
-    include_reposts: includeReposts,
-    filter_type: includeReposts ? 'all' : 'original',
     limit: 100
   };
   
@@ -408,7 +397,75 @@ function toggleReposts(includeReposts) {
   .then(response => response.json())
   .then(data => {
     updatePostList(data.posts);
-    updateTypeDistribution(data.summary.type_distribution);
+    updateTagCloud(data.summary.top_tags);  // 更新标签云
+  });
+}
+
+// 标签云点击事件
+function onTagCloudClick(tag) {
+  onTagFilter([tag], false);  // 筛选包含该标签的帖子
+}
+```
+
+### 场景4: 组合筛选
+
+用户组合多种筛选条件：
+
+```javascript
+// 高级筛选
+function advancedFilter(params) {
+  const filterParams = {
+    simulation_id: currentSimulationId,
+    time_range: params.timeRange,
+    tags: params.tags,
+    match_all_tags: params.matchAllTags,
+    keywords: params.keywords,
+    search_fields: ['content', 'tags'],
+    min_popularity: params.minPopularity,
+    filter_type: params.filterType,
+    sort_by: params.sortBy,
+    sort_reverse: params.sortReverse,
+    limit: params.limit || 50
+  };
+  
+  fetch('/api/visualization/posts/filter', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(filterParams)
+  })
+  .then(response => response.json())
+  .then(data => {
+    updatePostList(data.posts);
+    updateSummary(data.summary);
+    updateFilterHistory(data.filter_params);  // 保存筛选历史
+  });
+}
+```
+
+### 场景5: 标签统计分析
+
+分析特定时间段的标签使用情况：
+
+```javascript
+// 获取标签统计
+function getTagStatistics(timeRange) {
+  const summaryParams = {
+    simulation_id: currentSimulationId,
+    time_range: timeRange
+  };
+  
+  fetch('/api/visualization/posts/summary', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(summaryParams)
+  })
+  .then(response => response.json())
+  .then(data => {
+    // 绘制标签使用频率图表
+    drawTagFrequencyChart(data.summary.top_tags);
+    
+    // 显示热门标签
+    displayHotTags(data.summary.top_tags.slice(0, 10));
   });
 }
 ```

@@ -283,97 +283,44 @@ class AgentController:
         
         return personalized_posts
     
-    def _get_heat_threshold_for_agent(self, agent: Agent, global_intensity_factor: float = 1.0) -> int:
-        """
-        根据Agent状态和全局环境动态计算热度阈值
-        
-        Args:
-            agent (Agent): Agent对象
-            global_intensity_factor (float): 全局环境强度因子 (0-2, 1.0为正常)
-            
-        Returns:
-            int: 动态计算的热度阈值
-        """
-        # 获取基础配置
-        config = self._get_dynamic_threshold_config()
-        
-        # 1. 基础阈值（基于Agent类型）
-        base_threshold = self._get_base_heat_threshold(agent.agent_type)
-        
-        # 2. 性格调整系数
-        personality_adjustment = self._calculate_personality_adjustment(agent)
-        
-        # 3. 情绪状态调整
-        emotion_adjustment = self._calculate_emotion_adjustment(agent)
-        
-        # 4. 置信度调整
-        confidence_adjustment = self._calculate_confidence_adjustment(agent)
-        
-        # 5. 全局环境调整
-        global_adjustment = self._calculate_global_adjustment(global_intensity_factor)
-        
-        # 6. 综合计算动态阈值
-        dynamic_threshold = (
-            base_threshold * personality_adjustment +
-            emotion_adjustment * config["emotion_weight"] * 100 +
-            confidence_adjustment * config["confidence_weight"] * 100 +
-            global_adjustment * config["global_intensity_weight"] * 100
-        )
-        
-        # 7. 应用限制范围
-        max_adjustment = config["max_threshold_adjustment"]
-        min_threshold = config["min_threshold"]
-        
-        dynamic_threshold = max(
-            min_threshold,
-            min(base_threshold + max_adjustment, dynamic_threshold)
-        )
-        
-        # 8. 记录调试信息
-        if hasattr(self, '_debug_threshold') and self._debug_threshold:
-            print(f"Agent {agent.agent_id} 动态阈值计算:")
-            print(f"  基础阈值: {base_threshold}")
-            print(f"  性格调整: {personality_adjustment:.2f}")
-            print(f"  情绪调整: {emotion_adjustment:.2f}")
-            print(f"  置信度调整: {confidence_adjustment:.2f}")
-            print(f"  全局调整: {global_adjustment:.2f}")
-            print(f"  最终阈值: {dynamic_threshold:.1f}")
-        
-        return int(dynamic_threshold)
-    
     def _get_dynamic_threshold_config(self) -> dict:
         """
-        获取动态阈值配置
-        
-        Returns:
-            dict: 配置字典
+        获取动态阈值配置（小幅浮动，基础为2，范围2~3）
         """
-        # 这里可以从配置文件读取，暂时使用默认值
         return {
-            "emotion_weight": 0.3,
-            "confidence_weight": 0.2,
-            "global_intensity_weight": 0.25,
-            "personality_weight": 0.25,
-            "max_threshold_adjustment": 30,
-            "min_threshold": 10
+            "emotion_weight": 0.1,
+            "confidence_weight": 0.1,
+            "global_intensity_weight": 0.1,
+            "personality_weight": 0.1,
+            "max_threshold_adjustment": 1,
+            "min_threshold": 2
         }
     
     def _get_base_heat_threshold(self, agent_type: str) -> int:
         """
-        获取基于Agent类型的基础热度阈值
-        
-        Args:
-            agent_type (str): Agent类型
-            
-        Returns:
-            int: 基础热度阈值
+        获取基于Agent类型的基础热度阈值（全部为2）
         """
-        base_thresholds = {
-            "意见领袖": 30,
-            "规则Agent": 20,
-            "普通用户": 50
-        }
-        return base_thresholds.get(agent_type, 50)
+        return 2
+    
+    def _get_heat_threshold_for_agent(self, agent: Agent, global_intensity_factor: float = 1.0) -> int:
+        """
+        根据Agent状态和全局环境动态计算热度阈值
+        """
+        config = self._get_dynamic_threshold_config()
+        base_threshold = self._get_base_heat_threshold(agent.agent_type)
+        personality_adjustment = self._calculate_personality_adjustment(agent)
+        emotion_adjustment = self._calculate_emotion_adjustment(agent)
+        confidence_adjustment = self._calculate_confidence_adjustment(agent)
+        global_adjustment = self._calculate_global_adjustment(global_intensity_factor)
+        dynamic_threshold = (
+            base_threshold * personality_adjustment +
+            emotion_adjustment * config["emotion_weight"] +
+            confidence_adjustment * config["confidence_weight"] +
+            global_adjustment * config["global_intensity_weight"]
+        )
+        # 限制范围在2~3
+        dynamic_threshold = max(config["min_threshold"], min(base_threshold + config["max_threshold_adjustment"], dynamic_threshold))
+        return int(dynamic_threshold)
     
     def _calculate_personality_adjustment(self, agent: Agent) -> float:
         """
@@ -518,41 +465,19 @@ class AgentController:
     
     def _calculate_stance_similarity(self, agent: Agent, post: dict) -> float:
         """
-        计算Agent立场与帖子立场的相似度
-        
-        Args:
-            agent (Agent): Agent对象
-            post (dict): 帖子对象
-            
-        Returns:
-            float: 相似度分数 (0-1)
+        计算Agent立场与帖子立场的相似度（新版：group=1→0.0，0→0.5，2→1.0）
         """
-        # 改进的相似度计算
-        # 1. 基于帖子内容的简单情感分析
-        content = post.get("content", "").lower()
-        
-        # 正面词汇
-        positive_words = ["好", "棒", "赞", "喜欢", "支持", "同意", "正确", "优秀", "成功", "开心", "愉快"]
-        # 负面词汇  
-        negative_words = ["坏", "差", "讨厌", "反对", "错误", "失败", "愤怒", "失望", "糟糕", "问题"]
-        
-        # 计算情感倾向
-        positive_count = sum(1 for word in positive_words if word in content)
-        negative_count = sum(1 for word in negative_words if word in content)
-        
-        # 估算帖子立场
-        if positive_count > negative_count:
-            post_stance = 0.7 + (positive_count - negative_count) * 0.1
-        elif negative_count > positive_count:
-            post_stance = 0.3 - (negative_count - positive_count) * 0.1
+        group = post.get('stance', 0)
+        if group == 1:
+            post_stance_val = 0.0  # 支持患者
+        elif group == 0:
+            post_stance_val = 0.5  # 中立
+        elif group == 2:
+            post_stance_val = 1.0  # 支持医院
         else:
-            post_stance = 0.5
-        
-        # 计算相似度（使用高斯函数）
-        stance_diff = abs(agent.stance - post_stance)
-        similarity = max(0.0, 1.0 - stance_diff * 2.0)  # 更宽松的相似度计算
-        
-        return similarity
+            post_stance_val = 0.5  # 默认中立
+        similarity = 1.0 - abs(agent.stance - post_stance_val)
+        return max(0.0, similarity)
     
     def _get_similarity_threshold_for_agent(self, agent: Agent) -> float:
         """
@@ -575,50 +500,9 @@ class AgentController:
     
     def _check_interest_match(self, agent: Agent, post: dict) -> bool:
         """
-        检查帖子是否匹配Agent的兴趣
-        
-        Args:
-            agent (Agent): Agent对象
-            post (dict): 帖子对象
-            
-        Returns:
-            bool: 是否匹配
+        当前系统不启用兴趣匹配，所有帖子均通过。
         """
-        # 改进的兴趣匹配逻辑
-        if not agent.interests:
-            return True  # 如果没有兴趣标签，接受所有帖子
-        
-        content = post.get("content", "").lower()
-        
-        # 兴趣关键词映射
-        interest_keywords = {
-            "政治": ["政策", "政府", "选举", "政治", "国家", "领导人", "法律"],
-            "经济": ["经济", "股市", "投资", "金融", "商业", "贸易", "GDP"],
-            "社会": ["社会", "民生", "教育", "医疗", "住房", "就业"],
-            "文化": ["文化", "艺术", "文学", "历史", "传统", "习俗"],
-            "科技": ["科技", "技术", "创新", "互联网", "AI", "数字化"],
-            "娱乐": ["娱乐", "电影", "音乐", "明星", "综艺", "游戏"],
-            "体育": ["体育", "足球", "篮球", "运动", "比赛", "健身"],
-            "健康": ["健康", "医疗", "养生", "运动", "饮食", "疾病"],
-            "美食": ["美食", "餐厅", "烹饪", "食材", "菜谱", "味道"],
-            "旅游": ["旅游", "旅行", "景点", "酒店", "机票", "度假"],
-            "教育": ["教育", "学校", "学习", "考试", "培训", "知识"],
-            "职场": ["职场", "工作", "公司", "职业", "面试", "升职"],
-            "规则": ["规则", "秩序", "制度", "规范", "管理", "监督"]
-        }
-        
-        # 计算兴趣匹配度
-        match_score = 0
-        for interest in agent.interests:
-            if interest in interest_keywords:
-                keywords = interest_keywords[interest]
-                for keyword in keywords:
-                    if keyword in content:
-                        match_score += 1
-                        break  # 每个兴趣只匹配一次
-        
-        # 匹配阈值：至少匹配一个兴趣，或者没有明确兴趣标签
-        return match_score > 0 or len(agent.interests) == 0
+        return True
     
     def _mock_llm_service(self, prompt: str) -> str:
         """模拟LLM回复"""
