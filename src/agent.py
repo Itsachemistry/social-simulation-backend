@@ -45,14 +45,12 @@ class Agent:
             "activity_level": 0.5,      # 活跃度 (0-1)
             "emotion_sensitivity": 0.5,  # 情绪敏感度 (0-1)
             "stance_firmness": 0.5,      # 立场坚定度 (0-1)
-            "information_thirst": 0.5,   # 信息渴求度 (0-1)
             "attention_span": 0.5        # 注意力持续时间 (0-1)
         })
         
         # 动态状态
         self.emotion = 0.5  # 情绪值 (0-1, 0=负面, 1=正面)
         self.confidence = 0.5  # 置信度 (0-1)
-        self.energy = 1.0  # 精力值 (0-1)
         
         # 交互历史
         self.viewed_posts = []  # 已浏览的帖子ID列表
@@ -133,9 +131,6 @@ class Agent:
         # 更新置信度
         self.confidence = max(0.0, min(1.0, self.confidence + impact["confidence_change"]))
         
-        # 更新精力（浏览帖子消耗精力）
-        self.energy = max(0.0, self.energy - 0.05)
-        
         # 记录交互历史
         interaction_record = {
             "post_id": post_id,
@@ -163,6 +158,14 @@ class Agent:
             "stance": self._stance
         })
         
+        # 记录每个帖子对Agent的影响分数
+        if not hasattr(self, 'impact_records') or self.impact_records is None:
+            self.impact_records = []
+        self.impact_records.append({
+            'post_id': post_id,
+            'impact_score': impact.get('base_impact', 0.0)
+        })
+        
         return {
             "status": "updated",
             "post_id": post_id,
@@ -172,7 +175,6 @@ class Agent:
             "new_state": {
                 "emotion": self.emotion,
                 "confidence": self.confidence,
-                "energy": self.energy
             }
         }
     
@@ -312,45 +314,43 @@ class Agent:
         
         return len(common_interests) / len(self._interests)
     
-    def generate_action_prompt(self) -> str | None:
+    def generate_action_prompt(self, debug_reason=False) -> tuple[str | None, str | None, str | None]:
         """
         行动决策接口，决定是否发言，返回Prompt或None。
-        发言概率逻辑（如状态波动、活跃度加成、随机决策等）应由Agent设计师在本方法内部实现。
+        debug_reason: 若为True，则返回(发言内容, 原因)元组
         """
-        # 检查是否还能发帖
         if self.current_posts_count >= self.max_posts_per_slice:
-            return None
-        
-        # 检查精力是否足够
-        if self.energy < 0.2:
-            return None
-        
-        # 基于概率决定是否发帖
-        if random.random() > self.post_probability:
-            return None
-        
-        # 基于当前状态调整发帖概率
-        adjusted_probability = self.post_probability
-        
-        # 情绪极端时更容易发帖
-        if self.emotion < 0.2 or self.emotion > 0.8:
-            adjusted_probability *= 1.5
-        
-        # 置信度高时更容易发帖
-        if self.confidence > 0.7:
-            adjusted_probability *= 1.3
-        
-        # 最终概率检查
-        if random.random() > adjusted_probability:
-            return None
-        
-        # 生成提示词
+            if debug_reason:
+                return None, None, "已达本时间片发帖上限"
+            return None, None, None
+        delta_emotion = abs(self.emotion - getattr(self, '_last_emotion', self.emotion))
+        delta_stance = abs(self._stance - getattr(self, '_last_stance', self._stance))
+        fluctuation = delta_emotion + delta_stance
+        base_threshold = 0.1
+        if fluctuation < base_threshold:
+            if debug_reason:
+                return None, None, f"波动量{fluctuation:.3f}低于阈值{base_threshold}"
+            return None, None, None
+        base_prob = min(fluctuation / 2.0, 1.0)
+        activity_multiplier = self.activity_level if self.activity_level is not None else 1.0
+        final_prob = base_prob * activity_multiplier
+        rand_val = random.random()
+        if rand_val > final_prob:
+            if debug_reason:
+                return None, None, f"最终概率{final_prob:.3f}，随机值{rand_val:.3f}，未通过"
+            return None, None, None
+        parent_post_id = None
+        if hasattr(self, 'impact_records') and self.impact_records:
+            max_impact = max(self.impact_records, key=lambda x: x['impact_score'])
+            parent_post_id = max_impact['post_id']
         prompt = self._create_action_prompt()
-        
-        # 增加发帖计数
         self.current_posts_count += 1
-        
-        return prompt
+        self._last_emotion = self.emotion
+        self._last_stance = self._stance
+        self.reset_impact_records()
+        if debug_reason:
+            return prompt, parent_post_id, "发言"
+        return prompt, parent_post_id, None
     
     def _create_action_prompt(self) -> str:
         """
@@ -366,7 +366,6 @@ class Agent:
 - 立场倾向：{self._stance:.2f} (0=反对，1=支持)
 - 情绪状态：{self.emotion:.2f} (0=负面，1=正面)
 - 置信度：{self.confidence:.2f} (0=不确定，1=确定)
-- 精力值：{self.energy:.2f} (0=疲惫，1=充沛)
 - 兴趣领域：{', '.join(self._interests) if self._interests else '无特定兴趣'}
 
 最近浏览了{len(self.viewed_posts)}条帖子，请基于你的状态和浏览历史，生成一条社交媒体帖子。
@@ -427,7 +426,6 @@ class Agent:
             "stance": self._stance,
             "emotion": self.emotion,
             "confidence": self.confidence,
-            "energy": self.energy,
             "post_probability": self.post_probability,
             "max_posts_per_slice": self.max_posts_per_slice,
             "viewed_posts_count": len(self.viewed_posts),
@@ -522,13 +520,6 @@ class Agent:
         return self._personality.get("stance_firmness", 0.5)
 
     @property
-    def information_thirst(self) -> float:
-        """
-        Agent信息渴求度 (0-1)
-        """
-        return self._personality.get("information_thirst", 0.5)
-
-    @property
     def attention_span(self) -> float:
         """
         Agent注意力持续时间 (0-1)
@@ -548,3 +539,6 @@ class Agent:
         """
         # 由Agent设计师实现：处理环境摘要，更新宏观认知状态
         pass 
+
+    def reset_impact_records(self):
+        self.impact_records = [] 

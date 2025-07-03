@@ -60,13 +60,26 @@ def test_real_data_integration():
     print(f"总时间片数: {time_manager.total_slices}")
     # 5. 初始化AgentController
     agent_controller = AgentController(agents, world_state)
+    # 新增：同步所有Agent的_last_emotion和_last_stance为当前状态
+    for agent_type, agents_list in agent_controller.agents.items():
+        for agent in agents_list:
+            agent._last_emotion = agent.emotion
+            agent._last_stance = agent._stance
     # 输出所有Agent的初始状态
     print("\n[Agent初始状态]")
     for agent_type, agents in agent_controller.agents.items():
+        if agent_type not in ["意见领袖", "普通用户"]:
+            continue
         for agent in agents:
             summary = agent.get_state_summary()
-            print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 能量: {summary.get("energy")}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
+            print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
     # 6. 遍历每个时间片，推送个性化信息流并模拟状态更新
+    prev_agent_states = {}
+    for agent_type, agents_list in agent_controller.agents.items():
+        if agent_type not in ["意见领袖", "普通用户"]:
+            continue
+        for agent in agents_list:
+            prev_agent_states[agent.agent_id] = agent.get_state_summary().copy()
     for slice_idx in range(min(4, time_manager.total_slices)):
         print(f'\n=== 时间片 {slice_idx+1}/{time_manager.total_slices} ===')
         current_slice_posts = time_manager.get_slice(slice_idx)
@@ -74,14 +87,40 @@ def test_real_data_integration():
         # 推送组成功能
         all_agents = []
         for agent_type, agents_list in agent_controller.agents.items():
+            if agent_type not in ["意见领袖", "普通用户"]:
+                continue
             all_agents.extend(agents_list)
         results = agent_controller.run_time_slice(all_agents, world_state)
         # 输出每个agent的详细状态
         print("\n[Agent状态变化]")
         for agent_type, agents in agent_controller.agents.items():
+            if agent_type not in ["意见领袖", "普通用户"]:
+                continue
             for agent in agents:
                 summary = agent.get_state_summary()
-                print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 能量: {summary.get("energy")}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
+                print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
+                # 输出增量
+                prev = prev_agent_states.get(agent.agent_id, {})
+                delta = {}
+                for key in ["stance", "emotion", "confidence", "viewed_posts_count", "interaction_count"]:
+                    if key in summary and key in prev:
+                        try:
+                            delta[key] = summary[key] - prev[key]
+                        except Exception:
+                            delta[key] = "N/A"
+                print(f'  属性增量: {delta}')
+                # 新增：输出波动量
+                delta_emotion = abs(summary.get("emotion", 0.0) - prev.get("emotion", 0.0))
+                delta_stance = abs(summary.get("stance", 0.0) - prev.get("stance", 0.0))
+                fluctuation = delta_emotion + delta_stance
+                print(f'  波动量: {fluctuation:.3f} (情绪: {delta_emotion:.3f}, 立场: {delta_stance:.3f})')
+                # 更新prev_agent_states
+                prev_agent_states[agent.agent_id] = summary.copy()
+        # 新增：输出发言判定
+        for judge in results.get("action_judgements", []):
+            if judge["agent_type"] not in ["意见领袖", "普通用户"]:
+                continue
+            print(f'Agent: {judge["agent_id"]}, 类型: {judge["agent_type"]}, 本时间片发言: {"是" if judge["action"] else "否"}，原因: {judge["reason"]}')
 
 if __name__ == "__main__":
     test_real_data_integration() 

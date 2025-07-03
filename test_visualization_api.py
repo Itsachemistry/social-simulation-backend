@@ -241,25 +241,7 @@ def test_interactive_features():
     
     # 场景3: 用户调整热度阈值
     print("\n--- 场景3: 热度阈值调整 ---")
-    popularity_thresholds = [0, 5, 10, 20, 50]
-    
-    for threshold in popularity_thresholds:
-        print(f"热度阈值: {threshold}")
-        
-        filter_params = {
-            "simulation_id": simulation_id,
-            "min_popularity": threshold,
-            "sort_by": "popularity",
-            "sort_reverse": True,
-            "limit": 10
-        }
-        
-        response = requests.post(f"{BASE_URL}/visualization/posts/filter", json=filter_params)
-        if response.status_code == 200:
-            result = response.json()
-            print(f"  符合条件的帖子: {result['total_filtered']} 条")
-        else:
-            print(f"  筛选失败")
+    # 删除popularity_thresholds相关测试
     
     # 场景4: 用户控制转发显示
     print("\n--- 场景4: 转发内容控制 ---")

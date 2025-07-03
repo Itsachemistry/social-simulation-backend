@@ -152,7 +152,7 @@ class AgentController:
             "total_posts": total_posts
         }
 
-    def run_time_slice(self, agents: List[Agent], world_state: WorldState, llm_service=None) -> List[Dict[str, Any]]:
+    def run_time_slice(self, agents: List[Agent], world_state: WorldState, llm_service=None) -> Dict[str, Any]:
         """
         运行一个时间片
         """
@@ -180,6 +180,7 @@ class AgentController:
         )
         
         generated_posts = []
+        action_judgements = []  # 新增：记录每个agent的发言判定
         
         # 按优先级处理每种类型的Agent
         for agent_type in sorted_agent_types:
@@ -200,7 +201,14 @@ class AgentController:
                     agent.update_state(post, llm_service)
                 
                 # 生成行动
-                action_prompt = agent.generate_action_prompt()
+                action_prompt, parent_post_id, reason = agent.generate_action_prompt(debug_reason=True)
+                action_judgements.append({
+                    "agent_id": agent.agent_id,
+                    "agent_type": agent.agent_type,
+                    "action": action_prompt is not None,
+                    "reason": reason,
+                    "parent_post_id": parent_post_id
+                })
                 if action_prompt:
                     # 调用LLM生成帖子内容
                     if llm_service:
@@ -221,7 +229,7 @@ class AgentController:
                         "is_event": False,
                         "priority": 0,
                         "is_repost": True if hasattr(agent, 'repost_source_id') and agent.repost_source_id else False,
-                        "parent_post_id": getattr(agent, 'max_impact_post_id', None)
+                        "parent_post_id": parent_post_id
                     }
                     
                     # 添加到世界状态
@@ -232,8 +240,13 @@ class AgentController:
                 # 时间片结束后重置影响记录
                 agent.max_impact_post_id = None
                 agent.max_impact_value = float('-inf')
+
+        # 新增：同步所有Agent的_last_emotion和_last_stance为当前值
+        for agent in agents:
+            agent._last_emotion = agent.emotion
+            agent._last_stance = agent._stance
         
-        return generated_posts
+        return {"generated_posts": generated_posts, "action_judgements": action_judgements}
     
     def _generate_personalized_feed(self, agent: Agent, all_posts: list, global_intensity_factor: float = 1.0) -> list:
         """
@@ -271,8 +284,8 @@ class AgentController:
             heat = post.get("heat", 0)
             similarity_score = self._calculate_stance_similarity(agent, post)
             
-            # 权重计算：热度 * 立场相似度 * 信息强度权重
-            weight = heat * similarity_score * post_strength
+            # 权重计算：热度 * 立场相似度
+            weight = heat * similarity_score
             
             # 确保权重为正数
             if weight > 0:
@@ -303,9 +316,8 @@ class AgentController:
         # 按权重排序（可选，保持原有逻辑）
         def calculate_sort_weight(post):
             heat = post.get("heat", 0)
-            strength = post.get("strength", 1.0)
             similarity = self._calculate_stance_similarity(agent, post)
-            return heat * strength * similarity
+            return heat * similarity
         
         selected_posts.sort(key=calculate_sort_weight, reverse=True)
         
@@ -330,166 +342,11 @@ class AgentController:
         
         base_count = base_counts.get(agent.agent_type, 3)
         
-        # 根据Agent状态调整
-        # 信息渴求度影响
-        thirst_adjustment = int((agent.information_thirst - 0.5) * 2)
-        
-        # 精力影响
-        energy_adjustment = int((agent.energy - 0.5) * 2)
-        
-        # 全局环境强度影响
-        intensity_adjustment = int((global_intensity_factor - 1.0) * 2)
-        
         # 计算最终浏览数量
-        final_count = base_count + thirst_adjustment + energy_adjustment + intensity_adjustment
+        final_count = base_count
         
         # 确保至少浏览1个帖子，最多浏览10个帖子
         return max(1, min(10, final_count))
-    
-    def _get_dynamic_threshold_config(self) -> dict:
-        """
-        获取动态阈值配置（小幅浮动，基础为2，范围2~3）
-        """
-        return {
-            "emotion_weight": 0.1,
-            "confidence_weight": 0.1,
-            "global_intensity_weight": 0.1,
-            "personality_weight": 0.1,
-            "max_threshold_adjustment": 1,
-            "min_threshold": 2
-        }
-    
-    def _get_base_heat_threshold(self, agent_type: str) -> int:
-        """
-        获取基于Agent类型的基础热度阈值（全部为2）
-        """
-        return 2
-    
-    def _get_heat_threshold_for_agent(self, agent: Agent, global_intensity_factor: float = 1.0) -> int:
-        """
-        根据Agent状态和全局环境动态计算热度阈值
-        """
-        config = self._get_dynamic_threshold_config()
-        base_threshold = self._get_base_heat_threshold(agent.agent_type)
-        personality_adjustment = self._calculate_personality_adjustment(agent)
-        emotion_adjustment = self._calculate_emotion_adjustment(agent)
-        confidence_adjustment = self._calculate_confidence_adjustment(agent)
-        global_adjustment = self._calculate_global_adjustment(global_intensity_factor)
-        dynamic_threshold = (
-            base_threshold * personality_adjustment +
-            emotion_adjustment * config["emotion_weight"] +
-            confidence_adjustment * config["confidence_weight"] +
-            global_adjustment * config["global_intensity_weight"]
-        )
-        # 限制范围在2~3
-        dynamic_threshold = max(config["min_threshold"], min(base_threshold + config["max_threshold_adjustment"], dynamic_threshold))
-        return int(dynamic_threshold)
-    
-    def _calculate_personality_adjustment(self, agent: Agent) -> float:
-        """
-        计算性格特征对阈值的影响
-        
-        Args:
-            agent (Agent): Agent对象
-            
-        Returns:
-            float: 性格调整系数 (0.5-1.5)
-        """
-        # 活跃度影响：高活跃度Agent对信息更敏感，阈值降低
-        activity_factor = 1.0 - (agent.activity_level - 0.5) * 0.4
-        
-        # 信息渴求度影响：高信息渴求度Agent阈值降低
-        thirst_factor = 1.0 - (agent.information_thirst - 0.5) * 0.3
-        
-        # 注意力持续时间影响：注意力短的Agent阈值降低
-        attention_factor = 1.0 - (0.5 - agent.attention_span) * 0.2
-        
-        # 综合调整系数
-        personality_adjustment = (activity_factor + thirst_factor + attention_factor) / 3
-        
-        return max(0.5, min(1.5, personality_adjustment))
-    
-    def _calculate_emotion_adjustment(self, agent: Agent) -> float:
-        """
-        计算情绪状态对阈值的影响
-        
-        Args:
-            agent (Agent): Agent对象
-            
-        Returns:
-            float: 情绪调整值 (-1.0 到 1.0)
-        """
-        # 情绪强度计算（距离中性情绪0.5的距离）
-        emotion_intensity = abs(agent.emotion - 0.5) * 2  # 0-1
-        
-        # 情绪敏感度影响
-        sensitivity_factor = agent.emotion_sensitivity
-        
-        # 情绪调整逻辑：
-        # - 情绪极端时（愤怒/兴奋），阈值降低（更容易关注信息）
-        # - 情绪平静时，阈值相对较高
-        if agent.emotion < 0.3:  # 负面情绪
-            adjustment = -emotion_intensity * sensitivity_factor
-        elif agent.emotion > 0.7:  # 正面情绪
-            adjustment = -emotion_intensity * sensitivity_factor * 0.8  # 正面情绪影响稍小
-        else:  # 中性情绪
-            adjustment = 0.0
-        
-        return max(-1.0, min(1.0, adjustment))
-    
-    def _calculate_confidence_adjustment(self, agent: Agent) -> float:
-        """
-        计算置信度对阈值的影响
-        
-        Args:
-            agent (Agent): Agent对象
-            
-        Returns:
-            float: 置信度调整值 (-1.0 到 1.0)
-        """
-        # 立场坚定度影响
-        firmness_factor = agent.stance_firmness
-        
-        # 置信度调整逻辑：
-        # - 高置信度 + 高坚定度：阈值升高（不太关心新信息）
-        # - 低置信度：阈值降低（更渴求信息）
-        if agent.confidence > 0.7 and firmness_factor > 0.7:
-            # 高置信度且立场坚定，阈值升高
-            adjustment = (agent.confidence - 0.7) * firmness_factor * 0.5
-        elif agent.confidence < 0.3:
-            # 低置信度，阈值降低
-            adjustment = -(0.3 - agent.confidence) * 2.0
-        else:
-            # 中等置信度，影响较小
-            adjustment = 0.0
-        
-        return max(-1.0, min(1.0, adjustment))
-    
-    def _calculate_global_adjustment(self, global_intensity_factor: float) -> float:
-        """
-        计算全局环境对阈值的影响
-        
-        Args:
-            global_intensity_factor (float): 全局环境强度因子
-            
-        Returns:
-            float: 全局调整值 (-1.0 到 1.0)
-        """
-        # 全局环境调整逻辑：
-        # - 当全局事件强度高时（global_intensity_factor > 1.0），阈值降低
-        # - 当全局环境平静时（global_intensity_factor < 1.0），阈值相对较高
-        
-        if global_intensity_factor > 1.0:
-            # 高强度环境，阈值降低
-            adjustment = -(global_intensity_factor - 1.0) * 0.8
-        elif global_intensity_factor < 0.5:
-            # 低强度环境，阈值升高
-            adjustment = (0.5 - global_intensity_factor) * 0.5
-        else:
-            # 正常环境，影响较小
-            adjustment = 0.0
-        
-        return max(-1.0, min(1.0, adjustment))
     
     def calculate_global_intensity_factor(self, all_posts: List[Dict[str, Any]]) -> float:
         """

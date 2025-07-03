@@ -102,20 +102,6 @@ class TestAgentController:
         total_count = self.agent_controller._get_total_agents_count()
         assert total_count == 3
     
-    def test_heat_threshold_for_different_agent_types(self):
-        """测试不同Agent类型的热度阈值"""
-        # 获取不同类型的Agent
-        leader_agent = self.agent_controller.agents["意见领袖"][0]
-        user_agent = self.agent_controller.agents["普通用户"][0]
-        
-        # 验证热度阈值（现在是动态计算的，基础值为2）
-        leader_threshold = self.agent_controller._get_heat_threshold_for_agent(leader_agent)
-        user_threshold = self.agent_controller._get_heat_threshold_for_agent(user_agent)
-        
-        # 验证阈值在合理范围内（2-3）
-        assert 2 <= leader_threshold <= 3
-        assert 2 <= user_threshold <= 3
-    
     def test_weighted_selection_mechanism(self):
         """测试加权随机选择机制（替代硬性热度筛选）"""
         user_agent = self.agent_controller.agents["普通用户"][0]

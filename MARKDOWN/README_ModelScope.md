@@ -148,30 +148,6 @@ python -c "from modelscope import AutoTokenizer; AutoTokenizer.from_pretrained('
 - 使用更小的模型
 - 减少max_new_tokens
 
-## Agent参数调整
-
-### 1. 发帖概率调整
-
-在`config/agents.json`中调整：
-
-```json
-{
-  "agent_id": "leader_001",
-  "type": "意见领袖",
-  "post_probability": 0.6,  // 发帖概率（0-1）
-  "max_posts_per_slice": 3  // 每个时间片最大发帖数
-}
-```
-
-### 2. 兴趣设置
-
-```json
-{
-  "interests": ["政治", "经济"],  // 兴趣标签
-  "stance": 0.8  // 立场倾向（0-1）
-}
-```
-
 ## 下一步计划
 
 1. **支持更多模型**：集成更多ModelScope模型

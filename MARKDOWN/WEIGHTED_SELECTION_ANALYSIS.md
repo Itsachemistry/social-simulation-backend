@@ -149,11 +149,10 @@ def _get_browse_count_for_agent(self, agent: Agent, global_intensity_factor: flo
     
     # 根据Agent状态调整
     thirst_adjustment = int((agent.information_thirst - 0.5) * 2)
-    energy_adjustment = int((agent.energy - 0.5) * 2)
     intensity_adjustment = int((global_intensity_factor - 1.0) * 2)
     
     # 计算最终浏览数量
-    final_count = base_count + thirst_adjustment + energy_adjustment + intensity_adjustment
+    final_count = base_count + thirst_adjustment + intensity_adjustment
     
     # 确保至少浏览1个帖子，最多浏览10个帖子
     return max(1, min(10, final_count))
@@ -219,7 +218,7 @@ def _get_browse_count_for_agent(self, agent: Agent, global_intensity_factor: flo
 
 ### 4. 动态浏览数量
 - **基于Agent类型**：意见领袖浏览更多，普通用户浏览较少
-- **基于Agent状态**：信息渴求度、精力、全局环境强度影响浏览数量
+- **基于Agent状态**：信息渴求度、全局环境强度影响浏览数量
 
 ## 🔄 与论文描述的一致性
 
