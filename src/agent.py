@@ -94,31 +94,48 @@ class Agent:
     
     def update_state(self, post_object: dict, llm_service=None) -> dict:
         """
-        状态更新接口
+        状态更新接口（改进版：支持信息强度过滤）
         - 输入：单条post_object（dict）
-        - 1. 调用LLM分析帖子内容，更新情绪
-        - 2. 按"坚定/不坚定"性格，采用不同的立场更新算法（多重阈值/直接跟随）
-        - 3. 判断是否需要将发帖人加入黑名单
+        - 1. 检查信息强度：strength为null的帖子被完全过滤
+        - 2. 调用LLM分析帖子内容，更新情绪
+        - 3. 按"坚定/不坚定"性格，采用不同的立场更新算法（多重阈值/直接跟随）
+        - 4. 判断是否需要将发帖人加入黑名单
         - 输出：状态变化详情（dict）
         - 你可以在内部自由设计Prompt和LLM调用方式
         """
         post_id = post_object.get("id", "")
+        
         # 避免重复处理同一帖子
         if post_id in self.viewed_posts:
             return {"status": "already_viewed", "post_id": post_id}
+        
+        # 计算帖子对Agent的影响（包含信息强度过滤逻辑）
+        impact = self._calculate_post_impact(post_object)
+        
+        # 检查是否被信息强度过滤
+        if impact.get("filtered", False):
+            return {
+                "status": "filtered_by_strength", 
+                "post_id": post_id,
+                "reason": "strength为null，信息强度不足"
+            }
+        
         # 记录已浏览的帖子
         self.viewed_posts.append(post_id)
-        # 计算帖子对Agent的影响
-        impact = self._calculate_post_impact(post_object)
+        
         # 记录旧状态
         old_emotion = self.emotion
         old_confidence = self.confidence
+        
         # 更新情绪
         self.emotion = max(0.0, min(1.0, self.emotion + impact["emotion_change"]))
+        
         # 更新置信度
         self.confidence = max(0.0, min(1.0, self.confidence + impact["confidence_change"]))
+        
         # 更新精力（浏览帖子消耗精力）
         self.energy = max(0.0, self.energy - 0.05)
+        
         # 记录交互历史
         interaction_record = {
             "post_id": post_id,
@@ -128,20 +145,24 @@ class Agent:
             "new_confidence": self.confidence
         }
         self.interaction_history.append(interaction_record)
+        
         # 计算本次状态变化量
         delta_emotion = self.emotion - old_emotion
         delta_confidence = self.confidence - old_confidence
+        
         # 计算影响分数
         influence_score = abs(delta_emotion) + abs(delta_confidence)
         if influence_score > getattr(self, 'max_impact_score', float('-inf')):
             self.max_impact_score = influence_score
             self.max_impact_post_id = post_id
+        
         # 状态变化后，记录一条历史
         self.state_history.append({
             "timestamp": post_object.get("timestamp", datetime.now().isoformat()),
             "emotion": self.emotion,
             "stance": self._stance
         })
+        
         return {
             "status": "updated",
             "post_id": post_id,
@@ -157,7 +178,12 @@ class Agent:
     
     def _calculate_post_impact(self, post_object: dict) -> Dict[str, float]:
         """
-        计算帖子对Agent的影响
+        计算帖子对Agent的影响（改进版：使用信息强度权重和完善的置信度逻辑）
+        
+        【重要改进】
+        1. 信息强度权重：使用帖子的strength字段作为影响权重，而不是过滤门槛
+        2. 完善置信度逻辑：区分立场一致/不一致对置信度的不同影响
+        3. null值处理：strength为null的帖子被完全过滤，不产生任何影响
         
         Args:
             post_object (dict): 帖子数据
@@ -165,36 +191,74 @@ class Agent:
         Returns:
             Dict[str, float]: 影响值字典
         """
-        # 获取帖子热度
+        # === 信息强度权重处理 ===
+        # 获取帖子信息强度（strength字段）
+        post_strength = post_object.get("strength")
+        
+        # 处理null值：strength为null的帖子被完全过滤
+        if post_strength is None:
+            return {
+                "emotion_change": 0.0,
+                "confidence_change": 0.0,
+                "base_impact": 0.0,
+                "stance_similarity": 0.0,
+                "interest_match": 0.0,
+                "strength_weight": 0.0,
+                "filtered": True
+            }
+        
+        # 将strength转换为影响权重（1.0, 2.0, 3.0 → 权重）
+        strength_weight = float(post_strength)  # 1.0, 2.0, 3.0 直接作为权重
+        
+        # === 基础影响因子计算 ===
+        # 获取帖子热度（归一化到0-1）
         post_heat = post_object.get("heat", 0) / 100.0  # 归一化到0-1
         
-        # 计算立场相似度（简化实现）
+        # 计算立场相似度（使用真实的group字段映射的立场值）
         post_stance = self._estimate_post_stance(post_object)
         stance_similarity = 1.0 - abs(self._stance - post_stance)
         
         # 计算兴趣匹配度
         interest_match = self._calculate_interest_match(post_object)
         
-        # 计算综合影响
-        base_impact = post_heat * stance_similarity * interest_match
+        # === 情绪变化计算（应用强度权重）===
+        # 情绪变化：基于立场相似度，应用强度权重
+        base_emotion_change = (stance_similarity - 0.5) * 0.1 * post_heat
+        emotion_change = base_emotion_change * strength_weight
         
-        # 情绪变化（基于立场相似度）
-        emotion_change = (stance_similarity - 0.5) * 0.1 * post_heat
+        # === 置信度变化计算（完善逻辑，应用强度权重）===
+        # 完善置信度更新逻辑：区分立场一致/不一致
+        if stance_similarity > 0.5:  # 立场一致
+            # 立场一致时，帖子强度越高，置信度提升越多
+            base_confidence_change = interest_match * post_heat * 0.05
+            confidence_change = base_confidence_change * strength_weight
+        else:  # 立场不一致
+            # 立场不一致时，帖子强度越高，对置信度的削弱也越厉害
+            # 但削弱幅度稍小，避免过度影响
+            base_confidence_change = -interest_match * post_heat * 0.03
+            confidence_change = base_confidence_change * strength_weight
         
-        # 置信度变化（基于兴趣匹配和热度）
-        confidence_change = interest_match * post_heat * 0.05
+        # === 综合影响计算 ===
+        base_impact = post_heat * stance_similarity * interest_match * strength_weight
         
         return {
             "emotion_change": emotion_change,
             "confidence_change": confidence_change,
             "base_impact": base_impact,
             "stance_similarity": stance_similarity,
-            "interest_match": interest_match
+            "interest_match": interest_match,
+            "strength_weight": strength_weight,
+            "filtered": False
         }
     
     def _estimate_post_stance(self, post_object: dict) -> float:
         """
-        估算帖子的立场值（简化实现）
+        估算帖子的立场值（修复版：使用真实的group字段映射）
+        
+        【重要说明】本方法与AgentController._calculate_stance_similarity保持一致：
+        - 从帖子的'stance'字段读取数据（该字段在WorldState.normalize_post中由'group'字段映射而来）
+        - 使用相同的映射逻辑：group=1→0.0（支持患者），0→0.5（中立），2→1.0（支持医院）
+        - 确保筛选阶段和状态更新阶段使用相同的立场值，避免数据不一致
         
         Args:
             post_object (dict): 帖子数据
@@ -202,10 +266,23 @@ class Agent:
         Returns:
             float: 估算的立场值 (0-1)
         """
-        # 这里应该使用更复杂的NLP分析
-        # 暂时使用基于帖子ID的伪随机值
-        random.seed(hash(post_object.get("id", "")))
-        return random.uniform(0.0, 1.0)
+        # 从帖子数据中读取已有的立场信息
+        # 注意：这里的'stance'字段实际上是原始数据中的'group'字段映射而来
+        stance = post_object.get('stance', 0)
+        
+        # 根据group字段映射（与AgentController._calculate_stance_similarity保持一致）
+        # 映射规则：
+        # - group=1 (支持患者) → 0.0
+        # - group=0 (中立) → 0.5  
+        # - group=2 (支持医院) → 1.0
+        if stance == 1:
+            return 0.0  # 支持患者
+        elif stance == 0:
+            return 0.5  # 中立
+        elif stance == 2:
+            return 1.0  # 支持医院
+        else:
+            return 0.5  # 默认中立（处理异常情况）
     
     def _calculate_interest_match(self, post_object: dict) -> float:
         """
@@ -371,7 +448,7 @@ class Agent:
     @property
     def agent_type(self) -> str:
         """
-        Agent类型（如"意见领袖"、"规则Agent"、"普通用户"），用于行动顺序调度
+        Agent类型（如"意见领袖"、"普通用户"），用于行动顺序调度
         """
         return self._agent_type
 

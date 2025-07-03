@@ -71,8 +71,8 @@ for slice_index in range(total_slices):
 ```python
 action_priority = {
     "意见领袖": 1,    # 最高优先级，最先行动
-    "规则Agent": 2,   # 中等优先级
-    "普通用户": 3     # 最低优先级，最后行动
+    
+            "普通用户": 2     # 最低优先级，最后行动
 }
 ```
 

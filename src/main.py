@@ -78,15 +78,7 @@ class SimulationEngine:
                 "post_probability": 0.6,  # 意见领袖发帖概率较高
                 "max_posts_per_slice": 3
             },
-            {
-                "agent_id": "rule_001",
-                "type": "规则Agent",
-                "stance": 0.5,
-                "interests": ["规则", "秩序"],
-                "influence": 1.5,
-                "post_probability": 0.4,  # 规则Agent中等发帖概率
-                "max_posts_per_slice": 2
-            },
+
             {
                 "agent_id": "user_001",
                 "type": "普通用户",

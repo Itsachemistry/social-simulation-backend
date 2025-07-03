@@ -11,7 +11,7 @@
 
 #### 1.2 核心概念掌握
 - [ ] 时间片 (Time Slice)
-- [ ] Agent类型：意见领袖、规则Agent、普通用户
+- [ ] Agent类型：意见领袖、普通用户
 - [ ] 世界状态 (World State)
 - [ ] 个性化信息流 (Personalized Feed)
 - [ ] 突发事件注入 (Event Injection)

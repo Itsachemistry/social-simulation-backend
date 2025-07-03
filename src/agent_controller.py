@@ -3,6 +3,7 @@ from src.world_state import WorldState
 from typing import Optional, List, Dict, Any
 import uuid
 from datetime import datetime
+import random
 
 class PlaceholderAgent:
     """
@@ -18,7 +19,7 @@ class PlaceholderAgent:
             agent_config (dict): Agent配置字典，包含类型、立场等信息
         """
         self.agent_id = agent_config.get("agent_id", "unknown")
-        self.agent_type = agent_config.get("type", "普通用户")  # 意见领袖、规则Agent、普通用户
+        self.agent_type = agent_config.get("type", "普通用户")  # 意见领袖、普通用户
         self.stance = agent_config.get("stance", 0.5)  # 立场值 (0-1)
         self.interests = agent_config.get("interests", [])  # 兴趣标签列表
         self.influence = agent_config.get("influence", 1.0)  # 影响力系数
@@ -32,7 +33,7 @@ class AgentController:
     Agent控制器，负责管理和调度所有Agent的行为
     
     核心功能：
-    1. 管理不同类型的Agent（意见领袖、规则Agent、普通用户）
+            1. 管理不同类型的Agent（意见领袖、普通用户）
     2. 实现行动顺序调度器
     3. 为每个Agent生成个性化信息流
     4. 协调Agent之间的交互
@@ -49,13 +50,11 @@ class AgentController:
         """
         self.agents = {
             "意见领袖": [],
-            "规则Agent": [],
             "普通用户": []
         }
         self.action_priority = {
             "意见领袖": 1,
-            "规则Agent": 2,
-            "普通用户": 3
+            "普通用户": 2
         }
         self.world_state = world_state
         self.llm_service = llm_service
@@ -238,7 +237,13 @@ class AgentController:
     
     def _generate_personalized_feed(self, agent: Agent, all_posts: list, global_intensity_factor: float = 1.0) -> list:
         """
-        为指定Agent生成个性化信息流
+        为指定Agent生成个性化信息流（改进版：实现论文描述的加权随机选择机制）
+        
+        【重要改进】
+        1. 移除硬性筛选：不再使用阈值过滤帖子
+        2. 实现加权随机选择：热度作为权重影响被选中概率
+        3. 有限浏览：每个时间片随机选择一定数量的帖子
+        4. 保留基础过滤：只过滤strength为null的帖子
         
         Args:
             agent (Agent): 目标Agent对象
@@ -246,42 +251,100 @@ class AgentController:
             global_intensity_factor (float): 全局环境强度因子
             
         Returns:
-            list: 筛选后的个性化帖子列表
+            list: 加权随机选择后的个性化帖子列表
         """
-        personalized_posts = []
+        # === 候选池构建 ===
+        candidate_posts = []
+        post_weights = []
         
         for post in all_posts:
-            # === 帖子筛选逻辑 ===
-            
-            # 1. 热度筛选：只选择热度值达到阈值的帖子
-            post_heat = post.get("heat", 0)
-            heat_threshold = self._get_heat_threshold_for_agent(agent, global_intensity_factor)
-            
-            if post_heat < heat_threshold:
+            # 基础过滤：只过滤strength为null的帖子
+            post_strength = post.get("strength")
+            if post_strength is None:
                 continue
             
-            # 2. 立场相似度筛选：计算帖子与Agent立场的相似度
-            similarity_score = self._calculate_stance_similarity(agent, post)
-            similarity_threshold = self._get_similarity_threshold_for_agent(agent)
-            
-            if similarity_score < similarity_threshold:
-                continue
-            
-            # 3. 兴趣匹配筛选：检查帖子是否匹配Agent的兴趣
-            if not self._check_interest_match(agent, post):
-                continue
-            
-            # 4. 黑名单过滤
+            # 黑名单过滤
             if "author_id" in post and post["author_id"] in getattr(agent, "blacklist", []):
                 continue
             
-            # 通过所有筛选条件的帖子被添加到个性化信息流
-            personalized_posts.append(post)
+            # 计算帖子权重（基于热度和立场相似度）
+            heat = post.get("heat", 0)
+            similarity_score = self._calculate_stance_similarity(agent, post)
+            
+            # 权重计算：热度 * 立场相似度 * 信息强度权重
+            weight = heat * similarity_score * post_strength
+            
+            # 确保权重为正数
+            if weight > 0:
+                candidate_posts.append(post)
+                post_weights.append(weight)
         
-        # 按热度降序排序，确保高热度帖子优先显示
-        personalized_posts.sort(key=lambda x: x.get("heat", 0), reverse=True)
+        if not candidate_posts:
+            return []
         
-        return personalized_posts
+        # === 加权随机选择 ===
+        # 确定浏览数量（基于Agent类型和状态）
+        browse_count = self._get_browse_count_for_agent(agent, global_intensity_factor)
+        
+        # 使用加权随机选择
+        selected_posts = []
+        if len(candidate_posts) <= browse_count:
+            # 如果候选帖子数量不足，全部选择
+            selected_posts = candidate_posts
+        else:
+            # 加权随机选择指定数量的帖子
+            selected_indices = random.choices(
+                range(len(candidate_posts)), 
+                weights=post_weights, 
+                k=browse_count
+            )
+            selected_posts = [candidate_posts[i] for i in selected_indices]
+        
+        # 按权重排序（可选，保持原有逻辑）
+        def calculate_sort_weight(post):
+            heat = post.get("heat", 0)
+            strength = post.get("strength", 1.0)
+            similarity = self._calculate_stance_similarity(agent, post)
+            return heat * strength * similarity
+        
+        selected_posts.sort(key=calculate_sort_weight, reverse=True)
+        
+        return selected_posts
+    
+    def _get_browse_count_for_agent(self, agent: Agent, global_intensity_factor: float = 1.0) -> int:
+        """
+        根据Agent类型和状态确定每个时间片的浏览帖子数量
+        
+        Args:
+            agent (Agent): Agent对象
+            global_intensity_factor (float): 全局环境强度因子
+            
+        Returns:
+            int: 浏览帖子数量
+        """
+        # 基础浏览数量（基于Agent类型）
+        base_counts = {
+            "意见领袖": 5,    # 意见领袖关注更多信息
+            "普通用户": 3     # 普通用户浏览较少
+        }
+        
+        base_count = base_counts.get(agent.agent_type, 3)
+        
+        # 根据Agent状态调整
+        # 信息渴求度影响
+        thirst_adjustment = int((agent.information_thirst - 0.5) * 2)
+        
+        # 精力影响
+        energy_adjustment = int((agent.energy - 0.5) * 2)
+        
+        # 全局环境强度影响
+        intensity_adjustment = int((global_intensity_factor - 1.0) * 2)
+        
+        # 计算最终浏览数量
+        final_count = base_count + thirst_adjustment + energy_adjustment + intensity_adjustment
+        
+        # 确保至少浏览1个帖子，最多浏览10个帖子
+        return max(1, min(10, final_count))
     
     def _get_dynamic_threshold_config(self) -> dict:
         """
@@ -492,7 +555,6 @@ class AgentController:
         # 不同类型的Agent对相似度敏感度不同
         similarity_thresholds = {
             "意见领袖": 0.7,    # 意见领袖关注度较高，对相似度要求也较高
-            "规则Agent": 0.5,   # 规则Agent需要监控更多内容，对相似度要求较低
             "普通用户": 0.3     # 普通用户只关注高热度内容，对相似度要求最低
         }
         

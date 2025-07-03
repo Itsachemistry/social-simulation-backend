@@ -60,7 +60,7 @@
 * **3.2 实现行动顺序调度器 (Turn-based Scheduler)**
     * **具体工作**:
         * 你首先要识别出哪些是"意见领袖"，让他们先行动。
-        * 然后是"基于规则的Agent"。
+        
         * 最后是大量的"普通用户Agent"。
         * **重要**：意见领袖需要接收两种信息：
             * **环境摘要**：当前时间片内所有帖子的情感和立场信息汇总，形成宏观舆情反馈。
@@ -350,3 +350,123 @@
 - 前端如有标签云、标签筛选等UI，可隐藏或弱化。
 
 +- 【说明】当前系统不启用兴趣匹配，所有Agent对所有内容均不过滤兴趣，推送仅受热度和立场相似度影响。
+
+---
+
+## 2024-12-19 信息强度权重机制与置信度更新逻辑完善
+
+### 核心改进概述
+基于论文中"信息强度"概念，将原有的硬性过滤门槛改为影响权重机制，并完善了置信度更新逻辑，实现了更符合现实的信息处理机制。
+
+### 主要改进内容
+
+#### 1. 信息强度权重机制（替代硬性过滤）
+**改进前**：使用热度阈值（heat_threshold）硬性过滤帖子，强度不够的帖子直接被忽略。
+
+**改进后**：
+- **信息强度过滤**：只过滤 `strength` 为 `null` 的帖子，这些帖子被认为"内容无法分析或无足轻重"
+- **影响权重应用**：`strength` 值（1.0, 2.0, 3.0）直接作为影响权重，强度越高的帖子产生的影响越大
+- **权重计算**：在状态更新时，所有影响值都乘以 `strength_weight`
+  ```python
+  # 情绪变化应用强度权重
+  emotion_change = base_emotion_change * strength_weight
+  
+  # 置信度变化应用强度权重  
+  confidence_change = base_confidence_change * strength_weight
+  ```
+
+#### 2. 完善置信度更新逻辑
+**改进前**：置信度变化只考虑兴趣匹配和热度，没有区分立场一致/不一致。
+
+**改进后**：
+- **立场一致性判断**：基于立场相似度（stance_similarity）判断帖子与Agent立场是否一致
+- **差异化影响**：
+  - 立场一致时：帖子强度越高，置信度提升越多
+  - 立场不一致时：帖子强度越高，对置信度的削弱也越厉害（但幅度稍小）
+  ```python
+  if stance_similarity > 0.5:  # 立场一致
+      confidence_change = interest_match * post_heat * 0.05 * strength_weight
+  else:  # 立场不一致
+      confidence_change = -interest_match * post_heat * 0.03 * strength_weight
+  ```
+
+#### 3. 筛选逻辑优化
+**AgentController._generate_personalized_feed 改进**：
+- 移除硬性热度阈值过滤
+- 只过滤 `strength` 为 `null` 的帖子
+- 保留立场相似度、兴趣匹配、黑名单过滤
+- 排序权重改为：`heat * strength`（综合权重）
+
+#### 4. 状态更新流程优化
+**Agent.update_state 改进**：
+- 在计算影响前先检查信息强度过滤
+- 被过滤的帖子返回 `filtered_by_strength` 状态
+- 避免重复处理和状态更新
+
+### 技术实现细节
+
+#### 数据结构扩展
+```python
+# _calculate_post_impact 返回值新增字段
+{
+    "emotion_change": float,
+    "confidence_change": float,
+    "base_impact": float,
+    "stance_similarity": float,
+    "interest_match": float,
+    "strength_weight": float,  # 新增：信息强度权重
+    "filtered": bool          # 新增：是否被过滤
+}
+```
+
+#### 过滤逻辑
+```python
+# 处理null值：strength为null的帖子被完全过滤
+if post_strength is None:
+    return {
+        "emotion_change": 0.0,
+        "confidence_change": 0.0,
+        "base_impact": 0.0,
+        "stance_similarity": 0.0,
+        "interest_match": 0.0,
+        "strength_weight": 0.0,
+        "filtered": True
+    }
+```
+
+### 设计理念与优势
+
+#### 1. 符合论文逻辑
+- 与论文中"按信息强度加权求和"的思想完全一致
+- 将宏观的群体情绪计算思想应用到微观的个体更新上
+
+#### 2. 更真实的模拟
+- 现实中人们并非完全不看"分量较轻"的新闻，只是这些新闻对他们思想的改变较小
+- 信息强度权重机制能很好地模拟这一点
+
+#### 3. 充分利用数据
+- 充分利用了 1, 2, 3 这三个数值等级的差异
+- 避免了将强度值粗暴地二分为"通过/不通过"
+
+#### 4. 避免数据损失
+- 移除了硬性热度阈值过滤，避免大量有效帖子被忽视
+- 只过滤真正无意义的 `null` 值帖子
+
+### 测试验证
+创建了 `test_strength_weight.py` 测试脚本，验证：
+1. ✅ `strength` 为 `null` 的帖子被完全过滤
+2. ✅ `strength` 值作为影响权重影响状态更新
+3. ✅ 立场一致/不一致对置信度有不同影响
+4. ✅ 移除了硬性热度阈值过滤
+5. ✅ 信息强度权重影响帖子排序
+
+### 影响范围
+- **Agent状态更新**：所有Agent的状态更新逻辑都应用了新的权重机制
+- **信息流筛选**：个性化信息流生成逻辑完全重构
+- **数据利用**：充分利用了帖子数据中的 `strength` 字段
+- **向后兼容**：对现有数据结构和接口保持兼容
+
+### 后续优化建议
+1. **权重参数调优**：可根据实际效果调整置信度提升/降低的系数
+2. **情绪更新完善**：可考虑添加帖子自身情绪值对Agent情绪的影响
+3. **动态权重**：可考虑根据Agent性格特征动态调整权重敏感度

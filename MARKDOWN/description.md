@@ -112,7 +112,7 @@
     - `_generate_personalized_feed(agent, all_posts, global_intensity_factor)`：为每个 Agent 生成个性化信息流，包含热度、立场、兴趣等多重筛选。
     - 多个内部方法：动态阈值、相似度、兴趣匹配等算法。
   - `PlaceholderAgent`：占位符类，便于扩展。
-  - **说明**：支持意见领袖、规则 Agent、普通用户等多类型 Agent，支持优先级调度、行为分组、主流程集成。
+  - **说明**：支持意见领袖、普通用户等多类型 Agent，支持优先级调度、行为分组、主流程集成。
 
 ---
 
