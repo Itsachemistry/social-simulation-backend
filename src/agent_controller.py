@@ -1,9 +1,10 @@
-from src.agent import Agent
+from src.agent import OpinionPublisher, OpinionReceiver, RuleBasedAgent
 from src.world_state import WorldState
 from typing import Optional, List, Dict, Any
 import uuid
 from datetime import datetime
 import random
+import math
 
 class PlaceholderAgent:
     """
@@ -73,11 +74,18 @@ class AgentController:
         """
         for config in agent_configs:
             try:
-                agent = Agent(config)
-                if agent.agent_type in self.agents:
-                    self.agents[agent.agent_type].append(agent)
+                agent_type = config.get('agent_type', 'RuleBasedAgent')
+                if agent_type == 'OpinionPublisher':
+                    agent = OpinionPublisher.from_dict(config)
+                elif agent_type == 'OpinionReceiver':
+                    agent = OpinionReceiver.from_dict(config)
                 else:
-                    print(f"警告：未知的Agent类型 '{agent.agent_type}'，归类为普通用户")
+                    agent = RuleBasedAgent.from_dict(config)
+                status = agent.get_status()
+                if status['agent_type'] in self.agents:
+                    self.agents[status['agent_type']].append(agent)
+                else:
+                    print(f"警告：未知的Agent类型 '{status['agent_type']}'，归类为普通用户")
                     self.agents["普通用户"].append(agent)
             except Exception as e:
                 print(f"创建Agent失败，配置：{config}，错误：{e}")
@@ -113,6 +121,9 @@ class AgentController:
         for post in posts:
             # 根据帖子情感值分类（假设情感值在0-1之间，0.5为中性）
             emotion = post.get("emotion", 0.5)
+            if isinstance(emotion, str):
+                emo_map = {'positive': 1.0, 'neutral': 0.5, 'negative': 0.0}
+                emotion = emo_map.get(emotion, 0.5)
             if emotion > 0.6:
                 emotion_counts["positive"] += 1
             elif emotion < 0.4:
@@ -122,6 +133,9 @@ class AgentController:
             
             # 根据帖子立场值分类（假设立场值在0-1之间，0.5为中性）
             stance = post.get("stance", 0.5)
+            if isinstance(stance, str):
+                stance_map = {'support': 1.0, 'neutral': 0.5, 'oppose': 0.0}
+                stance = stance_map.get(stance, 0.5)
             if stance > 0.6:
                 stance_counts["pro"] += 1
             elif stance < 0.4:
@@ -152,7 +166,7 @@ class AgentController:
             "total_posts": total_posts
         }
 
-    def run_time_slice(self, agents: List[Agent], world_state: WorldState, llm_service=None) -> Dict[str, Any]:
+    def run_time_slice(self, agents, world_state, llm_service=None):
         """
         运行一个时间片
         """
@@ -165,7 +179,7 @@ class AgentController:
         # 生成环境摘要（为意见领袖准备）
         environmental_summary = self._generate_environmental_summary(all_posts)
         
-        # 按类型分组Agent
+        # 按类型分组
         agents_by_type = {}
         for agent in agents:
             agent_type = agent.agent_type
@@ -182,14 +196,15 @@ class AgentController:
         generated_posts = []
         action_judgements = []  # 新增：记录每个agent的发言判定
         
-        # 按优先级处理每种类型的Agent
+        # 按优先级处理每种类型
         for agent_type in sorted_agent_types:
             type_agents = agents_by_type[agent_type]
             
             for agent in type_agents:
                 # 为意见领袖提供环境摘要
                 if agent_type == "意见领袖":
-                    agent.update_state_with_summary(environmental_summary, llm_service)
+                    if hasattr(agent, 'update_state_with_summary'):
+                        agent.update_state_with_summary(environmental_summary, llm_service)
                 
                 # 为每个Agent生成个性化信息流（使用动态阈值）
                 personalized_posts = self._generate_personalized_feed(
@@ -198,10 +213,12 @@ class AgentController:
                 
                 # 处理每个帖子
                 for post in personalized_posts:
-                    agent.update_state(post, llm_service)
+                    agent.update_emotion_and_stance(post)
                 
                 # 生成行动
-                action_prompt, parent_post_id, reason = agent.generate_action_prompt(debug_reason=True)
+                action_prompt, parent_post_id, reason = None, None, None
+                if hasattr(agent, 'should_post') and agent.should_post():
+                    action_prompt = agent.generate_text()
                 action_judgements.append({
                     "agent_id": agent.agent_id,
                     "agent_type": agent.agent_type,
@@ -240,95 +257,75 @@ class AgentController:
                 # 时间片结束后重置影响记录
                 agent.max_impact_post_id = None
                 agent.max_impact_value = float('-inf')
-
+        
         # 新增：同步所有Agent的_last_emotion和_last_stance为当前值
         for agent in agents:
             agent._last_emotion = agent.emotion
-            agent._last_stance = agent._stance
+            agent._last_stance = agent.stance
         
         return {"generated_posts": generated_posts, "action_judgements": action_judgements}
     
-    def _generate_personalized_feed(self, agent: Agent, all_posts: list, global_intensity_factor: float = 1.0) -> list:
+    def _generate_personalized_feed(self, agent, all_posts: list, global_intensity_factor: float = 1.0, w_pop: float = 0.7, w_rel: float = 0.3, k: float = 5.0, x0: float = None) -> list:
         """
-        为指定Agent生成个性化信息流（改进版：实现论文描述的加权随机选择机制）
-        
-        【重要改进】
-        1. 移除硬性筛选：不再使用阈值过滤帖子
-        2. 实现加权随机选择：热度作为权重影响被选中概率
-        3. 有限浏览：每个时间片随机选择一定数量的帖子
-        4. 保留基础过滤：只过滤strength为null的帖子
-        
-        Args:
-            agent (Agent): 目标Agent对象
-            all_posts (list): 所有可用的帖子列表
-            global_intensity_factor (float): 全局环境强度因子
-            
-        Returns:
-            list: 加权随机选择后的个性化帖子列表
+        为指定Agent生成个性化信息流（逐帖概率门控模型，Sigmoid概率采样）
         """
-        # === 候选池构建 ===
-        candidate_posts = []
-        post_weights = []
-        
-        for post in all_posts:
-            # 基础过滤：只过滤strength为null的帖子
-            post_strength = post.get("strength")
-            if post_strength is None:
-                continue
-            
-            # 黑名单过滤
-            if "author_id" in post and post["author_id"] in getattr(agent, "blacklist", []):
-                continue
-            
-            # 计算帖子权重（基于热度和立场相似度）
-            heat = post.get("heat", 0)
-            similarity_score = self._calculate_stance_similarity(agent, post)
-            
-            # 权重计算：热度 * 立场相似度
-            weight = heat * similarity_score
-            
-            # 确保权重为正数
-            if weight > 0:
-                candidate_posts.append(post)
-                post_weights.append(weight)
-        
-        if not candidate_posts:
+        import math
+        # === 1. 过滤掉无效帖子 ===
+        valid_posts = [p for p in all_posts if p.get('emotion') is not None and p.get('stance') is not None and p.get('strength') is not None]
+        if not valid_posts:
             return []
-        
-        # === 加权随机选择 ===
-        # 确定浏览数量（基于Agent类型和状态）
-        browse_count = self._get_browse_count_for_agent(agent, global_intensity_factor)
-        
-        # 使用加权随机选择
-        selected_posts = []
-        if len(candidate_posts) <= browse_count:
-            # 如果候选帖子数量不足，全部选择
-            selected_posts = candidate_posts
+        # === 2. 黑名单过滤 ===
+        blocked_users = getattr(agent, 'blocked_users', set())
+        posts = [p for p in valid_posts if p.get('author_id') not in blocked_users]
+        if not posts:
+            return []
+        # === 3. 观点屏蔽过滤 ===
+        opinion_blocking_degree = getattr(agent, 'opinion_blocking_degree', 0.0)
+        T_stance = 2.0 * (1.0 - opinion_blocking_degree)
+        agent_stance = agent.stance
+        filtered_posts = []
+        for post in posts:
+            stance_score = post.get('stance')
+            stance_diff = abs(agent_stance - stance_score)
+            if stance_diff <= T_stance:
+                filtered_posts.append(post)
+        if not filtered_posts:
+            return []
+        # === 4. 计算分数 ===
+        max_totalChildren = max([p.get('totalChildren', 0) for p in filtered_posts] or [1])
+        scored_posts = []
+        for post in filtered_posts:
+            Score_Rel = max(0.0, 1.0 - abs(agent_stance - post.get('stance')))
+            Score_Pop = 0.0
+            tc = post.get('totalChildren', 0)
+            if max_totalChildren > 0:
+                Score_Pop = math.log(1 + tc) / math.log(1 + max_totalChildren)
+            Final_Score = w_pop * Score_Pop + w_rel * Score_Rel
+            scored_posts.append((Final_Score, post))
+        if not scored_posts:
+            return []
+        # === 5. 逐帖概率门控 ===
+        # 计算x0（中心点），默认用均值
+        scores = [fs for fs, _ in scored_posts]
+        if x0 is None:
+            x0_val = float(sum(scores) / len(scores))
         else:
-            # 加权随机选择指定数量的帖子
-            selected_indices = random.choices(
-                range(len(candidate_posts)), 
-                weights=post_weights, 
-                k=browse_count
-            )
-            selected_posts = [candidate_posts[i] for i in selected_indices]
-        
-        # 按权重排序（可选，保持原有逻辑）
-        def calculate_sort_weight(post):
-            heat = post.get("heat", 0)
-            similarity = self._calculate_stance_similarity(agent, post)
-            return heat * similarity
-        
-        selected_posts.sort(key=calculate_sort_weight, reverse=True)
-        
-        return selected_posts
+            x0_val = float(x0)
+        agent_feed = []
+        for Final_Score, post in scored_posts:
+            # Sigmoid概率
+            p_view = 1.0 / (1.0 + math.exp(-k * (Final_Score - x0_val)))
+            R = random.random()
+            if R < p_view:
+                agent_feed.append(post)
+        return agent_feed
     
-    def _get_browse_count_for_agent(self, agent: Agent, global_intensity_factor: float = 1.0) -> int:
+    def _get_browse_count_for_agent(self, agent, global_intensity_factor: float = 1.0) -> int:
         """
         根据Agent类型和状态确定每个时间片的浏览帖子数量
         
         Args:
-            agent (Agent): Agent对象
+            agent: Agent对象
             global_intensity_factor (float): 全局环境强度因子
             
         Returns:
@@ -372,6 +369,9 @@ class AgentController:
         emotion_intensities = []
         for post in all_posts:
             emotion = post.get("emotion", 0.5)
+            if isinstance(emotion, str):
+                emo_map = {'positive': 1.0, 'neutral': 0.5, 'negative': 0.0}
+                emotion = emo_map.get(emotion, 0.5)
             intensity = abs(emotion - 0.5) * 2  # 0-1
             emotion_intensities.append(intensity)
         
@@ -383,7 +383,7 @@ class AgentController:
         
         return max(0.1, min(2.0, global_intensity))
     
-    def _calculate_stance_similarity(self, agent: Agent, post: dict) -> float:
+    def _calculate_stance_similarity(self, agent, post: dict) -> float:
         """
         计算Agent立场与帖子立场的相似度（新版：group=1→0.0，0→0.5，2→1.0）
         """
@@ -396,15 +396,21 @@ class AgentController:
             post_stance_val = 1.0  # 支持医院
         else:
             post_stance_val = 0.5  # 默认中立
-        similarity = 1.0 - abs(agent.stance - post_stance_val)
+        # 兼容 agent.stance 为字符串的情况
+        if isinstance(agent.stance, str):
+            stance_map = {'support': 1.0, 'neutral': 0.5, 'oppose': 0.0}
+            agent_stance_val = stance_map.get(agent.stance, 0.5)
+        else:
+            agent_stance_val = agent.stance
+        similarity = 1.0 - abs(agent_stance_val - post_stance_val)
         return max(0.0, similarity)
     
-    def _get_similarity_threshold_for_agent(self, agent: Agent) -> float:
+    def _get_similarity_threshold_for_agent(self, agent) -> float:
         """
         根据Agent类型获取相似度阈值
         
         Args:
-            agent (Agent): Agent对象
+            agent: Agent对象
             
         Returns:
             float: 相似度阈值
@@ -417,7 +423,7 @@ class AgentController:
         
         return similarity_thresholds.get(agent.agent_type, 0.3)
     
-    def _check_interest_match(self, agent: Agent, post: dict) -> bool:
+    def _check_interest_match(self, agent, post: dict) -> bool:
         """
         当前系统不启用兴趣匹配，所有帖子均通过。
         """

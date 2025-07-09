@@ -187,7 +187,83 @@ API 文件夹实现了社交仿真引擎的全部后端接口，涵盖仿真配�
 ## 【补充】标签功能说明
 - 本系统当前不使用标签功能，所有post的tags字段始终为空列表。
 - 推荐用内容关键词搜索替代标签筛选。
-- 前端如有标签云、标签筛选等UI，可隐藏或弱化。
+- 前端如有标签云、标签筛选等UI，可隐藏或弱化。 
 
 # 明确agent类型和行为机制
 # ... existing code ... 
+
+## Agent情绪更新算法
+
+本系统支持两种Agent情绪更新方案，可通过参数切换：
+
+### 1. LLM建议融合算法（llm模式）
+- 步骤：
+  1. 构造prompt，将Agent当前情绪（E_current）、帖子内容、事件描述传递给大语言模型（LLM）。
+  2. LLM返回建议情绪值（E_suggested，范围-1~1）。
+  3. 用如下公式融合：
+     E_new = E_current × (1 - α × I_strength) + E_suggested × (α × I_strength)
+     - α（alpha）：Agent的情绪敏感度（emotion_sensitivity），范围0~1。
+     - I_strength：帖子影响力（post['strength']），范围0~1。
+- 说明：即使Agent本身敏感（α大），但帖子影响力小，情绪变化也小，反之亦然。
+- 切换方式：初始化Agent时 emotion_update_mode="llm"。
+
+### 2. 纯规则算法（rule模式）
+- 步骤：
+  1. 直接使用帖子数据预处理阶段标记的情绪值（P_emotion，范围-1~1）。
+  2. 用同样的融合公式：
+     E_new = E_current × (1 - α × I_strength) + P_emotion × (α × I_strength)
+- 切换方式：初始化Agent时 emotion_update_mode="rule"。
+
+### 切换示例
+```python
+agent = BaseAgent(..., emotion_update_mode="llm", emotion_sensitivity=0.7)
+# 或
+agent = BaseAgent(..., emotion_update_mode="rule", emotion_sensitivity=0.7)
+``` 
+
+## 推送与过滤算法说明
+
+### 1. 无效帖子过滤
+- 仅保留情绪、立场、强度均不为None的帖子。
+
+### 2. 黑名单过滤
+- Agent不会浏览其blocked_users中的用户所发帖子。
+
+### 3. 观点屏蔽机制
+- 每个Agent有opinion_blocking_degree（0.0=完全开放，1.0=完全封闭）。
+- 立场容忍度阈值T_stance=2.0*(1.0-opinion_blocking_degree)。
+- 仅浏览与自身立场差异不超过T_stance的帖子。
+
+### 4. 浏览分数计算
+- 相关性分数：Score_Rel = max(0, 1.0 - abs(agent.stance - post.stance))。
+- 热度分数（对数归一化）：Score_Pop = log(1+totalChildren)/log(1+max_totalChildren)。
+- 最终分数：Final_Score = w_pop * Score_Pop + w_rel * Score_Rel。
+- 按Final_Score降序排序，推送前N个帖子。 
+
+### 5. 逐帖概率门控推送模型
+- 对每个候选帖子，先计算Final_Score。
+- 用Sigmoid函数将Final_Score转为浏览概率：P_view = 1/(1+exp(-k*(Final_Score-x0)))。
+  - k为斜率参数，控制概率曲线陡峭程度。
+  - x0为中心点，通常取所有Final_Score的均值或中位数。
+- 对每个帖子独立采样，若随机数R<P_view，则推送该帖。
+- 这样高分帖子更易被推送，但低分也有机会，推送数量自然浮动。
+- 优点：更贴近真实社交体验，鲁棒性强，参数可调。
+- 缺点：推送数量不固定，需关注极端分布时的表现。 
+
+### 立场更新算法说明
+- 变量：
+  - agent.stance（当前立场，-1~1）
+  - agent.confidence（置信度，0~1）
+  - agent.attitude_stability（Enum: FIRM/UNCERTAIN）
+  - agent.attitude_firmness（0~1，0.5为分界）
+  - post['stance']（帖子立场，-1~1）
+  - post['strength']（信息强度，0~1）
+- 坚定型Agent（attitude_stability==FIRM或attitude_firmness>=0.5）：
+  - 信息强度<THRESHOLD_PROCESS，置信度随机扰动（-0.02~0.02）。
+  - 立场一致，置信度+DELTA_CONF_SMALL。
+  - 立场不一致且信息强度>=THRESHOLD_CHANGE，立场反转，置信度-DELTA_CONF_LARGE。
+  - 立场不一致且信息强度<THRESHOLD_CHANGE，置信度-DELTA_CONF_SMALL。
+- 不坚定型Agent（attitude_stability==UNCERTAIN且attitude_firmness<0.5）：
+  - 信息强度>=THRESHOLD_PROCESS，直接采纳新立场，置信度=信息强度。
+  - 信息强度<THRESHOLD_PROCESS，置信度-DELTA_CONF_SMALL。
+- 相关参数：THRESHOLD_PROCESS, THRESHOLD_CHANGE, DELTA_CONF_SMALL, DELTA_CONF_LARGE，均可调优。 

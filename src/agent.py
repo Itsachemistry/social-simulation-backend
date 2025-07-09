@@ -1,544 +1,399 @@
-from typing import Dict, List, Any, Optional
+from enum import Enum
+import requests
+import os
 import random
-from datetime import datetime
+from dotenv import load_dotenv
+import csv
 
+load_dotenv()  # 加载环境变量
 
-class Agent:
-    """
-    Agent类（由Agent设计师负责实现）
-    --------------------------
-    该类模拟社交仿真中的"演员"，封装了个体决策、状态更新、行为生成等全部逻辑。
-    
-    设计契约：
-    1. 你需要实现如下接口，供后端主流程调用：
-        - __init__(agent_config): 初始化Agent，读取配置，塑造角色，包括性格（如is_firm_stance等）
-        - update_state(post_object, llm_service=None): 状态更新，内部需调用LLM分析情绪，按性格规则更新立场，管理黑名单
-        - generate_action_prompt(): 行动决策，决定是否发言，返回Prompt或None
-        - agent_id/agent_type/stance/interests/blacklist等属性：供后端读取
-        - join_timestamp: 加入仿真的时间戳（datetime对象），由后端用于激活判断
-        - is_active: 是否已激活（bool），由后端主循环管理
-        - firm_stance: 立场坚定度（接口属性，供队友实现）
-        - filter_opposite: 是否过滤异见（接口属性，供队友实现）
-        - activity_level: 活跃度（接口属性，供队友实现）
-    2. 你只需保证接口契约，内部实现细节完全由你决定。
-    3. 详细接口说明见下方各方法docstring。
-    """
-    
-    def __init__(self, agent_config: dict):
+class AttitudeStability(Enum):
+    FIRM = "firm"
+    UNCERTAIN = "uncertain"
+
+class ResponseStyle(Enum):
+    FILTERING = "filtering"  # 观点屏蔽
+    OPEN = "open"            # 开放接受
+
+class ActivityLevel(Enum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+class BaseAgent:
+    def __init__(self, agent_id, attitude_stability, response_style, activity_level, emotion_update_mode="llm", emotion_sensitivity=0.5):
+        self.agent_id = agent_id
+        self.attitude_stability = AttitudeStability(attitude_stability)
+        self.response_style = ResponseStyle(response_style)
+        self.activity_level = ActivityLevel(activity_level)
+        self.emotion = 0.0  # 情绪值：-1.0~1.0
+        self.confidence = 0.5  # 信心度：0.0-1.0
+        self.stance = 0.0  # 立场值：-1.0~1.0
+        self.blocked_users = set()
+        self.memory = []
+        self.emotion_update_mode = emotion_update_mode  # "llm" or "rule"
+        self.emotion_sensitivity = emotion_sensitivity  # α, 0.0~1.0
+        self.llm_api_key = os.getenv('LLM_API_KEY')
+        self.llm_endpoint = os.getenv('LLM_ENDPOINT')
+        self.llm_model = os.getenv('LLM_MODEL') 
+        # 立场更新相关系统参数
+        self.THRESHOLD_PROCESS = 0.3
+        self.THRESHOLD_CHANGE = 0.5
+        self.DELTA_CONF_SMALL = 0.05
+        self.DELTA_CONF_LARGE = 0.2
+
+    def browse_posts(self, current_time_slice_posts):
+        """浏览当前时间片的帖子，按热度和立场相似度排序，返回浏览列表"""
+        def stance_similarity(post_stance):
+            # 立场相似度，越接近越高
+            if self.stance is None or post_stance is None:
+                return 0.5
+            return 1 - abs(self._stance_to_value(self.stance) - self._stance_to_value(post_stance))
+        # 先按热度（假设有popularity字段），再按立场相似度排序
+        sorted_posts = sorted(
+            current_time_slice_posts,
+            key=lambda p: (p.get('popularity', 0), stance_similarity(p.get('stance'))),
+            reverse=True
+        )
+        browsed_posts = []
+        for post in sorted_posts:
+            if post['user_id'] in self.blocked_users:  # 如果用户被屏蔽，则跳过
+                continue
+            browsed_posts.append(post)
+            self.memory.append(post['post_id'])
+            if len(browsed_posts) >= self._get_browse_count(): # 按活跃度限制浏览数量
+                break
+        return browsed_posts
+
+    def _get_browse_count(self):
+        """根据活跃度返回浏览数量"""
+        return 5 if self.activity_level == ActivityLevel.HIGH else 3 if self.activity_level == ActivityLevel.MEDIUM else 1
+
+    def update_emotion_and_stance(self, post, event_description=None):
         """
-        初始化Agent
-        - 读取agent_config，初始化ID、类型、立场、兴趣、性格（如is_firm_stance等）
-        - 参数：agent_config (dict): 包含所有角色设定的配置字典
-        - 你需要支持"态度坚定/不坚定"等性格特征
+        更新情绪状态和观点立场。根据self.emotion_update_mode选择算法：
+        - "llm": LLM建议融合算法
+        - "rule": 纯规则算法
         """
-        agent_id = agent_config.get("agent_id", "unknown")
-        if not agent_id.startswith("agent_"):
-            agent_id = f"agent_{agent_id}"
-        self._agent_id = agent_id
-        self._agent_type = agent_config.get("type", "普通用户")
-        self._stance = agent_config.get("stance", 0.5)  # 立场值 (0-1)
-        self._interests = agent_config.get("interests", [])  # 兴趣标签列表
-        self.influence = agent_config.get("influence", 1.0)  # 影响力系数
-        
-        # 性格特征
-        self._personality = agent_config.get("personality", {
-            "activity_level": 0.5,      # 活跃度 (0-1)
-            "emotion_sensitivity": 0.5,  # 情绪敏感度 (0-1)
-            "stance_firmness": 0.5,      # 立场坚定度 (0-1)
-            "attention_span": 0.5        # 注意力持续时间 (0-1)
-        })
-        
-        # 动态状态
-        self.emotion = 0.5  # 情绪值 (0-1, 0=负面, 1=正面)
-        self.confidence = 0.5  # 置信度 (0-1)
-        
-        # 交互历史
-        self.viewed_posts = []  # 已浏览的帖子ID列表
-        self._blacklist = []  # 黑名单用户ID列表
-        self.interaction_history = []  # 交互历史记录
-        
-        # 行为参数（可从配置中读取）
-        self.post_probability = agent_config.get("post_probability", 0.3)  # 发帖概率
-        self.max_posts_per_slice = agent_config.get("max_posts_per_slice", 2)  # 每个时间片最大发帖数
-        self.current_posts_count = 0  # 当前时间片已发帖数
-        
-        # 重置当前时间片的发帖计数
-        self._reset_slice_counters()
-        
-        # 加入仿真的时间戳（用于激活）
-        join_ts = agent_config.get("join_time") or agent_config.get("join_timestamp")
-        if join_ts is not None:
-            if isinstance(join_ts, datetime):
-                self.join_timestamp = join_ts
+        if self.emotion_update_mode == "llm":
+            self._update_emotion_llm_fusion(post, event_description)
+        else:
+            self._update_emotion_rule(post)
+
+    def _update_emotion_llm_fusion(self, post, event_description=None):
+        """
+        LLM建议融合算法：
+        1. 构造prompt，传递当前情绪、帖子内容、事件描述给LLM，获得建议情绪E_suggested（-1~1）
+        2. 用公式融合：
+           E_new = E_current * (1 - α * I_strength) + E_suggested * (α * I_strength)
+        其中α为self.emotion_sensitivity，I_strength为post['strength']
+        """
+        # 1. 构造prompt并请求LLM
+        if not hasattr(self, 'llm_api_key') or not self.llm_api_key or not self.llm_endpoint:
+            print(f"[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: {self.agent_id}")
+            E_suggested = post.get('emotion', 0.0)
+        else:
+            prompt = f"""你是一个社交媒体用户。你当前的情绪值为：{self.emotion}（范围-1到1）。\n你刚刚浏览了一条内容如下的帖子：{post.get('content', '')}。\n事件描述：{event_description or ''}\n请你根据当前情绪、帖子内容和事件描述，判断你现在的情绪值（-1到1之间的小数），并以如下JSON格式输出：{{'emotion': 0.xx}}。"""
+            response = requests.post(
+                self.llm_endpoint or '',
+                headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {self.llm_api_key}'},
+                json={'model': self.llm_model, 'messages': [{'role': 'user', 'content': prompt}]}
+            )
+            response.raise_for_status()
+            import json as _json
+            try:
+                result = _json.loads(response.json()['choices'][0]['message']['content'].strip().replace("'", '"'))
+                E_suggested = float(result.get('emotion', self.emotion))
+            except Exception:
+                E_suggested = self.emotion
+        # 2. 融合更新
+        alpha = self.emotion_sensitivity
+        I_strength = float(post.get('strength', 1.0))
+        E_current = self.emotion
+        lr = alpha * I_strength
+        self.emotion = E_current * (1 - lr) + E_suggested * lr
+
+    def _update_emotion_rule(self, post):
+        """
+        纯规则算法：直接用post['emotion']作为建议情绪P_emotion，带入融合公式
+        E_new = E_current * (1 - α * I_strength) + P_emotion * (α * I_strength)
+        """
+        P_emotion = float(post.get('emotion', 0.0))
+        alpha = self.emotion_sensitivity
+        I_strength = float(post.get('strength', 1.0))
+        E_current = self.emotion
+        lr = alpha * I_strength
+        self.emotion = E_current * (1 - lr) + P_emotion * lr
+
+    def check_blocking(self, post):
+        """检查是否需要屏蔽用户"""
+        if self.response_style == ResponseStyle.FILTERING:
+            stance_diff = abs(self._stance_to_value(self.stance) - self._stance_to_value(post['stance']))
+            if stance_diff > 0.7:
+                self.blocked_users.add(post['user_id'])
+
+    def _stance_to_value(self, stance):
+        """立场数值化转换"""
+        stance_map = {'support': 1.0, 'neutral': 0.5, 'oppose': 0.0}
+        return stance_map.get(stance, 0.5)
+
+    def get_status(self):
+        return {
+            'agent_id': self.agent_id,
+            'agent_type': self.__class__.__name__,
+            'attitude_stability': self.attitude_stability.value,
+            'response_style': self.response_style.value,
+            'activity_level': self.activity_level.value,
+            'emotion': self.emotion,
+            'stance': self.stance,
+            'confidence': self.confidence,
+            'blocked_users': list(self.blocked_users),
+            'memory': self.memory
+        }
+
+    @classmethod
+    def from_dict(cls, config):
+        return cls(
+            config['agent_id'],
+            config['attitude_stability'],
+            config['response_style'],
+            config['activity_level'],
+            config.get('emotion_update_mode', 'llm'),
+            float(config.get('emotion_sensitivity', 0.5))
+        )
+
+    def update_stance(self, post):
+        """
+        立场更新算法：分为坚定型和不坚定型Agent
+        - agent.attitude_stability: Enum (FIRM/UNCERTAIN)
+        - agent.attitude_firmness: float (0-1), 0.5为分界
+        - agent.stance: float (-1~1)
+        - agent.confidence: float (0~1)
+        - post['stance']: float (-1~1)
+        - post['strength']: float (0~1)
+        """
+        def clamp(val, minv, maxv):
+            return max(minv, min(maxv, val))
+        stance_score = post.get('stance')
+        information_strength = post.get('strength')
+        if stance_score is None or information_strength is None:
+            return
+        # 判断类型
+        is_firm = (self.attitude_stability == AttitudeStability.FIRM) or (getattr(self, 'attitude_firmness', 0.5) >= 0.5)
+        if is_firm:
+            # 坚定型Agent
+            if information_strength < self.THRESHOLD_PROCESS:
+                # 信息强度太低，置信度随机扰动
+                disturbance = random.uniform(-0.02, 0.02)
+                self.confidence = clamp(self.confidence + disturbance, 0.0, 1.0)
+                return
+            # 判断立场方向是否一致
+            stance_match = (self.stance * stance_score >= 0)
+            if stance_match:
+                # 立场一致，置信度小幅提升
+                self.confidence = clamp(self.confidence + self.DELTA_CONF_SMALL, 0.0, 1.0)
             else:
-                # 支持字符串自动转datetime
-                self.join_timestamp = datetime.fromisoformat(str(join_ts))
+                if information_strength >= self.THRESHOLD_CHANGE:
+                    # 强度足够，立场反转，置信度大幅下降
+                    self.stance = stance_score
+                    self.confidence = clamp(self.confidence - self.DELTA_CONF_LARGE, 0.0, 1.0)
+                else:
+                    # 强度不足，置信度小幅下降
+                    self.confidence = clamp(self.confidence - self.DELTA_CONF_SMALL, 0.0, 1.0)
         else:
-            self.join_timestamp = None
-        # 是否已激活（由主循环管理）
-        self.is_active = agent_config.get("is_active", True)
-        # 立场坚定度、过滤异见、活跃度等为接口属性，供队友实现
-        self._firm_stance = agent_config.get("is_firm_stance", None)  # 供队友实现
-        self._filter_opposite = agent_config.get("filter_opposite", None)  # 供队友实现
-        self._activity_level = agent_config.get("activity_level", None)  # 供队友实现
-        self.state_history = []  # 新增：记录时序变化
-    
-    def _reset_slice_counters(self):
-        """重置时间片相关的计数器"""
-        self.current_posts_count = 0
-        self.viewed_posts = []
-        self.max_impact_post_id = None  # 本时间片影响最大的帖子ID
-        self.max_impact_score = float('-inf')  # 新增：最大影响分数
-    
-    def update_state(self, post_object: dict, llm_service=None) -> dict:
-        """
-        状态更新接口（改进版：支持信息强度过滤）
-        - 输入：单条post_object（dict）
-        - 1. 检查信息强度：strength为null的帖子被完全过滤
-        - 2. 调用LLM分析帖子内容，更新情绪
-        - 3. 按"坚定/不坚定"性格，采用不同的立场更新算法（多重阈值/直接跟随）
-        - 4. 判断是否需要将发帖人加入黑名单
-        - 输出：状态变化详情（dict）
-        - 你可以在内部自由设计Prompt和LLM调用方式
-        """
-        post_id = post_object.get("id", "")
-        
-        # 避免重复处理同一帖子
-        if post_id in self.viewed_posts:
-            return {"status": "already_viewed", "post_id": post_id}
-        
-        # 计算帖子对Agent的影响（包含信息强度过滤逻辑）
-        impact = self._calculate_post_impact(post_object)
-        
-        # 检查是否被信息强度过滤
-        if impact.get("filtered", False):
-            return {
-                "status": "filtered_by_strength", 
-                "post_id": post_id,
-                "reason": "strength为null，信息强度不足"
-            }
-        
-        # 记录已浏览的帖子
-        self.viewed_posts.append(post_id)
-        
-        # 记录旧状态
-        old_emotion = self.emotion
-        old_confidence = self.confidence
-        
-        # 更新情绪
-        self.emotion = max(0.0, min(1.0, self.emotion + impact["emotion_change"]))
-        
-        # 更新置信度
-        self.confidence = max(0.0, min(1.0, self.confidence + impact["confidence_change"]))
-        
-        # 记录交互历史
-        interaction_record = {
-            "post_id": post_id,
-            "timestamp": post_object.get("timestamp", ""),
-            "impact": impact,
-            "new_emotion": self.emotion,
-            "new_confidence": self.confidence
-        }
-        self.interaction_history.append(interaction_record)
-        
-        # 计算本次状态变化量
-        delta_emotion = self.emotion - old_emotion
-        delta_confidence = self.confidence - old_confidence
-        
-        # 计算影响分数
-        influence_score = abs(delta_emotion) + abs(delta_confidence)
-        if influence_score > getattr(self, 'max_impact_score', float('-inf')):
-            self.max_impact_score = influence_score
-            self.max_impact_post_id = post_id
-        
-        # 状态变化后，记录一条历史
-        self.state_history.append({
-            "timestamp": post_object.get("timestamp", datetime.now().isoformat()),
-            "emotion": self.emotion,
-            "stance": self._stance
-        })
-        
-        # 记录每个帖子对Agent的影响分数
-        if not hasattr(self, 'impact_records') or self.impact_records is None:
-            self.impact_records = []
-        self.impact_records.append({
-            'post_id': post_id,
-            'impact_score': impact.get('base_impact', 0.0)
-        })
-        
+            # 不坚定型Agent
+            if information_strength >= self.THRESHOLD_PROCESS:
+                # 强度足够，直接采纳新立场，置信度=信息强度
+                self.stance = stance_score
+                self.confidence = information_strength
+            else:
+                # 强度不足，置信度小幅下降
+                self.confidence = clamp(self.confidence - self.DELTA_CONF_SMALL, 0.0, 1.0)
+
+class LLMDrivenAgent(BaseAgent):
+    def __init__(self, agent_id, attitude_stability, response_style, activity_level, agent_type):
+        super().__init__(agent_id, attitude_stability, response_style, activity_level)
+        self.agent_type = agent_type
+        self.llm_api_key = os.getenv('LLM_API_KEY')
+        self.llm_endpoint = os.getenv('LLM_ENDPOINT')
+        self.llm_model = os.getenv('LLM_MODEL') 
+
+    def generate_text(self):
+        """调用LLM生成文本"""
+        if not self.llm_api_key:
+            print(f"[LLM] 未设置API KEY，跳过LLM调用，返回空字符串。Agent: {self.agent_id}")
+            return ""
+        print(f"[LLM] 调用 LLM 生成文本，Agent: {self.agent_id}, 情绪: {self.emotion}, 立场: {self.stance}")
+        prompt = f"""作为社交媒体智能体，你的特征：
+        - 态度坚定性：{self.attitude_stability.value}
+        - 回应方式：{self.response_style.value}
+        - 活跃度：{self.activity_level.value}
+        当前状态：
+        - 情绪：{self.emotion}
+        - 立场：{self.stance}
+        请生成一段符合以上特征的社交媒体帖子内容。"""
+
+        response = requests.post(
+            self.llm_endpoint,
+            headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {self.llm_api_key}'},
+            json={'model': {self.llm_model}, 'messages': [{'role': 'user', 'content': prompt}]}
+        )
+        response.raise_for_status()
+        return response.json()['choices'][0]['message']['content'].strip()
+
+    def get_status(self):
         return {
-            "status": "updated",
-            "post_id": post_id,
-            "impact": impact,
-            "delta_emotion": delta_emotion,
-            "delta_confidence": delta_confidence,
-            "new_state": {
-                "emotion": self.emotion,
-                "confidence": self.confidence,
-            }
+            'agent_id': self.agent_id,
+            'agent_type': self.__class__.__name__,
+            'attitude_stability': self.attitude_stability.value,
+            'response_style': self.response_style.value,
+            'activity_level': self.activity_level.value,
+            'emotion': self.emotion,
+            'stance': self.stance,
+            'confidence': self.confidence,
+            'blocked_users': list(self.blocked_users),
+            'memory': self.memory
         }
-    
-    def _calculate_post_impact(self, post_object: dict) -> Dict[str, float]:
-        """
-        计算帖子对Agent的影响（改进版：使用信息强度权重和完善的置信度逻辑）
-        
-        【重要改进】
-        1. 信息强度权重：使用帖子的strength字段作为影响权重，而不是过滤门槛
-        2. 完善置信度逻辑：区分立场一致/不一致对置信度的不同影响
-        3. null值处理：strength为null的帖子被完全过滤，不产生任何影响
-        
-        Args:
-            post_object (dict): 帖子数据
-            
-        Returns:
-            Dict[str, float]: 影响值字典
-        """
-        # === 信息强度权重处理 ===
-        # 获取帖子信息强度（strength字段）
-        post_strength = post_object.get("strength")
-        
-        # 处理null值：strength为null的帖子被完全过滤
-        if post_strength is None:
-            return {
-                "emotion_change": 0.0,
-                "confidence_change": 0.0,
-                "base_impact": 0.0,
-                "stance_similarity": 0.0,
-                "interest_match": 0.0,
-                "strength_weight": 0.0,
-                "filtered": True
-            }
-        
-        # 将strength转换为影响权重（1.0, 2.0, 3.0 → 权重）
-        strength_weight = float(post_strength)  # 1.0, 2.0, 3.0 直接作为权重
-        
-        # === 基础影响因子计算 ===
-        # 获取帖子热度（归一化到0-1）
-        post_heat = post_object.get("heat", 0) / 100.0  # 归一化到0-1
-        
-        # 计算立场相似度（使用真实的group字段映射的立场值）
-        post_stance = self._estimate_post_stance(post_object)
-        stance_similarity = 1.0 - abs(self._stance - post_stance)
-        
-        # 计算兴趣匹配度
-        interest_match = self._calculate_interest_match(post_object)
-        
-        # === 情绪变化计算（应用强度权重）===
-        # 情绪变化：基于立场相似度，应用强度权重
-        base_emotion_change = (stance_similarity - 0.5) * 0.1 * post_heat
-        emotion_change = base_emotion_change * strength_weight
-        
-        # === 置信度变化计算（完善逻辑，应用强度权重）===
-        # 完善置信度更新逻辑：区分立场一致/不一致
-        if stance_similarity > 0.5:  # 立场一致
-            # 立场一致时，帖子强度越高，置信度提升越多
-            base_confidence_change = interest_match * post_heat * 0.05
-            confidence_change = base_confidence_change * strength_weight
-        else:  # 立场不一致
-            # 立场不一致时，帖子强度越高，对置信度的削弱也越厉害
-            # 但削弱幅度稍小，避免过度影响
-            base_confidence_change = -interest_match * post_heat * 0.03
-            confidence_change = base_confidence_change * strength_weight
-        
-        # === 综合影响计算 ===
-        base_impact = post_heat * stance_similarity * interest_match * strength_weight
-        
-        return {
-            "emotion_change": emotion_change,
-            "confidence_change": confidence_change,
-            "base_impact": base_impact,
-            "stance_similarity": stance_similarity,
-            "interest_match": interest_match,
-            "strength_weight": strength_weight,
-            "filtered": False
-        }
-    
-    def _estimate_post_stance(self, post_object: dict) -> float:
-        """
-        估算帖子的立场值（修复版：使用真实的group字段映射）
-        
-        【重要说明】本方法与AgentController._calculate_stance_similarity保持一致：
-        - 从帖子的'stance'字段读取数据（该字段在WorldState.normalize_post中由'group'字段映射而来）
-        - 使用相同的映射逻辑：group=1→0.0（支持患者），0→0.5（中立），2→1.0（支持医院）
-        - 确保筛选阶段和状态更新阶段使用相同的立场值，避免数据不一致
-        
-        Args:
-            post_object (dict): 帖子数据
-            
-        Returns:
-            float: 估算的立场值 (0-1)
-        """
-        # 从帖子数据中读取已有的立场信息
-        # 注意：这里的'stance'字段实际上是原始数据中的'group'字段映射而来
-        stance = post_object.get('stance', 0)
-        
-        # 根据group字段映射（与AgentController._calculate_stance_similarity保持一致）
-        # 映射规则：
-        # - group=1 (支持患者) → 0.0
-        # - group=0 (中立) → 0.5  
-        # - group=2 (支持医院) → 1.0
-        if stance == 1:
-            return 0.0  # 支持患者
-        elif stance == 0:
-            return 0.5  # 中立
-        elif stance == 2:
-            return 1.0  # 支持医院
+
+    @classmethod
+    def from_dict(cls, config):
+        return cls(
+            config['agent_id'],
+            config['attitude_stability'],
+            config['response_style'],
+            config['activity_level'],
+            config.get('agent_type', 'llm')
+        )
+
+class OpinionPublisher(LLMDrivenAgent):
+    def __init__(self, agent_id, attitude_stability, response_style, activity_level):
+        super().__init__(agent_id, attitude_stability, response_style, activity_level, 'publisher')
+
+    def should_post(self):
+        """判断是否需要发布帖子"""
+        return self.activity_level == ActivityLevel.HIGH or abs(self.emotion) > 0.7
+
+    @classmethod
+    def from_dict(cls, config):
+        return cls(
+            config['agent_id'],
+            config['attitude_stability'],
+            config['response_style'],
+            config['activity_level']
+        )
+
+class OpinionReceiver(LLMDrivenAgent):
+    def __init__(self, agent_id, attitude_stability, response_style, activity_level):
+        super().__init__(agent_id, attitude_stability, response_style, activity_level, 'receiver')
+
+    def should_post(self):
+        """判断是否需要发布帖子"""
+        # 接收者通常不会主动发布帖子，除非情绪非常强烈
+        return self.activity_level == ActivityLevel.HIGH and abs(self.emotion) > 0.9
+
+    @classmethod
+    def from_dict(cls, config):
+        return cls(
+            config['agent_id'],
+            config['attitude_stability'],
+            config['response_style'],
+            config['activity_level']
+        )
+
+class RuleBasedAgent(BaseAgent):
+    def generate_text(self):
+        """基于规则生成文本"""
+        if self.emotion == 'positive':
+            return f"我支持{self.stance}！这是个好消息！"
+        elif self.emotion == 'negative':
+            return f"我反对{self.stance}。这让我很失望。"
         else:
-            return 0.5  # 默认中立（处理异常情况）
-    
-    def _calculate_interest_match(self, post_object: dict) -> float:
-        """
-        计算帖子与Agent兴趣的匹配度
-        
-        Args:
-            post_object (dict): 帖子数据
-            
-        Returns:
-            float: 匹配度 (0-1)
-        """
-        if not self._interests:
-            return 0.5  # 如果没有兴趣标签，返回中等匹配度
-        
-        # 获取帖子的兴趣标签（如果存在）
-        post_interests = post_object.get("interests", [])
-        
-        if not post_interests:
-            return 0.3  # 如果帖子没有兴趣标签，返回较低匹配度
-        
-        # 计算交集大小
-        common_interests = set(self._interests) & set(post_interests)
-        
-        # 计算匹配度
-        if len(self._interests) == 0:
-            return 0.0
-        
-        return len(common_interests) / len(self._interests)
-    
-    def generate_action_prompt(self, debug_reason=False) -> tuple[str | None, str | None, str | None]:
-        """
-        行动决策接口，决定是否发言，返回Prompt或None。
-        debug_reason: 若为True，则返回(发言内容, 原因)元组
-        """
-        if self.current_posts_count >= self.max_posts_per_slice:
-            if debug_reason:
-                return None, None, "已达本时间片发帖上限"
-            return None, None, None
-        delta_emotion = abs(self.emotion - getattr(self, '_last_emotion', self.emotion))
-        delta_stance = abs(self._stance - getattr(self, '_last_stance', self._stance))
-        fluctuation = delta_emotion + delta_stance
-        base_threshold = 0.1
-        if fluctuation < base_threshold:
-            if debug_reason:
-                return None, None, f"波动量{fluctuation:.3f}低于阈值{base_threshold}"
-            return None, None, None
-        base_prob = min(fluctuation / 2.0, 1.0)
-        activity_multiplier = self.activity_level if self.activity_level is not None else 1.0
-        final_prob = base_prob * activity_multiplier
-        rand_val = random.random()
-        if rand_val > final_prob:
-            if debug_reason:
-                return None, None, f"最终概率{final_prob:.3f}，随机值{rand_val:.3f}，未通过"
-            return None, None, None
-        parent_post_id = None
-        if hasattr(self, 'impact_records') and self.impact_records:
-            max_impact = max(self.impact_records, key=lambda x: x['impact_score'])
-            parent_post_id = max_impact['post_id']
-        prompt = self._create_action_prompt()
-        self.current_posts_count += 1
-        self._last_emotion = self.emotion
-        self._last_stance = self._stance
-        self.reset_impact_records()
-        if debug_reason:
-            return prompt, parent_post_id, "发言"
-        return prompt, parent_post_id, None
-    
-    def _create_action_prompt(self) -> str:
-        """
-        创建具体的行动提示词
-        
-        Returns:
-            str: 提示词文本
-        """
-        # 基于Agent类型和状态生成不同的提示词
-        base_prompt = f"""你是一个{self._agent_type}，ID为{self._agent_id}。
+            return f"关于这件事，我保持中立态度"
 
-当前状态：
-- 立场倾向：{self._stance:.2f} (0=反对，1=支持)
-- 情绪状态：{self.emotion:.2f} (0=负面，1=正面)
-- 置信度：{self.confidence:.2f} (0=不确定，1=确定)
-- 兴趣领域：{', '.join(self._interests) if self._interests else '无特定兴趣'}
+    def should_post(self):
+        """判断是否需要发布帖子"""
+        # 根据情绪和活跃度判断是否发布帖子
+        activity_factor = {'high': 0.8, 'medium': 0.5, 'low': 0.2}[self.activity_level.value]
+        return (abs(self.emotion) * activity_factor) > 0.5
 
-最近浏览了{len(self.viewed_posts)}条帖子，请基于你的状态和浏览历史，生成一条社交媒体帖子。
-
-要求：
-1. 帖子内容要符合你的立场倾向和情绪状态
-2. 内容要真实、自然，符合{self._agent_type}的身份特征
-3. 长度控制在50-200字之间
-4. 可以是对某条帖子的回应，也可以是原创内容
-5. 避免过于极端或不当的言论
-
-请直接输出帖子内容，不要包含任何解释或标记。"""
-
-        return base_prompt
-    
-    def add_to_blacklist(self, user_id: str) -> None:
-        """
-        将用户添加到黑名单
-        
-        Args:
-            user_id (str): 要拉黑的用户ID
-        """
-        if user_id not in self._blacklist:
-            self._blacklist.append(user_id)
-    
-    def remove_from_blacklist(self, user_id: str) -> None:
-        """
-        从黑名单中移除用户
-        
-        Args:
-            user_id (str): 要解除拉黑的用户ID
-        """
-        if user_id in self._blacklist:
-            self._blacklist.remove(user_id)
-    
-    def is_blacklisted(self, user_id: str) -> bool:
-        """
-        检查用户是否在黑名单中
-        
-        Args:
-            user_id (str): 用户ID
-            
-        Returns:
-            bool: 是否在黑名单中
-        """
-        return user_id in self._blacklist
-    
-    def get_state_summary(self) -> Dict[str, Any]:
-        """
-        获取Agent状态摘要
-        
-        Returns:
-            Dict[str, Any]: 状态摘要
-        """
+    def get_status(self):
+        """返回当前智能体状态，便于导出和查询"""
         return {
-            "agent_id": self._agent_id,
-            "agent_type": self._agent_type,
-            "stance": self._stance,
-            "emotion": self.emotion,
-            "confidence": self.confidence,
-            "post_probability": self.post_probability,
-            "max_posts_per_slice": self.max_posts_per_slice,
-            "viewed_posts_count": len(self.viewed_posts),
-            "blacklist_count": len(self._blacklist),
-            "interaction_count": len(self.interaction_history)
+            'agent_id': self.agent_id,
+            'agent_type': self.__class__.__name__,
+            'attitude_stability': self.attitude_stability.value,
+            'response_style': self.response_style.value,
+            'activity_level': self.activity_level.value,
+            'emotion': self.emotion,
+            'stance': self.stance,
+            'confidence': self.confidence,
+            'blocked_users': list(self.blocked_users),
+            'memory': self.memory
         }
-    
-    def __str__(self):
-        return f"Agent(id={self._agent_id}, type={self._agent_type}, stance={self._stance:.2f}, emotion={self.emotion:.2f})"
 
-    @property
-    def agent_id(self) -> str:
-        """
-        Agent唯一标识符，供后端调度和日志使用
-        """
-        return self._agent_id
+    @classmethod
+    def from_dict(cls, config):
+        return cls(
+            config['agent_id'],
+            config['attitude_stability'],
+            config['response_style'],
+            config['activity_level']
+        )
 
-    @property
-    def agent_type(self) -> str:
-        """
-        Agent类型（如"意见领袖"、"普通用户"），用于行动顺序调度
-        """
-        return self._agent_type
+def load_agents_from_csv(csv_path):
+    """从CSV文件读取智能体状态并恢复为对象列表"""
+    agents = []
+    with open(csv_path, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            agent_type = row['agent_type']
+            if agent_type == 'OpinionPublisher':
+                agent = OpinionPublisher(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'])
+            elif agent_type == 'OpinionReceiver':
+                agent = OpinionReceiver(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'])
+            else:
+                agent = RuleBasedAgent(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'])
+            # 恢复状态
+            agent.emotion = float(row['emotion']) if row['emotion'] else 0.0
+            agent.stance = float(row['stance']) if row['stance'] else 0.0
+            agent.confidence = float(row['confidence']) if row['confidence'] else 0.5
+            agent.blocked_users = set(row['blocked_users'].split(',')) if row['blocked_users'] else set()
+            agent.memory = row['memory'].split(',') if row['memory'] else []
+            agents.append(agent)
+    return agents
 
-    @property
-    def stance(self) -> float:
-        """
-        Agent当前立场值（0-1），用于信息流筛选和立场相似度计算
-        """
-        return self._stance
+def main():
+    # 先尝试从CSV读取智能体状态，否则新建
+    import os
+    csv_path = 'agent_status_output.csv'
+    if os.path.exists(csv_path):
+        agents = load_agents_from_csv(csv_path)
+    else:
+        agents = [
+            OpinionPublisher('pub_001', 'firm', 'filtering', 'high'),
+            OpinionReceiver('rec_001', 'uncertain', 'open', 'medium'),
+            RuleBasedAgent('rule_001', 'uncertain', 'open', 'low')
+        ]
 
-    @property
-    def interests(self) -> list:
-        """
-        Agent兴趣标签列表，用于兴趣匹配筛选
-        """
-        return self._interests
+    # 让每个智能体执行一次行动（如判断是否发帖并生成内容）
+    for agent in agents:
+        if hasattr(agent, 'should_post') and agent.should_post():
+            try:
+                content = agent.generate_text()
+                print(f"Agent {agent.agent_id} posted: {content}")
+            except Exception as e:
+                print(f"Agent {agent.agent_id} failed to post: {e}")
 
-    @property
-    def blacklist(self) -> list:
-        """
-        Agent黑名单，存储被屏蔽用户ID，用于信息流过滤
-        """
-        return self._blacklist
+    # 保存所有智能体当前状态到CSV
+    with open(csv_path, 'w', newline='', encoding='utf-8') as f:
+        fieldnames = ['agent_id', 'agent_type', 'attitude_stability', 'response_style', 'activity_level', 'emotion', 'stance', 'confidence', 'blocked_users', 'memory']
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for agent in agents:
+            status = agent.get_status()
+            status['blocked_users'] = ','.join(map(str, status['blocked_users']))
+            status['memory'] = ','.join(map(str, status['memory']))
+            writer.writerow(status)
 
-    @property
-    def personality(self) -> dict:
-        """
-        Agent性格特征，包含活跃度、情绪敏感度、立场坚定度等
-        """
-        return self._personality.copy()
-
-    @property
-    def firm_stance(self):
-        """
-        Agent立场坚定度（接口属性，供队友实现）
-        """
-        if self._firm_stance is not None:
-            return self._firm_stance
-        return self._personality.get("stance_firmness", 0.5)
-
-    @property
-    def filter_opposite(self):
-        """
-        Agent是否过滤异见（接口属性，供队友实现）
-        """
-        if self._filter_opposite is not None:
-            return self._filter_opposite
-        return None
-
-    @property
-    def activity_level(self):
-        """
-        Agent活跃度 (0-1)
-        """
-        if self._activity_level is not None:
-            return self._activity_level
-        return self._personality.get("activity_level", 0.5)
-
-    @property
-    def emotion_sensitivity(self) -> float:
-        """
-        Agent情绪敏感度 (0-1)
-        """
-        return self._personality.get("emotion_sensitivity", 0.5)
-
-    @property
-    def stance_firmness(self) -> float:
-        """
-        Agent立场坚定度 (0-1)
-        """
-        return self._personality.get("stance_firmness", 0.5)
-
-    @property
-    def attention_span(self) -> float:
-        """
-        Agent注意力持续时间 (0-1)
-        """
-        return self._personality.get("attention_span", 0.5)
-
-    def update_state_with_summary(self, environmental_summary: Dict[str, Any], llm_service=None) -> None:
-        """
-        环境摘要更新接口（Agent设计师负责实现）
-        - 参数：environmental_summary (Dict): 环境摘要数据，包含情感分布、立场分布、热点话题等
-        - 参数：llm_service: LLM服务实例，用于分析摘要内容（可选）
-        - 职责：
-            * 处理宏观舆情信息，更新Agent对整体环境的认知
-            * 可能影响Agent的决策策略和发言倾向
-            * 这是意见领袖特有的接口，普通Agent不需要
-        - 注意：这个接口在update_state之前调用，为后续具体帖子处理提供背景
-        """
-        # 由Agent设计师实现：处理环境摘要，更新宏观认知状态
-        pass 
-
-    def reset_impact_records(self):
-        self.impact_records = [] 
+if __name__ == "__main__":
+    main()

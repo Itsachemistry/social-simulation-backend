@@ -1,3 +1,10 @@
+# 使用方法：
+# 1. 启动虚拟环境（Windows）：
+#    .\venv\Scripts\activate
+# 2. 运行测试脚本：
+#    python tests/test_real_data_integration.py
+#    （或用pytest: pytest -s tests/test_real_data_integration.py）
+
 import json
 from datetime import datetime
 import os
@@ -6,6 +13,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.world_state import WorldState
 from src.agent_controller import AgentController
 from src.time_manager import TimeSliceManager
+
+if not hasattr(sys.modules[__name__], "_stdout_redirected"):
+    setattr(sys.modules[__name__], "_stdout_redirected", True)
+    sys.stdout = open("real_data_integration_test_output.txt", "w", encoding="utf-8")
 
 # 背景说明：
 # 本测试围绕"医生将纱布留置在患者体内"事件展开，数据为网友在事件发展过程中的表态、站队、争吵。
@@ -37,9 +48,26 @@ def load_agents(json_path):
         agents = json.load(f)
     return agents['agents']
 
+def preprocess_post(post):
+    # 立场映射
+    stance_map = {1: 'oppose', 0: 'neutral', 2: 'support'}
+    post['stance'] = stance_map.get(post.get('group', 0), 'neutral')
+    # 强度字段适配
+    post['stance_strength'] = post.get('strength', 1.0)
+    # 情感映射
+    emotion_map = {'正面': 'positive', '负面': 'negative', '中性': 'neutral'}
+    post['emotion'] = emotion_map.get(post.get('coarse_emotion', '中性'), 'neutral')
+    # 情感强度（可根据实际情况调整）
+    post['emotion_intensity'] = 1.0 if post['emotion'] != 'neutral' else 0.5
+    # 用户ID、帖子ID适配
+    post['user_id'] = post.get('uid', '')
+    post['post_id'] = post.get('id', '')
+    return post
+
 def test_real_data_integration():
     # 1. 加载真实数据
     posts = load_real_posts('data/data/3weibo_data_index_group_importance_withvirtual.json')
+    posts = [preprocess_post(post) for post in posts]
     print(f"加载帖子总数: {len(posts)}")
     # 2. 加载agent配置
     agents = load_agents('config/agents.json')
@@ -64,14 +92,15 @@ def test_real_data_integration():
     for agent_type, agents_list in agent_controller.agents.items():
         for agent in agents_list:
             agent._last_emotion = agent.emotion
-            agent._last_stance = agent._stance
+            agent._last_stance = agent.stance
+            agent.stance = 'neutral'
     # 输出所有Agent的初始状态
     print("\n[Agent初始状态]")
     for agent_type, agents in agent_controller.agents.items():
         if agent_type not in ["意见领袖", "普通用户"]:
             continue
         for agent in agents:
-            summary = agent.get_state_summary()
+            summary = agent.get_status()
             print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
     # 6. 遍历每个时间片，推送个性化信息流并模拟状态更新
     prev_agent_states = {}
@@ -79,7 +108,7 @@ def test_real_data_integration():
         if agent_type not in ["意见领袖", "普通用户"]:
             continue
         for agent in agents_list:
-            prev_agent_states[agent.agent_id] = agent.get_state_summary().copy()
+            prev_agent_states[agent.agent_id] = agent.get_status().copy()
     for slice_idx in range(min(4, time_manager.total_slices)):
         print(f'\n=== 时间片 {slice_idx+1}/{time_manager.total_slices} ===')
         current_slice_posts = time_manager.get_slice(slice_idx)
@@ -97,7 +126,7 @@ def test_real_data_integration():
             if agent_type not in ["意见领袖", "普通用户"]:
                 continue
             for agent in agents:
-                summary = agent.get_state_summary()
+                summary = agent.get_status()
                 print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
                 # 输出增量
                 prev = prev_agent_states.get(agent.agent_id, {})
@@ -105,13 +134,33 @@ def test_real_data_integration():
                 for key in ["stance", "emotion", "confidence", "viewed_posts_count", "interaction_count"]:
                     if key in summary and key in prev:
                         try:
-                            delta[key] = summary[key] - prev[key]
+                            val1, val2 = summary[key], prev[key]
+                            # 兼容字符串情绪/立场
+                            if key == "emotion":
+                                emo_map = {'positive': 1.0, 'neutral': 0.5, 'negative': 0.0}
+                                val1 = emo_map.get(val1, 0.5) if isinstance(val1, str) else (val1 if val1 is not None else 0.5)
+                                val2 = emo_map.get(val2, 0.5) if isinstance(val2, str) else (val2 if val2 is not None else 0.5)
+                            if key == "stance":
+                                stance_map = {'support': 1.0, 'neutral': 0.5, 'oppose': 0.0}
+                                val1 = stance_map.get(val1, 0.5) if isinstance(val1, str) else (val1 if val1 is not None else 0.5)
+                                val2 = stance_map.get(val2, 0.5) if isinstance(val2, str) else (val2 if val2 is not None else 0.5)
+                            delta[key] = val1 - val2
                         except Exception:
                             delta[key] = "N/A"
                 print(f'  属性增量: {delta}')
                 # 新增：输出波动量
-                delta_emotion = abs(summary.get("emotion", 0.0) - prev.get("emotion", 0.0))
-                delta_stance = abs(summary.get("stance", 0.0) - prev.get("stance", 0.0))
+                emo_map = {'positive': 1.0, 'neutral': 0.5, 'negative': 0.0}
+                stance_map = {'support': 1.0, 'neutral': 0.5, 'oppose': 0.0}
+                e1 = summary.get("emotion", 0.5)
+                e2 = prev.get("emotion", 0.5)
+                s1 = summary.get("stance", 0.5)
+                s2 = prev.get("stance", 0.5)
+                e1 = emo_map.get(e1, 0.5) if isinstance(e1, str) else (e1 if e1 is not None else 0.5)
+                e2 = emo_map.get(e2, 0.5) if isinstance(e2, str) else (e2 if e2 is not None else 0.5)
+                s1 = stance_map.get(s1, 0.5) if isinstance(s1, str) else (s1 if s1 is not None else 0.5)
+                s2 = stance_map.get(s2, 0.5) if isinstance(s2, str) else (s2 if s2 is not None else 0.5)
+                delta_emotion = abs(e1 - e2)
+                delta_stance = abs(s1 - s2)
                 fluctuation = delta_emotion + delta_stance
                 print(f'  波动量: {fluctuation:.3f} (情绪: {delta_emotion:.3f}, 立场: {delta_stance:.3f})')
                 # 更新prev_agent_states
