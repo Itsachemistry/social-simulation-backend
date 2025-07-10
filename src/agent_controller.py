@@ -6,6 +6,8 @@ from datetime import datetime
 import random
 import math
 
+SYSTEM_OPINION_LEADER_POP_BONUS = 0.7
+
 class PlaceholderAgent:
     """
     临时的Agent占位符类，用于在AgentController中模拟Agent对象
@@ -270,15 +272,24 @@ class AgentController:
         为指定Agent生成个性化信息流（逐帖概率门控模型，Sigmoid概率采样）
         """
         import math
+        # === 广播信息强制注入 ===
+        agent_feed = []
+        broadcast_posts = [p for p in all_posts if p.get('is_broadcast') or p.get('is_event')]
+        if broadcast_posts:
+            # 只要有广播，全部强制注入（可多条）
+            for bp in broadcast_posts:
+                agent_feed.append(bp)
         # === 1. 过滤掉无效帖子 ===
         valid_posts = [p for p in all_posts if p.get('emotion') is not None and p.get('stance') is not None and p.get('strength') is not None]
+        # 排除已注入的广播信息
+        valid_posts = [p for p in valid_posts if p not in broadcast_posts]
         if not valid_posts:
-            return []
+            return agent_feed
         # === 2. 黑名单过滤 ===
         blocked_users = getattr(agent, 'blocked_users', set())
         posts = [p for p in valid_posts if p.get('author_id') not in blocked_users]
         if not posts:
-            return []
+            return agent_feed
         # === 3. 观点屏蔽过滤 ===
         opinion_blocking_degree = getattr(agent, 'opinion_blocking_degree', 0.0)
         T_stance = 2.0 * (1.0 - opinion_blocking_degree)
@@ -290,7 +301,7 @@ class AgentController:
             if stance_diff <= T_stance:
                 filtered_posts.append(post)
         if not filtered_posts:
-            return []
+            return agent_feed
         # === 4. 计算分数 ===
         max_totalChildren = max([p.get('totalChildren', 0) for p in filtered_posts] or [1])
         scored_posts = []
@@ -303,17 +314,14 @@ class AgentController:
             Final_Score = w_pop * Score_Pop + w_rel * Score_Rel
             scored_posts.append((Final_Score, post))
         if not scored_posts:
-            return []
+            return agent_feed
         # === 5. 逐帖概率门控 ===
-        # 计算x0（中心点），默认用均值
         scores = [fs for fs, _ in scored_posts]
         if x0 is None:
             x0_val = float(sum(scores) / len(scores))
         else:
             x0_val = float(x0)
-        agent_feed = []
         for Final_Score, post in scored_posts:
-            # Sigmoid概率
             p_view = 1.0 / (1.0 + math.exp(-k * (Final_Score - x0_val)))
             R = random.random()
             if R < p_view:
@@ -432,5 +440,46 @@ class AgentController:
     def _mock_llm_service(self, prompt: str) -> str:
         """模拟LLM回复"""
         return f"【模拟LLM生成内容】基于提示：{prompt[:30]}..."
+
+    def create_post_from_agent(self, agent, content, timestamp=None):
+        """
+        由Agent生成新帖，自动赋予完整属性
+        """
+        import uuid
+        post = {
+            'id': str(uuid.uuid4()),
+            'content': content,
+            'author_id': agent.agent_id,
+            'timestamp': timestamp or '',
+            'emotion_score': agent.emotion,
+            'stance_score': agent.stance,
+            'information_strength': (abs(agent.emotion) + agent.confidence) / 2,
+            'is_event': False,
+        }
+        # 角色区分热度
+        if getattr(agent, 'agent_type', None) == 'OpinionPublisher':
+            post['popularity_score'] = SYSTEM_OPINION_LEADER_POP_BONUS
+        else:
+            post['popularity_score'] = 0.0
+        return post
+
+    def create_broadcast_post(self, user_input_emotion, user_input_stance, content, timestamp=None):
+        """
+        创建广播信息/大新闻，属性全部顶格
+        """
+        import uuid
+        post = {
+            'id': str(uuid.uuid4()),
+            'content': content,
+            'author_id': 'system_broadcast',
+            'timestamp': timestamp or '',
+            'emotion_score': user_input_emotion,
+            'stance_score': user_input_stance,
+            'information_strength': 1.0,
+            'popularity_score': 1.0,
+            'is_event': True,
+            'is_broadcast': True
+        }
+        return post
 
 

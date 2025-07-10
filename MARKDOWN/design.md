@@ -243,3 +243,21 @@ else:  # 立场不一致
   - 信息强度>=THRESHOLD_PROCESS，直接采纳新立场，置信度=信息强度。
   - 信息强度<THRESHOLD_PROCESS，置信度-DELTA_CONF_SMALL。
 - 相关参数：THRESHOLD_PROCESS, THRESHOLD_CHANGE, DELTA_CONF_SMALL, DELTA_CONF_LARGE，均可调优。
+
+#### Agent发帖与广播信息属性设定
+
+##### Agent发帖属性设定
+- emotion_score = agent.emotion
+- stance_score = agent.stance
+- information_strength = (abs(agent.emotion) + agent.confidence) / 2
+- popularity_score = 0.0（普通用户）或 SYSTEM_OPINION_LEADER_POP_BONUS（意见领袖，默认0.7）
+
+##### 广播信息（大新闻）属性设定
+- emotion_score, stance_score 由用户指定
+- information_strength = 1.0
+- popularity_score = 1.0
+- is_broadcast/is_event = True
+
+##### 广播信息强制注入机制
+- 每个Agent生成Feed时，若有广播信息，强制插入agent_feed最前面，跳过所有过滤和概率门控，确保全员接收。
+- 其余帖子仍按常规过滤和概率门控推送。

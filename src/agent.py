@@ -148,7 +148,11 @@ class BaseAgent:
             'stance': self.stance,
             'confidence': self.confidence,
             'blocked_users': list(self.blocked_users),
-            'memory': self.memory
+            'memory': self.memory,
+            'attitude_firmness': getattr(self, 'attitude_firmness', 0.5),
+            'opinion_blocking_degree': getattr(self, 'opinion_blocking_degree', 0.0),
+            'emotion_update_mode': getattr(self, 'emotion_update_mode', 'llm'),
+            'emotion_sensitivity': getattr(self, 'emotion_sensitivity', 0.5)
         }
 
     @classmethod
@@ -211,9 +215,13 @@ class BaseAgent:
                 self.confidence = clamp(self.confidence - self.DELTA_CONF_SMALL, 0.0, 1.0)
 
 class LLMDrivenAgent(BaseAgent):
-    def __init__(self, agent_id, attitude_stability, response_style, activity_level, agent_type):
-        super().__init__(agent_id, attitude_stability, response_style, activity_level)
+    def __init__(self, agent_id, attitude_stability, response_style, activity_level, agent_type, attitude_firmness=0.5, opinion_blocking_degree=0.0, emotion_update_mode='llm', emotion_sensitivity=0.5):
+        super().__init__(agent_id, attitude_stability, response_style, activity_level, emotion_update_mode, emotion_sensitivity)
         self.agent_type = agent_type
+        self.attitude_firmness = attitude_firmness
+        self.opinion_blocking_degree = opinion_blocking_degree
+        self.emotion_update_mode = emotion_update_mode
+        self.emotion_sensitivity = emotion_sensitivity
         self.llm_api_key = os.getenv('LLM_API_KEY')
         self.llm_endpoint = os.getenv('LLM_ENDPOINT')
         self.llm_model = os.getenv('LLM_MODEL') 
@@ -252,7 +260,11 @@ class LLMDrivenAgent(BaseAgent):
             'stance': self.stance,
             'confidence': self.confidence,
             'blocked_users': list(self.blocked_users),
-            'memory': self.memory
+            'memory': self.memory,
+            'attitude_firmness': getattr(self, 'attitude_firmness', 0.5),
+            'opinion_blocking_degree': getattr(self, 'opinion_blocking_degree', 0.0),
+            'emotion_update_mode': getattr(self, 'emotion_update_mode', 'llm'),
+            'emotion_sensitivity': getattr(self, 'emotion_sensitivity', 0.5)
         }
 
     @classmethod
@@ -262,12 +274,16 @@ class LLMDrivenAgent(BaseAgent):
             config['attitude_stability'],
             config['response_style'],
             config['activity_level'],
-            config.get('agent_type', 'llm')
+            config.get('agent_type', 'llm'),
+            float(config.get('attitude_firmness', 0.5)),
+            float(config.get('opinion_blocking_degree', 0.0)),
+            config.get('emotion_update_mode', 'llm'),
+            float(config.get('emotion_sensitivity', 0.5))
         )
 
 class OpinionPublisher(LLMDrivenAgent):
-    def __init__(self, agent_id, attitude_stability, response_style, activity_level):
-        super().__init__(agent_id, attitude_stability, response_style, activity_level, 'publisher')
+    def __init__(self, agent_id, attitude_stability, response_style, activity_level, attitude_firmness=0.5, opinion_blocking_degree=0.0, emotion_update_mode='llm', emotion_sensitivity=0.5):
+        super().__init__(agent_id, attitude_stability, response_style, activity_level, 'publisher', attitude_firmness, opinion_blocking_degree, emotion_update_mode, emotion_sensitivity)
 
     def should_post(self):
         """判断是否需要发布帖子"""
@@ -279,12 +295,16 @@ class OpinionPublisher(LLMDrivenAgent):
             config['agent_id'],
             config['attitude_stability'],
             config['response_style'],
-            config['activity_level']
+            config['activity_level'],
+            float(config.get('attitude_firmness', 0.5)),
+            float(config.get('opinion_blocking_degree', 0.0)),
+            config.get('emotion_update_mode', 'llm'),
+            float(config.get('emotion_sensitivity', 0.5))
         )
 
 class OpinionReceiver(LLMDrivenAgent):
-    def __init__(self, agent_id, attitude_stability, response_style, activity_level):
-        super().__init__(agent_id, attitude_stability, response_style, activity_level, 'receiver')
+    def __init__(self, agent_id, attitude_stability, response_style, activity_level, attitude_firmness=0.5, opinion_blocking_degree=0.0, emotion_update_mode='llm', emotion_sensitivity=0.5):
+        super().__init__(agent_id, attitude_stability, response_style, activity_level, 'receiver', attitude_firmness, opinion_blocking_degree, emotion_update_mode, emotion_sensitivity)
 
     def should_post(self):
         """判断是否需要发布帖子"""
@@ -297,10 +317,21 @@ class OpinionReceiver(LLMDrivenAgent):
             config['agent_id'],
             config['attitude_stability'],
             config['response_style'],
-            config['activity_level']
+            config['activity_level'],
+            float(config.get('attitude_firmness', 0.5)),
+            float(config.get('opinion_blocking_degree', 0.0)),
+            config.get('emotion_update_mode', 'llm'),
+            float(config.get('emotion_sensitivity', 0.5))
         )
 
 class RuleBasedAgent(BaseAgent):
+    def __init__(self, agent_id, attitude_stability, response_style, activity_level, attitude_firmness=0.5, opinion_blocking_degree=0.0, emotion_update_mode='llm', emotion_sensitivity=0.5):
+        super().__init__(agent_id, attitude_stability, response_style, activity_level, emotion_update_mode, emotion_sensitivity)
+        self.attitude_firmness = attitude_firmness
+        self.opinion_blocking_degree = opinion_blocking_degree
+        self.emotion_update_mode = emotion_update_mode
+        self.emotion_sensitivity = emotion_sensitivity
+
     def generate_text(self):
         """基于规则生成文本"""
         if self.emotion == 'positive':
@@ -328,7 +359,11 @@ class RuleBasedAgent(BaseAgent):
             'stance': self.stance,
             'confidence': self.confidence,
             'blocked_users': list(self.blocked_users),
-            'memory': self.memory
+            'memory': self.memory,
+            'attitude_firmness': getattr(self, 'attitude_firmness', 0.5),
+            'opinion_blocking_degree': getattr(self, 'opinion_blocking_degree', 0.0),
+            'emotion_update_mode': getattr(self, 'emotion_update_mode', 'llm'),
+            'emotion_sensitivity': getattr(self, 'emotion_sensitivity', 0.5)
         }
 
     @classmethod
@@ -337,7 +372,11 @@ class RuleBasedAgent(BaseAgent):
             config['agent_id'],
             config['attitude_stability'],
             config['response_style'],
-            config['activity_level']
+            config['activity_level'],
+            float(config.get('attitude_firmness', 0.5)),
+            float(config.get('opinion_blocking_degree', 0.0)),
+            config.get('emotion_update_mode', 'llm'),
+            float(config.get('emotion_sensitivity', 0.5))
         )
 
 def load_agents_from_csv(csv_path):
@@ -347,12 +386,16 @@ def load_agents_from_csv(csv_path):
         reader = csv.DictReader(f)
         for row in reader:
             agent_type = row['agent_type']
+            attitude_firmness = float(row.get('attitude_firmness', 0.5))
+            opinion_blocking_degree = float(row.get('opinion_blocking_degree', 0.0))
+            emotion_update_mode = row.get('emotion_update_mode', 'llm')
+            emotion_sensitivity = float(row.get('emotion_sensitivity', 0.5))
             if agent_type == 'OpinionPublisher':
-                agent = OpinionPublisher(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'])
+                agent = OpinionPublisher(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'], attitude_firmness, opinion_blocking_degree, emotion_update_mode, emotion_sensitivity)
             elif agent_type == 'OpinionReceiver':
-                agent = OpinionReceiver(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'])
+                agent = OpinionReceiver(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'], attitude_firmness, opinion_blocking_degree, emotion_update_mode, emotion_sensitivity)
             else:
-                agent = RuleBasedAgent(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'])
+                agent = RuleBasedAgent(row['agent_id'], row['attitude_stability'], row['response_style'], row['activity_level'], attitude_firmness, opinion_blocking_degree, emotion_update_mode, emotion_sensitivity)
             # 恢复状态
             agent.emotion = float(row['emotion']) if row['emotion'] else 0.0
             agent.stance = float(row['stance']) if row['stance'] else 0.0
@@ -386,7 +429,7 @@ def main():
 
     # 保存所有智能体当前状态到CSV
     with open(csv_path, 'w', newline='', encoding='utf-8') as f:
-        fieldnames = ['agent_id', 'agent_type', 'attitude_stability', 'response_style', 'activity_level', 'emotion', 'stance', 'confidence', 'blocked_users', 'memory']
+        fieldnames = ['agent_id', 'agent_type', 'attitude_stability', 'response_style', 'activity_level', 'emotion', 'stance', 'confidence', 'blocked_users', 'memory', 'attitude_firmness', 'opinion_blocking_degree', 'emotion_update_mode', 'emotion_sensitivity']
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for agent in agents:
