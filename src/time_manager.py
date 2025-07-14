@@ -25,14 +25,18 @@ class TimeSliceManager:
         if slice_size <= 0:
             raise ValueError("时间片大小必须大于0")
         
-        # 验证所有帖子都有timestamp字段
+        # 验证所有帖子都有timestamp字段（支持t和timestamp）
         for i, post in enumerate(posts):
-            if 'timestamp' not in post:
+            if 'timestamp' not in post and 't' not in post:
                 raise KeyError(f"帖子 {i} 缺少timestamp字段")
         
-        # 过滤掉热度为0的帖子
-        filtered_posts = [p for p in posts if p.get('heat', 0) > 0]
-        self._posts = sorted(filtered_posts, key=lambda x: x['timestamp'])
+        # 只保留popularity（或heat）大于0的帖子
+        valid_posts = [post for post in posts if post.get('popularity', post.get('heat', 0)) > 0]
+        # 标准化timestamp字段（支持t和timestamp）
+        for post in valid_posts:
+            if 'timestamp' not in post and 't' in post:
+                post['timestamp'] = post['t']
+        self._posts = sorted(valid_posts, key=lambda x: x['timestamp'])
         self._slice_size = slice_size
         
         # 计算总时间片数

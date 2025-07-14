@@ -66,7 +66,7 @@ class SimulationManager:
             simulation_config["results"] = {
                 "summary": engine.get_simulation_summary(),
                 "simulation_results": results,
-                "final_posts": engine.world_state.get_all_posts(),
+                "agent_generated_posts": engine.world_state.get_all_posts(),
                 "agent_states": self._get_agent_states(engine.agent_controller)
             }
             

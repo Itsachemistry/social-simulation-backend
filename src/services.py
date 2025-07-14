@@ -102,3 +102,37 @@ class DataLoader:
             raise
         except Exception as e:
             raise Exception(f"读取Agent配置时发生错误: {str(e)}") 
+
+
+def flatten_posts_recursive(posts, parent_id=None, level=0):
+    """
+    递归展开所有嵌套的帖子，返回扁平化列表
+    """
+    flattened_posts = []
+    for post in posts:
+        post = dict(post)  # 避免修改原始数据
+        post['parent_post_id'] = parent_id
+        post['nesting_level'] = level
+        flattened_posts.append(post)
+        if 'children' in post and post['children']:
+            flattened_posts.extend(flatten_posts_recursive(
+                post['children'],
+                parent_id=post.get('pid', post.get('mid', post.get('id'))),
+                level=level + 1
+            ))
+    return flattened_posts
+
+def filter_valid_posts(posts):
+    """
+    过滤有效的帖子（popularity>0且关键字段不为None）
+    """
+    valid_posts = []
+    for post in posts:
+        if post.get('popularity', 0) <= 0:
+            continue
+        if (post.get('emotion_score') is None or
+            post.get('stance_score') is None or
+            post.get('information_strength') is None):
+            continue
+        valid_posts.append(post)
+    return valid_posts 

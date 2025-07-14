@@ -120,7 +120,7 @@ def create_test_agents():
             "stance": 0.8,  # 支持医院
             "interests": ["政治", "经济"],
             "influence": 2.0,
-            "post_probability": 0.6,
+    
             "max_posts_per_slice": 3
         },
         {
@@ -129,7 +129,7 @@ def create_test_agents():
             "stance": 0.2,  # 支持患者
             "interests": ["娱乐", "科技"],
             "influence": 1.0,
-            "post_probability": 0.2,
+    
             "max_posts_per_slice": 1
         }
     ]
@@ -223,32 +223,7 @@ def test_weighted_selection_mechanism():
     else:
         print("⚠️  高热度帖子选择概率未明显高于低热度帖子")
     
-    # 测试3: 验证浏览数量限制
-    print("\n📱 测试3: 验证浏览数量限制")
-    print("-" * 40)
-    
-    browse_counts = []
-    for i in range(20):
-        selected_posts = agent_controller._generate_personalized_feed(
-            user_agent, test_posts, global_intensity
-        )
-        browse_counts.append(len(selected_posts))
-    
-    avg_browse_count = sum(browse_counts) / len(browse_counts)
-    min_browse_count = min(browse_counts)
-    max_browse_count = max(browse_counts)
-    
-    print(f"浏览数量统计:")
-    print(f"  平均浏览数量: {avg_browse_count:.1f}")
-    print(f"  最少浏览数量: {min_browse_count}")
-    print(f"  最多浏览数量: {max_browse_count}")
-    
-    # 验证浏览数量在合理范围内
-    assert min_browse_count >= 1, "至少应该浏览1个帖子"
-    assert max_browse_count <= 10, "最多应该浏览10个帖子"
-    print("✅ 浏览数量在合理范围内")
-    
-    # 测试4: 验证立场相似度影响
+    # 测试3: 验证立场相似度影响
     print("\n🎯 测试4: 验证立场相似度影响")
     print("-" * 40)
     

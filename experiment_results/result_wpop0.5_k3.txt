@@ -1,0 +1,1495 @@
+=== 参数对比实验 ===
+实验时间: 2025-07-14 13:23:39
+参数配置: w_pop=0.5, k=3
+==================================================
+
+=== 社交模拟引擎测试（重构版）===
+使用src中提供的标准接口，专注于测试核心算法
+
+[参数] w_pop=0.5, k=3
+
+1. 加载原始帖子数据...
+✅ 成功加载 203 条原始帖子
+
+2. 展开嵌套帖子...
+✅ 展开后共 4424 条帖子
+
+3. 过滤有效帖子...
+✅ 过滤后剩余 564 条有效帖子
+
+4. 字段标准化...
+✅ 完成 564 条帖子的标准化
+
+5. 时间片划分...
+✅ 时间片大小: 30
+✅ 总时间片数: 19
+
+6. 创建Agent控制器...
+
+7. 创建测试Agent...
+✅ 创建Agent: Agent(id=agent_001, role=ordinary_user, emotion=0.00, stance=0.00)
+✅ 创建Agent: Agent(id=agent_002, role=ordinary_user, emotion=-0.20, stance=-0.10)
+✅ 创建Agent: Agent(id=agent_003, role=opinion_leader, emotion=0.30, stance=0.50)
+✅ 创建Agent: Agent(id=agent_004, role=ordinary_user, emotion=0.10, stance=0.20)
+
+8. 开始模拟...
+
+--- 时间片 1 ---
+处理 30 条帖子
+[Feed] Agent agent_001 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.200, Final_Score=0.119, Sigmoid概率=0.387, ✔选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.400, Final_Score=0.480, Sigmoid概率=0.651, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.446, ✔选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.400, Final_Score=0.257, Sigmoid概率=0.489, ✔选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.410, ✘未选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.446, ✘未选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.400, Final_Score=0.285, Sigmoid概率=0.510, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.400, Sigmoid概率=0.595, ✘未选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.400, Final_Score=0.238, Sigmoid概率=0.475, ✘未选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.700, Final_Score=0.350, Sigmoid概率=0.558, ✘未选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.256, Sigmoid概率=0.488, ✘未选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.446, ✘未选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.446, ✘未选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.300, Final_Score=0.292, Sigmoid概率=0.515, ✘未选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.400, Final_Score=0.206, Sigmoid概率=0.451, ✔选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.410, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.400, Final_Score=0.301, Sigmoid概率=0.522, ✘未选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.600, Final_Score=0.394, Sigmoid概率=0.591, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.500, Final_Score=0.259, Sigmoid概率=0.491, ✘未选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.446, ✘未选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.700, Final_Score=0.356, Sigmoid概率=0.563, ✘未选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.300, Final_Score=0.153, Sigmoid概率=0.412, ✘未选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.400, Final_Score=0.700, Sigmoid概率=0.783, ✔选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.446, ✘未选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.410, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.484, ✔选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.400, Final_Score=0.203, Sigmoid概率=0.449, ✔选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.900, Final_Score=0.450, Sigmoid概率=0.631, ✔选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.253, Sigmoid概率=0.486, ✘未选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.500, Final_Score=0.297, Sigmoid概率=0.519, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4036716081432676: 情绪 -0.030, 立场 -0.038, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4036784096263919: 情绪 -0.107, 立场 0.012, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037007263095724: 情绪 -0.142, 立场 0.018, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037013675446399: 情绪 -0.207, 立场 0.017, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037130835022729: 情绪 -0.237, 立场 0.015, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037319461863054: 情绪 -0.283, 立场 -0.017, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037326046850659: 情绪 -0.315, 立场 -0.004, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037333135457250: 情绪 -0.339, 立场 -0.033, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037345017634878: 情绪 -0.335, 立场 -0.041, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037385668283204: 情绪 -0.222, 立场 -0.056, 置信度 0.500
+[Feed] Agent agent_002 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.300, Final_Score=0.169, Sigmoid概率=0.395, ✘未选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.500, Final_Score=0.530, Sigmoid概率=0.658, ✘未选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.454, ✔选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.500, Final_Score=0.307, Sigmoid概率=0.496, ✘未选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.417, ✔选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.454, ✔选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.500, Final_Score=0.335, Sigmoid概率=0.517, ✔选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.900, Final_Score=0.450, Sigmoid概率=0.602, ✔选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.500, Final_Score=0.288, Sigmoid概率=0.482, ✘未选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.400, Sigmoid概率=0.566, ✔选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.600, Final_Score=0.306, Sigmoid概率=0.496, ✘未选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.454, ✘未选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.454, ✘未选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.400, Final_Score=0.342, Sigmoid概率=0.522, ✔选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.256, Sigmoid概率=0.459, ✘未选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.417, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.500, Final_Score=0.351, Sigmoid概率=0.529, ✘未选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.700, Final_Score=0.444, Sigmoid概率=0.598, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.600, Final_Score=0.309, Sigmoid概率=0.498, ✘未选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.454, ✔选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.800, Final_Score=0.406, Sigmoid概率=0.571, ✘未选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.200, Final_Score=0.103, Sigmoid概率=0.349, ✔选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.500, Final_Score=0.750, Sigmoid概率=0.788, ✘未选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.454, ✘未选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.346, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.600, Final_Score=0.300, Sigmoid概率=0.491, ✘未选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.253, Sigmoid概率=0.456, ✘未选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=1.000, Final_Score=0.500, Sigmoid概率=0.638, ✘未选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.400, Final_Score=0.203, Sigmoid概率=0.419, ✔选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.600, Final_Score=0.347, Sigmoid概率=0.527, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037007263095724: 情绪 -0.230, 立场 -0.138, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037016473197395: 情绪 -0.287, 立场 -0.143, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037037071873683: 情绪 -0.328, 立场 -0.186, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037088459942071: 情绪 -0.345, 立场 -0.181, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037090738392104: 情绪 -0.399, 立场 -0.182, 置信度 0.350
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037118331831237: 情绪 -0.419, 立场 -0.211, 置信度 0.350
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037128382063235: 情绪 -0.457, 立场 -0.175, 置信度 0.350
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037152763295775: 情绪 -0.508, 立场 -0.213, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037249505368724: 情绪 -0.522, 立场 -0.131, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037350071630678: 情绪 -0.530, 立场 -0.144, 置信度 0.250
+[Feed] Agent agent_003 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.000, Final_Score=0.019, Sigmoid概率=0.432, ✘未选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.000, Final_Score=0.280, Sigmoid概率=0.625, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✔选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.000, Final_Score=0.057, Sigmoid概率=0.460, ✘未选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✔选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✔选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.000, Final_Score=0.085, Sigmoid概率=0.481, ✔选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.530, ✔选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.000, Final_Score=0.038, Sigmoid概率=0.446, ✔选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.493, ✔选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.000, Final_Score=0.006, Sigmoid概率=0.423, ✔选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✘未选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✘未选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.000, Final_Score=0.142, Sigmoid概率=0.524, ✔选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.000, Final_Score=0.006, Sigmoid概率=0.423, ✔选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✔选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.000, Final_Score=0.101, Sigmoid概率=0.493, ✔选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.100, Final_Score=0.144, Sigmoid概率=0.526, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.000, Final_Score=0.009, Sigmoid概率=0.425, ✔选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✘未选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.106, Sigmoid概率=0.497, ✔选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.800, Final_Score=0.403, Sigmoid概率=0.707, ✔选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.000, Final_Score=0.500, Sigmoid概率=0.763, ✔选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✘未选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.400, Sigmoid概率=0.705, ✔选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.418, ✘未选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.421, ✘未选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.567, ✔选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=1.000, Final_Score=0.503, Sigmoid概率=0.765, ✔选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.000, Final_Score=0.047, Sigmoid概率=0.453, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4036784096263919: 情绪 0.190, 立场 0.500, 置信度 0.686
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037007263095724: 情绪 0.140, 立场 0.500, 置信度 0.679
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037016473197395: 情绪 0.046, 立场 0.500, 置信度 0.697
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037037071873683: 情绪 -0.028, 立场 0.500, 置信度 0.679
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037088459942071: 情绪 -0.075, 立场 0.500, 置信度 0.691
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037090738392104: 情绪 -0.169, 立场 0.500, 置信度 0.641
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037114661914029: 情绪 -0.222, 立场 0.500, 置信度 0.645
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037118331831237: 情绪 -0.260, 立场 0.500, 置信度 0.645
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037124792139040: 情绪 -0.314, 立场 0.500, 置信度 0.637
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037128382063235: 情绪 -0.363, 立场 0.500, 置信度 0.620
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037130835022729: 情绪 -0.384, 立场 0.500, 置信度 0.617
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037141966651655: 情绪 -0.406, 立场 0.500, 置信度 0.615
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037148266670011: 情绪 -0.445, 立场 0.500, 置信度 0.599
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037152008120995: 情绪 -0.481, 立场 0.500, 置信度 0.593
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037153069176321: 情绪 -0.503, 立场 0.500, 置信度 0.600
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037249505368724: 情绪 -0.517, 立场 0.500, 置信度 0.650
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037319461863054: 情绪 -0.536, 立场 0.500, 置信度 0.653
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037325761439459: 情绪 -0.542, 立场 0.500, 置信度 0.661
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037345017634878: 情绪 -0.518, 立场 0.500, 置信度 0.664
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037350071630678: 情绪 -0.526, 立场 0.500, 置信度 0.653
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037385668283204: 情绪 -0.393, 立场 0.500, 置信度 0.672
+[Feed] Agent agent_004 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.000, Final_Score=0.019, Sigmoid概率=0.373, ✘未选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.200, Final_Score=0.380, Sigmoid概率=0.638, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✘未选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.200, Final_Score=0.157, Sigmoid概率=0.474, ✔选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.395, ✘未选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✘未选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.200, Final_Score=0.185, Sigmoid概率=0.495, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.600, Final_Score=0.300, Sigmoid概率=0.581, ✘未选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.200, Final_Score=0.138, Sigmoid概率=0.460, ✔选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.544, ✘未选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.300, Final_Score=0.156, Sigmoid概率=0.474, ✘未选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✔选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✔选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.100, Final_Score=0.192, Sigmoid概率=0.500, ✘未选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.106, Sigmoid概率=0.436, ✘未选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.395, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.200, Final_Score=0.201, Sigmoid概率=0.507, ✘未选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.400, Final_Score=0.294, Sigmoid概率=0.576, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.300, Final_Score=0.159, Sigmoid概率=0.476, ✘未选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✘未选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.256, Sigmoid概率=0.548, ✔选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.253, Sigmoid概率=0.546, ✘未选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.600, Sigmoid概率=0.773, ✘未选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✔选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.544, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.469, ✘未选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.200, Final_Score=0.103, Sigmoid概率=0.434, ✔选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.700, Final_Score=0.350, Sigmoid概率=0.617, ✔选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.700, Final_Score=0.353, Sigmoid概率=0.619, ✘未选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.300, Final_Score=0.197, Sigmoid概率=0.504, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4036784096263919: 情绪 0.010, 立场 0.200, 置信度 0.602
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037013675446399: 情绪 -0.071, 立场 0.200, 置信度 0.621
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037114661914029: 情绪 -0.134, 立场 0.200, 置信度 0.629
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037125542459730: 情绪 -0.201, 立场 0.200, 置信度 0.615
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037126159400564: 情绪 -0.260, 立场 0.200, 置信度 0.619
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037153069176321: 情绪 -0.304, 立场 0.200, 置信度 0.609
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037324478023375: 情绪 -0.354, 立场 0.200, 置信度 0.590
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037333135457250: 情绪 -0.376, 立场 0.200, 置信度 0.605
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037345017634878: 情绪 -0.369, 立场 0.200, 置信度 0.592
+[Feed] Agent agent_001 候选池大小: 27 (k=3, x0=auto)
+    帖子1: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.453, ✔选中
+    帖子2: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.456, Final_Score=0.284, Sigmoid概率=0.495, ✔选中
+    帖子3: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.356, Final_Score=0.178, Sigmoid概率=0.416, ✔选中
+    帖子4: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.453, ✔选中
+    帖子5: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.856, Final_Score=0.428, Sigmoid概率=0.601, ✔选中
+    帖子6: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.456, Final_Score=0.266, Sigmoid概率=0.481, ✔选中
+    帖子7: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.756, Final_Score=0.378, Sigmoid概率=0.565, ✘未选中
+    帖子8: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.556, Final_Score=0.284, Sigmoid概率=0.495, ✘未选中
+    帖子9: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.453, ✔选中
+    帖子10: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.453, ✔选中
+    帖子11: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.356, Final_Score=0.319, Sigmoid概率=0.521, ✔选中
+    帖子12: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.456, Final_Score=0.234, Sigmoid概率=0.458, ✔选中
+    帖子13: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.356, Final_Score=0.178, Sigmoid概率=0.416, ✘未选中
+    帖子14: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.456, Final_Score=0.328, Sigmoid概率=0.528, ✘未选中
+    帖子15: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.656, Final_Score=0.422, Sigmoid概率=0.597, ✘未选中
+    帖子16: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.556, Final_Score=0.287, Sigmoid概率=0.497, ✘未选中
+    帖子17: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.453, ✘未选中
+    帖子18: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.756, Final_Score=0.384, Sigmoid概率=0.570, ✔选中
+    帖子19: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.244, Final_Score=0.125, Sigmoid概率=0.378, ✘未选中
+    帖子20: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.456, Final_Score=0.728, Sigmoid概率=0.788, ✔选中
+    帖子21: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.453, ✔选中
+    帖子22: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.244, Final_Score=0.122, Sigmoid概率=0.376, ✘未选中
+    帖子23: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.556, Final_Score=0.278, Sigmoid概率=0.490, ✔选中
+    帖子24: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.456, Final_Score=0.231, Sigmoid概率=0.455, ✘未选中
+    帖子25: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.956, Final_Score=0.478, Sigmoid概率=0.637, ✘未选中
+    帖子26: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.444, Final_Score=0.225, Sigmoid概率=0.451, ✘未选中
+    帖子27: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.556, Final_Score=0.325, Sigmoid概率=0.526, ✔选中
+[Feed] Agent agent_002 候选池大小: 28 (k=3, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.344, Final_Score=0.191, Sigmoid概率=0.392, ✔选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.544, Final_Score=0.552, Sigmoid概率=0.656, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.452, ✘未选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.544, Final_Score=0.329, Sigmoid概率=0.494, ✔选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.444, Final_Score=0.222, Sigmoid概率=0.415, ✘未选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.452, ✔选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.544, Final_Score=0.357, Sigmoid概率=0.515, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.944, Final_Score=0.472, Sigmoid概率=0.600, ✔选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.544, Final_Score=0.310, Sigmoid概率=0.480, ✘未选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.844, Final_Score=0.422, Sigmoid概率=0.564, ✘未选中
+    帖子11: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.452, ✔选中
+    帖子12: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.452, ✔选中
+    帖子13: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.444, Final_Score=0.363, Sigmoid概率=0.520, ✔选中
+    帖子14: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.544, Final_Score=0.278, Sigmoid概率=0.456, ✘未选中
+    帖子15: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.444, Final_Score=0.222, Sigmoid概率=0.415, ✔选中
+    帖子16: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.544, Final_Score=0.373, Sigmoid概率=0.527, ✔选中
+    帖子17: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.744, Final_Score=0.466, Sigmoid概率=0.596, ✔选中
+    帖子18: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.644, Final_Score=0.331, Sigmoid概率=0.496, ✘未选中
+    帖子19: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.452, ✘未选中
+    帖子20: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.844, Final_Score=0.428, Sigmoid概率=0.568, ✔选中
+    帖子21: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.544, Final_Score=0.772, Sigmoid概率=0.787, ✔选中
+    帖子22: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.452, ✔选中
+    帖子23: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.156, Final_Score=0.078, Sigmoid概率=0.315, ✘未选中
+    帖子24: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.644, Final_Score=0.322, Sigmoid概率=0.489, ✔选中
+    帖子25: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.544, Final_Score=0.275, Sigmoid概率=0.454, ✔选中
+    帖子26: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.956, Final_Score=0.478, Sigmoid概率=0.605, ✘未选中
+    帖子27: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.356, Final_Score=0.181, Sigmoid概率=0.386, ✔选中
+    帖子28: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.644, Final_Score=0.369, Sigmoid概率=0.524, ✔选中
+[Feed] Agent agent_003 候选池大小: 9 (k=3, x0=auto)
+    帖子1: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.508, ✔选中
+    帖子2: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.397, ✔选中
+    帖子3: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.397, ✘未选中
+    帖子4: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.397, ✔选中
+    帖子5: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.400, Sigmoid概率=0.686, ✔选中
+    帖子6: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.397, ✔选中
+    帖子7: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.399, ✔选中
+    帖子8: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.545, ✘未选中
+    帖子9: id=4037350071630678, Score_Pop=0.006, Score_Rel=1.000, Final_Score=0.503, Sigmoid概率=0.749, ✔选中
+[Feed] Agent agent_004 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.000, Final_Score=0.019, Sigmoid概率=0.373, ✘未选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.200, Final_Score=0.380, Sigmoid概率=0.638, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✔选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.200, Final_Score=0.157, Sigmoid概率=0.474, ✘未选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.395, ✔选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✘未选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.200, Final_Score=0.185, Sigmoid概率=0.495, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.600, Final_Score=0.300, Sigmoid概率=0.581, ✔选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.200, Final_Score=0.138, Sigmoid概率=0.460, ✘未选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.544, ✘未选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.300, Final_Score=0.156, Sigmoid概率=0.474, ✘未选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✘未选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✘未选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.100, Final_Score=0.192, Sigmoid概率=0.500, ✘未选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.106, Sigmoid概率=0.436, ✔选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.395, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.200, Final_Score=0.201, Sigmoid概率=0.507, ✘未选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.400, Final_Score=0.294, Sigmoid概率=0.576, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.300, Final_Score=0.159, Sigmoid概率=0.476, ✔选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✔选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.256, Sigmoid概率=0.548, ✘未选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.253, Sigmoid概率=0.546, ✔选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.600, Sigmoid概率=0.773, ✔选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.432, ✘未选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.544, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.469, ✘未选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.200, Final_Score=0.103, Sigmoid概率=0.434, ✘未选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.700, Final_Score=0.350, Sigmoid概率=0.617, ✔选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.700, Final_Score=0.353, Sigmoid概率=0.619, ✔选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.300, Final_Score=0.197, Sigmoid概率=0.504, ✔选中
+
+时间片 1 结束，Agent状态:
+  agent_001: 情绪=-0.222(波动0.222), 立场=-0.056(波动0.056), 置信度=0.500, 总波动=0.278, 本时间片阅读15条帖子
+    -> 决定发帖！
+  agent_002: 情绪=-0.530(波动0.330), 立场=-0.144(波动0.044), 置信度=0.250, 总波动=0.374, 本时间片阅读18条帖子
+    -> 不发帖
+  agent_003: 情绪=-0.393(波动0.693), 立场=0.500(波动0.000), 置信度=0.672, 总波动=0.693, 本时间片阅读7条帖子
+    -> 不发帖
+  agent_004: 情绪=-0.369(波动0.469), 立场=0.200(波动0.000), 置信度=0.592, 总波动=0.469, 本时间片阅读12条帖子
+    -> 决定发帖！
+
+[分析] 本时间片每个帖子被选中的情况：
+  帖子4037007263095724: 被 2 个Agent选中 -> agent_001(Final=0.228,P=0.45), agent_004(Final=0.100,P=0.43)
+  帖子4037013675446399: 被 2 个Agent选中 -> agent_001(Final=0.284,P=0.50), agent_002(Final=0.329,P=0.49)
+  帖子4037016473197395: 被 2 个Agent选中 -> agent_001(Final=0.178,P=0.42), agent_004(Final=0.050,P=0.40)
+  帖子4037037071873683: 被 2 个Agent选中 -> agent_001(Final=0.228,P=0.45), agent_002(Final=0.272,P=0.45)
+  帖子4037090738392104: 被 4 个Agent选中 -> agent_001(Final=0.428,P=0.60), agent_002(Final=0.472,P=0.60), agent_003(Final=0.150,P=0.51), agent_004(Final=0.300,P=0.58)
+  帖子4037114661914029: 被 1 个Agent选中 -> agent_001(Final=0.266,P=0.48)
+  帖子4037125542459730: 被 3 个Agent选中 -> agent_001(Final=0.228,P=0.45), agent_002(Final=0.272,P=0.45), agent_003(Final=0.000,P=0.40)
+  帖子4037126159400564: 被 2 个Agent选中 -> agent_001(Final=0.228,P=0.45), agent_002(Final=0.272,P=0.45)
+  帖子4037128382063235: 被 2 个Agent选中 -> agent_001(Final=0.319,P=0.52), agent_002(Final=0.363,P=0.52)
+  帖子4037130835022729: 被 2 个Agent选中 -> agent_001(Final=0.234,P=0.46), agent_004(Final=0.106,P=0.44)
+  帖子4037141966651655: 被 1 个Agent选中 -> agent_002(Final=0.222,P=0.41)
+  帖子4037148266670011: 被 1 个Agent选中 -> agent_002(Final=0.373,P=0.53)
+  帖子4037149974179421: 被 1 个Agent选中 -> agent_002(Final=0.466,P=0.60)
+  帖子4037152008120995: 被 1 个Agent选中 -> agent_004(Final=0.159,P=0.48)
+  帖子4037152763295775: 被 1 个Agent选中 -> agent_004(Final=0.100,P=0.43)
+  帖子4037153069176321: 被 2 个Agent选中 -> agent_001(Final=0.384,P=0.57), agent_002(Final=0.428,P=0.57)
+  帖子4037249505368724: 被 1 个Agent选中 -> agent_004(Final=0.253,P=0.55)
+  帖子4037319461863054: 被 3 个Agent选中 -> agent_001(Final=0.728,P=0.79), agent_002(Final=0.772,P=0.79), agent_004(Final=0.600,P=0.77)
+  帖子4037324478023375: 被 3 个Agent选中 -> agent_001(Final=0.228,P=0.45), agent_002(Final=0.272,P=0.45), agent_003(Final=0.000,P=0.40)
+  帖子4037325761439459: 被 1 个Agent选中 -> agent_003(Final=0.400,P=0.69)
+  帖子4037326046850659: 被 3 个Agent选中 -> agent_001(Final=0.278,P=0.49), agent_002(Final=0.322,P=0.49), agent_003(Final=0.000,P=0.40)
+  帖子4037333135457250: 被 2 个Agent选中 -> agent_002(Final=0.275,P=0.45), agent_003(Final=0.003,P=0.40)
+  帖子4037345017634878: 被 1 个Agent选中 -> agent_004(Final=0.350,P=0.62)
+  帖子4037350071630678: 被 3 个Agent选中 -> agent_002(Final=0.181,P=0.39), agent_003(Final=0.503,P=0.75), agent_004(Final=0.353,P=0.62)
+  帖子4037385668283204: 被 3 个Agent选中 -> agent_001(Final=0.325,P=0.53), agent_002(Final=0.369,P=0.52), agent_004(Final=0.197,P=0.50)
+  帖子4036716081432676: 被 1 个Agent选中 -> agent_002(Final=0.191,P=0.39)
+  帖子4036784096263919: 被 2 个Agent选中 -> agent_002(Final=0.552,P=0.66), agent_004(Final=0.380,P=0.64)
+
+--- 时间片 2 ---
+处理 30 条帖子
+[Feed] Agent agent_001 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.456, Final_Score=0.728, Sigmoid概率=0.812, ✔选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.056, Final_Score=0.029, Sigmoid概率=0.346, ✔选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.490, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.490, ✘未选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.490, ✔选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.356, Final_Score=0.179, Sigmoid概率=0.454, ✘未选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.456, Final_Score=0.234, Sigmoid概率=0.495, ✔选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.456, Final_Score=0.233, Sigmoid概率=0.494, ✘未选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.356, Final_Score=0.180, Sigmoid概率=0.455, ✔选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.456, Final_Score=0.229, Sigmoid概率=0.491, ✔选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.490, ✔选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.756, Final_Score=0.378, Sigmoid概率=0.602, ✘未选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.490, ✘未选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.456, Final_Score=0.229, Sigmoid概率=0.491, ✔选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.356, Final_Score=0.178, Sigmoid概率=0.453, ✘未选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.356, Final_Score=0.179, Sigmoid概率=0.454, ✘未选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.356, Final_Score=0.245, Sigmoid概率=0.504, ✔选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.456, Final_Score=0.327, Sigmoid概率=0.564, ✔选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.556, Final_Score=0.278, Sigmoid概率=0.528, ✘未选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.456, Final_Score=0.230, Sigmoid概率=0.492, ✘未选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.456, Final_Score=0.230, Sigmoid概率=0.492, ✔选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.756, Final_Score=0.379, Sigmoid概率=0.603, ✔选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.256, Final_Score=0.128, Sigmoid概率=0.416, ✔选中
+    帖子24: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.056, Final_Score=0.028, Sigmoid概率=0.346, ✘未选中
+    帖子25: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.456, Final_Score=0.228, Sigmoid概率=0.490, ✔选中
+    帖子26: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.356, Final_Score=0.178, Sigmoid概率=0.453, ✔选中
+    帖子27: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.456, Final_Score=0.239, Sigmoid概率=0.499, ✘未选中
+    帖子28: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.756, Final_Score=0.389, Sigmoid概率=0.610, ✔选中
+    帖子29: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.456, Final_Score=0.237, Sigmoid概率=0.497, ✔选中
+    帖子30: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.356, Final_Score=0.188, Sigmoid概率=0.461, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037468871533108: 情绪 -0.290, 立场 -0.035, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037469333061937: 情绪 -0.341, 立场 -0.044, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037472705083262: 情绪 -0.387, 立场 -0.011, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037479382140704: 情绪 -0.428, 立场 -0.051, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037482716825790: 情绪 -0.447, 立场 -0.018, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037485828777530: 情绪 -0.482, 立场 -0.049, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037486294974129: 情绪 -0.504, 立场 -0.050, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037502316793620: 情绪 -0.533, 立场 -0.026, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037523090702447: 情绪 -0.547, 立场 -0.044, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037526526024650: 情绪 -0.562, 立场 -0.037, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037624610063495: 情绪 -0.586, 立场 -0.002, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037640300362283: 情绪 -0.567, 立场 0.026, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037640942131137: 情绪 -0.571, 立场 0.010, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037655488479647: 情绪 -0.590, 立场 -0.045, 置信度 0.450
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037655836443222: 情绪 -0.600, 立场 -0.060, 置信度 0.450
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037680855660322: 情绪 -0.600, 立场 -0.101, 置信度 0.450
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037683523563257: 情绪 -0.580, 立场 -0.061, 置信度 0.450
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037688232933919: 情绪 -0.591, 立场 -0.039, 置信度 0.450
+[Feed] Agent agent_002 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.544, Final_Score=0.772, Sigmoid概率=0.812, ✔选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.144, Final_Score=0.073, Sigmoid概率=0.346, ✘未选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.490, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.490, ✘未选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.490, ✔选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.444, Final_Score=0.223, Sigmoid概率=0.454, ✘未选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.544, Final_Score=0.278, Sigmoid概率=0.495, ✔选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.544, Final_Score=0.277, Sigmoid概率=0.494, ✔选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.444, Final_Score=0.224, Sigmoid概率=0.455, ✘未选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.544, Final_Score=0.273, Sigmoid概率=0.491, ✔选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.490, ✔选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.844, Final_Score=0.422, Sigmoid概率=0.602, ✔选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.490, ✘未选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.544, Final_Score=0.273, Sigmoid概率=0.491, ✘未选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.444, Final_Score=0.222, Sigmoid概率=0.453, ✘未选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.444, Final_Score=0.223, Sigmoid概率=0.454, ✘未选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.444, Final_Score=0.289, Sigmoid概率=0.504, ✘未选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.544, Final_Score=0.371, Sigmoid概率=0.564, ✘未选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.644, Final_Score=0.322, Sigmoid概率=0.528, ✔选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.544, Final_Score=0.274, Sigmoid概率=0.492, ✘未选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.544, Final_Score=0.274, Sigmoid概率=0.492, ✔选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.844, Final_Score=0.423, Sigmoid概率=0.603, ✘未选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.344, Final_Score=0.172, Sigmoid概率=0.416, ✔选中
+    帖子24: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.144, Final_Score=0.072, Sigmoid概率=0.346, ✔选中
+    帖子25: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.544, Final_Score=0.272, Sigmoid概率=0.490, ✘未选中
+    帖子26: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.444, Final_Score=0.222, Sigmoid概率=0.453, ✘未选中
+    帖子27: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.544, Final_Score=0.283, Sigmoid概率=0.499, ✔选中
+    帖子28: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.844, Final_Score=0.433, Sigmoid概率=0.610, ✔选中
+    帖子29: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.544, Final_Score=0.281, Sigmoid概率=0.497, ✘未选中
+    帖子30: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.444, Final_Score=0.232, Sigmoid概率=0.461, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037468871533108: 情绪 -0.567, 立场 -0.123, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037472705083262: 情绪 -0.590, 立场 -0.109, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037479382140704: 情绪 -0.611, 立场 -0.120, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037482380907819: 情绪 -0.630, 立场 -0.142, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037485828777530: 情绪 -0.647, 立场 -0.176, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037486294974129: 情绪 -0.652, 立场 -0.169, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037494938379719: 情绪 -0.650, 立场 -0.212, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037556222287638: 情绪 -0.645, 立场 -0.209, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037624610063495: 情绪 -0.660, 立场 -0.183, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037640942131137: 情绪 -0.654, 立场 -0.219, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037654611276362: 情绪 -0.669, 立场 -0.253, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037668302663458: 情绪 -0.672, 立场 -0.235, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037680855660322: 情绪 -0.665, 立场 -0.228, 置信度 0.250
+[Feed] Agent agent_003 候选池大小: 29 (k=3, x0=auto)
+    帖子1: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.487, ✔选中
+    帖子2: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✔选中
+    帖子3: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✘未选中
+    帖子4: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✔选中
+    帖子5: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.487, ✔选中
+    帖子6: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.000, Final_Score=0.006, Sigmoid概率=0.491, ✔选中
+    帖子7: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.000, Final_Score=0.005, Sigmoid概率=0.490, ✘未选中
+    帖子8: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.488, ✘未选中
+    帖子9: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.487, ✔选中
+    帖子10: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✔选中
+    帖子11: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.561, ✔选中
+    帖子12: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✘未选中
+    帖子13: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.487, ✘未选中
+    帖子14: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✘未选中
+    帖子15: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.487, ✘未选中
+    帖子16: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.000, Final_Score=0.067, Sigmoid概率=0.537, ✘未选中
+    帖子17: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.000, Final_Score=0.099, Sigmoid概率=0.560, ✔选中
+    帖子18: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✘未选中
+    帖子19: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.488, ✘未选中
+    帖子20: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.488, ✘未选中
+    帖子21: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.200, Final_Score=0.101, Sigmoid概率=0.562, ✘未选中
+    帖子22: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✘未选中
+    帖子23: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✘未选中
+    帖子24: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✘未选中
+    帖子25: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.486, ✘未选中
+    帖子26: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.000, Final_Score=0.011, Sigmoid概率=0.495, ✘未选中
+    帖子27: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.200, Final_Score=0.111, Sigmoid概率=0.569, ✔选中
+    帖子28: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.000, Final_Score=0.009, Sigmoid概率=0.493, ✘未选中
+    帖子29: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.000, Final_Score=0.010, Sigmoid概率=0.494, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037469333061937: 情绪 -0.434, 立场 0.500, 置信度 0.675
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037469706040849: 情绪 -0.452, 立场 0.500, 置信度 0.679
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037472705083262: 情绪 -0.487, 立场 0.500, 置信度 0.662
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037476202349175: 情绪 -0.518, 立场 0.500, 置信度 0.663
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037479382140704: 情绪 -0.547, 立场 0.500, 置信度 0.647
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037485828777530: 情绪 -0.572, 立场 0.500, 置信度 0.651
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037486294974129: 情绪 -0.585, 立场 0.500, 置信度 0.643
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037494938379719: 情绪 -0.586, 立场 0.500, 置信度 0.629
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037526526024650: 情绪 -0.597, 立场 0.500, 置信度 0.618
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037680855660322: 情绪 -0.597, 立场 0.500, 置信度 0.628
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037688232933919: 情绪 -0.607, 立场 0.500, 置信度 0.619
+[Feed] Agent agent_004 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.600, Sigmoid概率=0.809, ✔选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.412, ✔选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.449, ✔选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.200, Final_Score=0.106, Sigmoid概率=0.490, ✘未选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.200, Final_Score=0.105, Sigmoid概率=0.489, ✔选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.100, Final_Score=0.052, Sigmoid概率=0.450, ✔选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.200, Final_Score=0.101, Sigmoid概率=0.486, ✔选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.597, ✘未选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.200, Final_Score=0.101, Sigmoid概率=0.486, ✘未选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.448, ✘未选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.449, ✘未选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.100, Final_Score=0.117, Sigmoid概率=0.499, ✘未选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.200, Final_Score=0.199, Sigmoid概率=0.559, ✔选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.523, ✔选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.200, Final_Score=0.102, Sigmoid概率=0.487, ✔选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.200, Final_Score=0.102, Sigmoid概率=0.487, ✘未选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.500, Final_Score=0.251, Sigmoid概率=0.598, ✔选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.411, ✘未选中
+    帖子24: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.411, ✔选中
+    帖子25: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子26: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.448, ✔选中
+    帖子27: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.200, Final_Score=0.111, Sigmoid概率=0.494, ✔选中
+    帖子28: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.500, Final_Score=0.261, Sigmoid概率=0.605, ✘未选中
+    帖子29: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.200, Final_Score=0.109, Sigmoid概率=0.492, ✘未选中
+    帖子30: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.100, Final_Score=0.060, Sigmoid概率=0.456, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037468871533108: 情绪 -0.422, 立场 0.200, 置信度 0.573
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037469333061937: 情绪 -0.460, 立场 0.200, 置信度 0.561
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037476202349175: 情绪 -0.494, 立场 0.200, 置信度 0.565
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037482380907819: 情绪 -0.524, 立场 0.200, 置信度 0.555
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037482716825790: 情绪 -0.538, 立场 0.200, 置信度 0.552
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037485828777530: 情绪 -0.564, 立场 0.200, 置信度 0.571
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037526526024650: 情绪 -0.578, 立场 0.200, 置信度 0.562
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037556222287638: 情绪 -0.580, 立场 0.200, 置信度 0.547
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037612207228769: 情绪 -0.598, 立场 0.200, 置信度 0.497
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037640300362283: 情绪 -0.578, 立场 0.200, 置信度 0.505
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037654611276362: 情绪 -0.600, 立场 0.200, 置信度 0.506
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037655836443222: 情绪 -0.610, 立场 0.200, 置信度 0.510
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037668302663458: 情绪 -0.619, 立场 0.200, 置信度 0.491
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037688232933919: 情绪 -0.628, 立场 0.200, 置信度 0.503
+[Feed] Agent agent_001 候选池大小: 27 (k=3, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.439, Final_Score=0.719, Sigmoid概率=0.809, ✔选中
+    帖子2: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.485, ✘未选中
+    帖子3: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.485, ✘未选中
+    帖子4: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.485, ✘未选中
+    帖子5: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.339, Final_Score=0.171, Sigmoid概率=0.449, ✔选中
+    帖子6: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.439, Final_Score=0.225, Sigmoid概率=0.490, ✘未选中
+    帖子7: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.439, Final_Score=0.225, Sigmoid概率=0.489, ✔选中
+    帖子8: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.339, Final_Score=0.172, Sigmoid概率=0.450, ✔选中
+    帖子9: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.439, Final_Score=0.220, Sigmoid概率=0.486, ✘未选中
+    帖子10: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.485, ✘未选中
+    帖子11: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.739, Final_Score=0.369, Sigmoid概率=0.597, ✔选中
+    帖子12: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.485, ✔选中
+    帖子13: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.439, Final_Score=0.220, Sigmoid概率=0.486, ✔选中
+    帖子14: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.339, Final_Score=0.169, Sigmoid概率=0.448, ✔选中
+    帖子15: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.339, Final_Score=0.170, Sigmoid概率=0.449, ✘未选中
+    帖子16: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.339, Final_Score=0.237, Sigmoid概率=0.498, ✔选中
+    帖子17: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.439, Final_Score=0.318, Sigmoid概率=0.559, ✔选中
+    帖子18: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.539, Final_Score=0.269, Sigmoid概率=0.523, ✘未选中
+    帖子19: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.439, Final_Score=0.222, Sigmoid概率=0.487, ✔选中
+    帖子20: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.439, Final_Score=0.222, Sigmoid概率=0.487, ✘未选中
+    帖子21: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.039, Final_Score=0.019, Sigmoid概率=0.341, ✘未选中
+    帖子22: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.485, ✔选中
+    帖子23: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.339, Final_Score=0.169, Sigmoid概率=0.448, ✘未选中
+    帖子24: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.439, Final_Score=0.231, Sigmoid概率=0.494, ✔选中
+    帖子25: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.739, Final_Score=0.381, Sigmoid概率=0.605, ✔选中
+    帖子26: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.439, Final_Score=0.228, Sigmoid概率=0.492, ✘未选中
+    帖子27: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.339, Final_Score=0.180, Sigmoid概率=0.456, ✘未选中
+[Feed] Agent agent_002 候选池大小: 29 (k=3, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.628, Final_Score=0.814, Sigmoid概率=0.808, ✘未选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.228, Final_Score=0.115, Sigmoid概率=0.341, ✔选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.485, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.485, ✔选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.485, ✔选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.528, Final_Score=0.265, Sigmoid概率=0.449, ✘未选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.628, Final_Score=0.320, Sigmoid概率=0.489, ✘未选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.628, Final_Score=0.319, Sigmoid概率=0.489, ✔选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.528, Final_Score=0.266, Sigmoid概率=0.449, ✔选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.628, Final_Score=0.315, Sigmoid概率=0.486, ✔选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.485, ✔选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.928, Final_Score=0.464, Sigmoid概率=0.596, ✔选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.485, ✔选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.628, Final_Score=0.315, Sigmoid概率=0.486, ✘未选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.528, Final_Score=0.264, Sigmoid概率=0.448, ✘未选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.528, Final_Score=0.265, Sigmoid概率=0.448, ✔选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.528, Final_Score=0.331, Sigmoid概率=0.498, ✔选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.628, Final_Score=0.413, Sigmoid概率=0.559, ✔选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.728, Final_Score=0.364, Sigmoid概率=0.522, ✘未选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.628, Final_Score=0.316, Sigmoid概率=0.487, ✔选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.628, Final_Score=0.316, Sigmoid概率=0.487, ✔选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.928, Final_Score=0.465, Sigmoid概率=0.597, ✔选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.428, Final_Score=0.214, Sigmoid概率=0.411, ✘未选中
+    帖子24: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.485, ✔选中
+    帖子25: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.528, Final_Score=0.264, Sigmoid概率=0.448, ✘未选中
+    帖子26: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.628, Final_Score=0.325, Sigmoid概率=0.493, ✘未选中
+    帖子27: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.928, Final_Score=0.475, Sigmoid概率=0.604, ✘未选中
+    帖子28: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.628, Final_Score=0.323, Sigmoid概率=0.492, ✘未选中
+    帖子29: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.528, Final_Score=0.274, Sigmoid概率=0.455, ✔选中
+[Feed] Agent agent_003 候选池大小: 16 (k=3, x0=auto)
+    帖子1: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✘未选中
+    帖子2: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.000, Final_Score=0.005, Sigmoid概率=0.495, ✔选中
+    帖子3: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.493, ✘未选中
+    帖子4: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✘未选中
+    帖子5: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.492, ✘未选中
+    帖子6: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✘未选中
+    帖子7: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.492, ✘未选中
+    帖子8: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.000, Final_Score=0.067, Sigmoid概率=0.542, ✔选中
+    帖子9: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子10: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.493, ✔选中
+    帖子11: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.493, ✘未选中
+    帖子12: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.200, Final_Score=0.101, Sigmoid概率=0.567, ✔选中
+    帖子13: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子14: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子15: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✘未选中
+    帖子16: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+[Feed] Agent agent_004 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.600, Sigmoid概率=0.809, ✔选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.412, ✘未选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✔选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.449, ✔选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.200, Final_Score=0.106, Sigmoid概率=0.490, ✔选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.200, Final_Score=0.105, Sigmoid概率=0.489, ✔选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.100, Final_Score=0.052, Sigmoid概率=0.450, ✔选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.200, Final_Score=0.101, Sigmoid概率=0.486, ✔选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.250, Sigmoid概率=0.597, ✔选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✔选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.200, Final_Score=0.101, Sigmoid概率=0.486, ✔选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.448, ✔选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.449, ✘未选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.100, Final_Score=0.117, Sigmoid概率=0.499, ✘未选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.200, Final_Score=0.199, Sigmoid概率=0.559, ✘未选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.523, ✘未选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.200, Final_Score=0.102, Sigmoid概率=0.487, ✔选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.200, Final_Score=0.102, Sigmoid概率=0.487, ✘未选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.500, Final_Score=0.251, Sigmoid概率=0.598, ✔选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.411, ✘未选中
+    帖子24: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.411, ✘未选中
+    帖子25: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.485, ✘未选中
+    帖子26: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.448, ✘未选中
+    帖子27: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.200, Final_Score=0.111, Sigmoid概率=0.494, ✘未选中
+    帖子28: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.500, Final_Score=0.261, Sigmoid概率=0.605, ✘未选中
+    帖子29: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.200, Final_Score=0.109, Sigmoid概率=0.492, ✘未选中
+    帖子30: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.100, Final_Score=0.060, Sigmoid概率=0.456, ✘未选中
+
+时间片 2 结束，Agent状态:
+  agent_001: 情绪=-0.591(波动0.369), 立场=-0.039(波动0.017), 置信度=0.450, 总波动=0.386, 本时间片阅读14条帖子
+    -> 决定发帖！
+  agent_002: 情绪=-0.665(波动0.135), 立场=-0.228(波动0.084), 置信度=0.250, 总波动=0.219, 本时间片阅读17条帖子
+    -> 不发帖
+  agent_003: 情绪=-0.607(波动0.214), 立场=0.500(波动0.000), 置信度=0.619, 总波动=0.214, 本时间片阅读8条帖子
+    -> 不发帖
+  agent_004: 情绪=-0.628(波动0.260), 立场=0.200(波动0.000), 置信度=0.503, 总波动=0.260, 本时间片阅读13条帖子
+    -> 决定发帖！
+
+[分析] 本时间片每个帖子被选中的情况：
+  帖子4037468871533108: 被 2 个Agent选中 -> agent_001(Final=0.719,P=0.81), agent_004(Final=0.600,P=0.81)
+  帖子4037470360135362: 被 1 个Agent选中 -> agent_002(Final=0.314,P=0.48)
+  帖子4037472705083262: 被 2 个Agent选中 -> agent_002(Final=0.314,P=0.48), agent_004(Final=0.100,P=0.49)
+  帖子4037476202349175: 被 2 个Agent选中 -> agent_001(Final=0.171,P=0.45), agent_004(Final=0.051,P=0.45)
+  帖子4037479382140704: 被 1 个Agent选中 -> agent_004(Final=0.106,P=0.49)
+  帖子4037482380907819: 被 4 个Agent选中 -> agent_001(Final=0.225,P=0.49), agent_002(Final=0.319,P=0.49), agent_003(Final=0.005,P=0.50), agent_004(Final=0.105,P=0.49)
+  帖子4037482716825790: 被 3 个Agent选中 -> agent_001(Final=0.172,P=0.45), agent_002(Final=0.266,P=0.45), agent_004(Final=0.052,P=0.45)
+  帖子4037485828777530: 被 2 个Agent选中 -> agent_002(Final=0.315,P=0.49), agent_004(Final=0.101,P=0.49)
+  帖子4037486294974129: 被 1 个Agent选中 -> agent_002(Final=0.314,P=0.48)
+  帖子4037494938379719: 被 3 个Agent选中 -> agent_001(Final=0.369,P=0.60), agent_002(Final=0.464,P=0.60), agent_004(Final=0.250,P=0.60)
+  帖子4037496436400858: 被 3 个Agent选中 -> agent_001(Final=0.219,P=0.49), agent_002(Final=0.314,P=0.48), agent_004(Final=0.100,P=0.49)
+  帖子4037502316793620: 被 2 个Agent选中 -> agent_001(Final=0.220,P=0.49), agent_004(Final=0.101,P=0.49)
+  帖子4037509556644795: 被 2 个Agent选中 -> agent_001(Final=0.169,P=0.45), agent_004(Final=0.050,P=0.45)
+  帖子4037519731098663: 被 1 个Agent选中 -> agent_002(Final=0.265,P=0.45)
+  帖子4037523090702447: 被 3 个Agent选中 -> agent_001(Final=0.237,P=0.50), agent_002(Final=0.331,P=0.50), agent_003(Final=0.067,P=0.54)
+  帖子4037526526024650: 被 2 个Agent选中 -> agent_001(Final=0.318,P=0.56), agent_002(Final=0.413,P=0.56)
+  帖子4037556222287638: 被 1 个Agent选中 -> agent_003(Final=0.000,P=0.49)
+  帖子4037612207228769: 被 4 个Agent选中 -> agent_001(Final=0.222,P=0.49), agent_002(Final=0.316,P=0.49), agent_003(Final=0.002,P=0.49), agent_004(Final=0.102,P=0.49)
+  帖子4037624610063495: 被 1 个Agent选中 -> agent_002(Final=0.316,P=0.49)
+  帖子4037654611276362: 被 1 个Agent选中 -> agent_003(Final=0.000,P=0.49)
+  帖子4037655488479647: 被 2 个Agent选中 -> agent_001(Final=0.219,P=0.49), agent_002(Final=0.314,P=0.48)
+  帖子4037655836443222: 被 1 个Agent选中 -> agent_003(Final=0.000,P=0.49)
+  帖子4037668302663458: 被 1 个Agent选中 -> agent_001(Final=0.231,P=0.49)
+  帖子4037680855660322: 被 1 个Agent选中 -> agent_001(Final=0.381,P=0.60)
+  帖子4037688232933919: 被 1 个Agent选中 -> agent_002(Final=0.274,P=0.46)
+  帖子4037469333061937: 被 1 个Agent选中 -> agent_002(Final=0.115,P=0.34)
+  帖子4037640300362283: 被 3 个Agent选中 -> agent_002(Final=0.465,P=0.60), agent_003(Final=0.101,P=0.57), agent_004(Final=0.251,P=0.60)
+  帖子4037640942131137: 被 1 个Agent选中 -> agent_003(Final=0.000,P=0.49)
+
+--- 时间片 3 ---
+处理 30 条帖子
+[Feed] Agent agent_001 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.439, Final_Score=0.321, Sigmoid概率=0.503, ✔选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.539, Final_Score=0.402, Sigmoid概率=0.563, ✔选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.739, Final_Score=0.451, Sigmoid概率=0.599, ✔选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.739, Final_Score=0.471, Sigmoid概率=0.613, ✔选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.339, Final_Score=0.220, Sigmoid概率=0.427, ✔选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.361, Final_Score=0.232, Sigmoid概率=0.436, ✘未选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.339, Final_Score=0.180, Sigmoid概率=0.398, ✘未选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✘未选中
+    帖子9: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✘未选中
+    帖子10: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.539, Final_Score=0.310, Sigmoid概率=0.494, ✘未选中
+    帖子11: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.361, Final_Score=0.211, Sigmoid概率=0.421, ✘未选中
+    帖子12: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.439, Final_Score=0.240, Sigmoid概率=0.442, ✘未选中
+    帖子13: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.339, Final_Score=0.180, Sigmoid概率=0.398, ✘未选中
+    帖子14: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✔选中
+    帖子15: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.439, Final_Score=0.475, Sigmoid概率=0.615, ✘未选中
+    帖子16: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.739, Final_Score=0.869, Sigmoid概率=0.840, ✔选中
+    帖子17: id=4038072587474324, Score_Pop=0.980, Score_Rel=0.439, Final_Score=0.709, Sigmoid概率=0.764, ✔选中
+    帖子18: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.439, Final_Score=0.638, Sigmoid概率=0.723, ✔选中
+    帖子19: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✔选中
+    帖子20: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.339, Final_Score=0.169, Sigmoid概率=0.390, ✔选中
+    帖子21: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✘未选中
+    帖子22: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.739, Final_Score=0.410, Sigmoid概率=0.569, ✔选中
+    帖子23: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.339, Final_Score=0.169, Sigmoid概率=0.390, ✔选中
+    帖子24: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✔选中
+    帖子25: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.439, Final_Score=0.240, Sigmoid概率=0.442, ✘未选中
+    帖子26: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✘未选中
+    帖子27: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✔选中
+    帖子28: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.539, Final_Score=0.494, Sigmoid概率=0.629, ✔选中
+    帖子29: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.439, Final_Score=0.219, Sigmoid概率=0.427, ✘未选中
+    帖子30: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.339, Final_Score=0.169, Sigmoid概率=0.390, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037688631643626: 情绪 -0.602, 立场 -0.060, 置信度 0.450
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037689735195221: 情绪 -0.602, 立场 -0.099, 置信度 0.400
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037692885079893: 情绪 -0.592, 立场 -0.110, 置信度 0.400
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037697091525950: 情绪 -0.593, 立场 -0.156, 置信度 0.400
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037697233932565: 情绪 -0.594, 立场 -0.205, 置信度 0.350
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037802024558229: 情绪 -0.610, 立场 -0.240, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038019029551423: 情绪 -0.599, 立场 -0.191, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038072587474324: 情绪 -0.609, 立场 -0.190, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038074344550661: 情绪 -0.618, 立场 -0.144, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038079713559945: 情绪 -0.645, 立场 -0.185, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038112012950997: 情绪 -0.661, 立场 -0.210, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038119739855303: 情绪 -0.655, 立场 -0.181, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038205554083523: 情绪 -0.669, 立场 -0.137, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038205684136962: 情绪 -0.672, 立场 -0.145, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038333027906488: 情绪 -0.685, 立场 -0.194, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038365571315477: 情绪 -0.687, 立场 -0.221, 置信度 0.200
+[Feed] Agent agent_002 候选池大小: 29 (k=3, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.628, Final_Score=0.416, Sigmoid概率=0.523, ✔选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.728, Final_Score=0.496, Sigmoid概率=0.582, ✘未选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.928, Final_Score=0.545, Sigmoid概率=0.618, ✘未选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.928, Final_Score=0.566, Sigmoid概率=0.632, ✔选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.528, Final_Score=0.315, Sigmoid概率=0.447, ✘未选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.172, Final_Score=0.137, Sigmoid概率=0.322, ✔选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.528, Final_Score=0.274, Sigmoid概率=0.417, ✘未选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✔选中
+    帖子9: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✘未选中
+    帖子10: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.728, Final_Score=0.405, Sigmoid概率=0.514, ✔选中
+    帖子11: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.172, Final_Score=0.117, Sigmoid概率=0.309, ✘未选中
+    帖子12: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.628, Final_Score=0.334, Sigmoid概率=0.461, ✘未选中
+    帖子13: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.528, Final_Score=0.274, Sigmoid概率=0.417, ✔选中
+    帖子14: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✔选中
+    帖子15: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.628, Final_Score=0.569, Sigmoid概率=0.634, ✘未选中
+    帖子16: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.928, Final_Score=0.964, Sigmoid概率=0.850, ✘未选中
+    帖子17: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.628, Final_Score=0.732, Sigmoid概率=0.739, ✔选中
+    帖子18: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✘未选中
+    帖子19: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.528, Final_Score=0.264, Sigmoid概率=0.410, ✘未选中
+    帖子20: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✘未选中
+    帖子21: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.928, Final_Score=0.505, Sigmoid概率=0.588, ✔选中
+    帖子22: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.528, Final_Score=0.264, Sigmoid概率=0.410, ✔选中
+    帖子23: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✔选中
+    帖子24: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.628, Final_Score=0.334, Sigmoid概率=0.461, ✔选中
+    帖子25: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✘未选中
+    帖子26: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✘未选中
+    帖子27: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.728, Final_Score=0.588, Sigmoid概率=0.647, ✔选中
+    帖子28: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.628, Final_Score=0.314, Sigmoid概率=0.446, ✘未选中
+    帖子29: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.528, Final_Score=0.264, Sigmoid概率=0.410, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037688631643626: 情绪 -0.668, 立场 -0.222, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037697091525950: 情绪 -0.661, 立场 -0.214, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037703068028311: 情绪 -0.637, 立场 -0.140, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037717584607669: 情绪 -0.654, 立场 -0.174, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037781711826073: 情绪 -0.675, 立场 -0.204, 置信度 0.150
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037799092710331: 情绪 -0.688, 立场 -0.178, 置信度 0.150
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037802024558229: 情绪 -0.690, 立场 -0.216, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038074344550661: 情绪 -0.691, 立场 -0.216, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038119739855303: 情绪 -0.682, 立场 -0.226, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038205554083523: 情绪 -0.694, 立场 -0.214, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038205684136962: 情绪 -0.694, 立场 -0.249, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038215646724449: 情绪 -0.705, 立场 -0.217, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038365571315477: 情绪 -0.704, 立场 -0.243, 置信度 0.050
+[Feed] Agent agent_003 候选池大小: 19 (k=3, x0=auto)
+    帖子1: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.000, Final_Score=0.051, Sigmoid概率=0.492, ✘未选中
+    帖子2: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.000, Final_Score=0.010, Sigmoid概率=0.461, ✔选中
+    帖子3: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✘未选中
+    帖子4: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.000, Final_Score=0.041, Sigmoid概率=0.484, ✔选中
+    帖子5: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.000, Final_Score=0.020, Sigmoid概率=0.469, ✔选中
+    帖子6: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.000, Final_Score=0.255, Sigmoid概率=0.641, ✔选中
+    帖子7: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.000, Final_Score=0.418, Sigmoid概率=0.744, ✔选中
+    帖子8: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✘未选中
+    帖子9: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✘未选中
+    帖子10: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✘未选中
+    帖子11: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.200, Final_Score=0.141, Sigmoid概率=0.559, ✘未选中
+    帖子12: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✘未选中
+    帖子13: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✔选中
+    帖子14: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.000, Final_Score=0.020, Sigmoid概率=0.469, ✘未选中
+    帖子15: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✔选中
+    帖子16: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✘未选中
+    帖子17: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.000, Final_Score=0.224, Sigmoid概率=0.619, ✔选中
+    帖子18: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✔选中
+    帖子19: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.453, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037717069087119: 情绪 -0.627, 立场 0.500, 置信度 0.635
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037781711826073: 情绪 -0.653, 立场 0.500, 置信度 0.585
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037794085230624: 情绪 -0.675, 立场 0.500, 置信度 0.535
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038005671022625: 情绪 -0.677, 立场 0.500, 置信度 0.534
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038074344550661: 情绪 -0.680, 立场 0.500, 置信度 0.537
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038205684136962: 情绪 -0.682, 立场 0.500, 置信度 0.522
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038233580773956: 情绪 -0.693, 立场 0.500, 置信度 0.536
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038365571315477: 情绪 -0.694, 立场 0.500, 置信度 0.486
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038415042933435: 情绪 -0.700, 立场 0.500, 置信度 0.491
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038437952870280: 情绪 -0.710, 立场 0.500, 置信度 0.494
+[Feed] Agent agent_004 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.200, Final_Score=0.202, Sigmoid概率=0.491, ✘未选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.300, Final_Score=0.283, Sigmoid概率=0.551, ✔选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.500, Final_Score=0.332, Sigmoid概率=0.587, ✔选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.500, Final_Score=0.352, Sigmoid概率=0.602, ✔选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.100, Final_Score=0.101, Sigmoid概率=0.416, ✘未选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.600, Final_Score=0.351, Sigmoid概率=0.601, ✔选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.100, Final_Score=0.060, Sigmoid概率=0.386, ✘未选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子9: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✔选中
+    帖子10: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.300, Final_Score=0.191, Sigmoid概率=0.482, ✘未选中
+    帖子11: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.600, Final_Score=0.331, Sigmoid概率=0.586, ✔选中
+    帖子12: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.200, Final_Score=0.120, Sigmoid概率=0.430, ✔选中
+    帖子13: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.100, Final_Score=0.060, Sigmoid概率=0.386, ✘未选中
+    帖子14: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子15: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.200, Final_Score=0.355, Sigmoid概率=0.604, ✔选中
+    帖子16: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.500, Final_Score=0.750, Sigmoid概率=0.833, ✘未选中
+    帖子17: id=4038072587474324, Score_Pop=0.980, Score_Rel=0.200, Final_Score=0.590, Sigmoid概率=0.755, ✔选中
+    帖子18: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.200, Final_Score=0.518, Sigmoid概率=0.713, ✘未选中
+    帖子19: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✔选中
+    帖子20: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.379, ✔选中
+    帖子21: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子22: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.500, Final_Score=0.291, Sigmoid概率=0.557, ✘未选中
+    帖子23: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.379, ✘未选中
+    帖子24: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子25: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.200, Final_Score=0.120, Sigmoid概率=0.430, ✘未选中
+    帖子26: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子27: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✔选中
+    帖子28: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.300, Final_Score=0.374, Sigmoid概率=0.618, ✘未选中
+    帖子29: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✔选中
+    帖子30: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.379, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037689735195221: 情绪 -0.624, 立场 0.200, 置信度 0.453
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037692885079893: 情绪 -0.612, 立场 0.200, 置信度 0.471
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037697091525950: 情绪 -0.611, 立场 0.200, 置信度 0.472
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037703068028311: 情绪 -0.594, 立场 0.200, 置信度 0.522
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037725864724805: 情绪 -0.604, 立场 0.200, 置信度 0.516
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037782940768173: 情绪 -0.594, 立场 0.200, 置信度 0.515
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037794085230624: 情绪 -0.625, 立场 0.200, 置信度 0.465
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038005671022625: 情绪 -0.632, 立场 0.200, 置信度 0.447
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038072587474324: 情绪 -0.639, 立场 0.200, 置信度 0.449
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038079713559945: 情绪 -0.663, 立场 0.200, 置信度 0.399
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038112012950997: 情绪 -0.677, 立场 0.200, 置信度 0.386
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038333027906488: 情绪 -0.689, 立场 0.200, 置信度 0.393
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038415042933435: 情绪 -0.695, 立场 0.200, 置信度 0.396
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038437952870280: 情绪 -0.706, 立场 0.200, 置信度 0.391
+[Feed] Agent agent_001 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.621, Final_Score=0.413, Sigmoid概率=0.512, ✘未选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.721, Final_Score=0.493, Sigmoid概率=0.572, ✘未选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.921, Final_Score=0.542, Sigmoid概率=0.607, ✔选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.921, Final_Score=0.563, Sigmoid概率=0.622, ✔选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.521, Final_Score=0.312, Sigmoid概率=0.436, ✘未选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.179, Final_Score=0.140, Sigmoid概率=0.316, ✘未选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.521, Final_Score=0.271, Sigmoid概率=0.407, ✔选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✘未选中
+    帖子9: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✘未选中
+    帖子10: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.721, Final_Score=0.402, Sigmoid概率=0.503, ✔选中
+    帖子11: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.179, Final_Score=0.120, Sigmoid概率=0.303, ✘未选中
+    帖子12: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.621, Final_Score=0.331, Sigmoid概率=0.451, ✔选中
+    帖子13: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.521, Final_Score=0.271, Sigmoid概率=0.407, ✔选中
+    帖子14: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✘未选中
+    帖子15: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.621, Final_Score=0.566, Sigmoid概率=0.624, ✘未选中
+    帖子16: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.921, Final_Score=0.961, Sigmoid概率=0.844, ✔选中
+    帖子17: id=4038072587474324, Score_Pop=0.980, Score_Rel=0.621, Final_Score=0.801, Sigmoid概率=0.770, ✔选中
+    帖子18: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.621, Final_Score=0.729, Sigmoid概率=0.730, ✔选中
+    帖子19: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✘未选中
+    帖子20: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.521, Final_Score=0.261, Sigmoid概率=0.399, ✔选中
+    帖子21: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✘未选中
+    帖子22: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.921, Final_Score=0.502, Sigmoid概率=0.578, ✔选中
+    帖子23: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.521, Final_Score=0.261, Sigmoid概率=0.399, ✘未选中
+    帖子24: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✘未选中
+    帖子25: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.621, Final_Score=0.331, Sigmoid概率=0.451, ✘未选中
+    帖子26: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✘未选中
+    帖子27: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✔选中
+    帖子28: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.721, Final_Score=0.585, Sigmoid概率=0.638, ✘未选中
+    帖子29: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.436, ✔选中
+    帖子30: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.521, Final_Score=0.261, Sigmoid概率=0.399, ✔选中
+[Feed] Agent agent_002 候选池大小: 21 (k=3, x0=auto)
+    帖子1: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.543, Final_Score=0.322, Sigmoid概率=0.439, ✘未选中
+    帖子2: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.543, Final_Score=0.282, Sigmoid概率=0.409, ✘未选中
+    帖子3: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.438, ✘未选中
+    帖子4: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.438, ✘未选中
+    帖子5: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.743, Final_Score=0.412, Sigmoid概率=0.506, ✔选中
+    帖子6: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.643, Final_Score=0.342, Sigmoid概率=0.454, ✘未选中
+    帖子7: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.643, Final_Score=0.576, Sigmoid概率=0.627, ✘未选中
+    帖子8: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.943, Final_Score=0.971, Sigmoid概率=0.846, ✔选中
+    帖子9: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.643, Final_Score=0.740, Sigmoid概率=0.733, ✔选中
+    帖子10: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.438, ✘未选中
+    帖子11: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.543, Final_Score=0.271, Sigmoid概率=0.402, ✘未选中
+    帖子12: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.438, ✘未选中
+    帖子13: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.943, Final_Score=0.512, Sigmoid概率=0.581, ✘未选中
+    帖子14: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.543, Final_Score=0.271, Sigmoid概率=0.402, ✘未选中
+    帖子15: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.438, ✘未选中
+    帖子16: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.643, Final_Score=0.342, Sigmoid概率=0.454, ✘未选中
+    帖子17: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.438, ✘未选中
+    帖子18: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.438, ✘未选中
+    帖子19: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.743, Final_Score=0.596, Sigmoid概率=0.640, ✔选中
+    帖子20: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.438, ✔选中
+    帖子21: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.543, Final_Score=0.271, Sigmoid概率=0.402, ✔选中
+[Feed] Agent agent_003 候选池大小: 6 (k=3, x0=auto)
+    帖子1: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.480, ✘未选中
+    帖子2: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.480, ✘未选中
+    帖子3: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.480, ✔选中
+    帖子4: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.200, Final_Score=0.141, Sigmoid概率=0.585, ✔选中
+    帖子5: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.000, Final_Score=0.020, Sigmoid概率=0.495, ✘未选中
+    帖子6: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.480, ✘未选中
+[Feed] Agent agent_004 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.200, Final_Score=0.202, Sigmoid概率=0.491, ✘未选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.300, Final_Score=0.283, Sigmoid概率=0.551, ✘未选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.500, Final_Score=0.332, Sigmoid概率=0.587, ✘未选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.500, Final_Score=0.352, Sigmoid概率=0.602, ✔选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.100, Final_Score=0.101, Sigmoid概率=0.416, ✘未选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.600, Final_Score=0.351, Sigmoid概率=0.601, ✔选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.100, Final_Score=0.060, Sigmoid概率=0.386, ✘未选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子9: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子10: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.300, Final_Score=0.191, Sigmoid概率=0.482, ✔选中
+    帖子11: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.600, Final_Score=0.331, Sigmoid概率=0.586, ✔选中
+    帖子12: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.200, Final_Score=0.120, Sigmoid概率=0.430, ✘未选中
+    帖子13: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.100, Final_Score=0.060, Sigmoid概率=0.386, ✔选中
+    帖子14: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子15: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.200, Final_Score=0.355, Sigmoid概率=0.604, ✘未选中
+    帖子16: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.500, Final_Score=0.750, Sigmoid概率=0.833, ✔选中
+    帖子17: id=4038072587474324, Score_Pop=0.980, Score_Rel=0.200, Final_Score=0.590, Sigmoid概率=0.755, ✔选中
+    帖子18: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.200, Final_Score=0.518, Sigmoid概率=0.713, ✘未选中
+    帖子19: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✔选中
+    帖子20: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.379, ✔选中
+    帖子21: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✔选中
+    帖子22: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.500, Final_Score=0.291, Sigmoid概率=0.557, ✘未选中
+    帖子23: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.379, ✔选中
+    帖子24: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子25: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.200, Final_Score=0.120, Sigmoid概率=0.430, ✔选中
+    帖子26: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子27: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子28: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.300, Final_Score=0.374, Sigmoid概率=0.618, ✔选中
+    帖子29: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.415, ✘未选中
+    帖子30: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.379, ✘未选中
+
+时间片 3 结束，Agent状态:
+  agent_001: 情绪=-0.687(波动0.096), 立场=-0.221(波动0.183), 置信度=0.200, 总波动=0.279, 本时间片阅读14条帖子
+    -> 不发帖
+  agent_002: 情绪=-0.704(波动0.039), 立场=-0.243(波动0.015), 置信度=0.050, 总波动=0.054, 本时间片阅读6条帖子
+    -> 不发帖
+  agent_003: 情绪=-0.710(波动0.103), 立场=0.500(波动0.000), 置信度=0.494, 总波动=0.103, 本时间片阅读2条帖子
+    -> 不发帖
+  agent_004: 情绪=-0.706(波动0.077), 立场=0.200(波动0.000), 置信度=0.391, 总波动=0.077, 本时间片阅读13条帖子
+    -> 不发帖
+
+[分析] 本时间片每个帖子被选中的情况：
+  帖子4037692885079893: 被 1 个Agent选中 -> agent_001(Final=0.542,P=0.61)
+  帖子4037697091525950: 被 2 个Agent选中 -> agent_001(Final=0.563,P=0.62), agent_004(Final=0.352,P=0.60)
+  帖子4037703068028311: 被 1 个Agent选中 -> agent_004(Final=0.351,P=0.60)
+  帖子4037717069087119: 被 1 个Agent选中 -> agent_001(Final=0.271,P=0.41)
+  帖子4037781711826073: 被 3 个Agent选中 -> agent_001(Final=0.402,P=0.50), agent_002(Final=0.412,P=0.51), agent_004(Final=0.191,P=0.48)
+  帖子4037782940768173: 被 1 个Agent选中 -> agent_004(Final=0.331,P=0.59)
+  帖子4037794085230624: 被 1 个Agent选中 -> agent_001(Final=0.331,P=0.45)
+  帖子4037799092710331: 被 2 个Agent选中 -> agent_001(Final=0.271,P=0.41), agent_004(Final=0.060,P=0.39)
+  帖子4038019029551423: 被 3 个Agent选中 -> agent_001(Final=0.961,P=0.84), agent_002(Final=0.971,P=0.85), agent_004(Final=0.750,P=0.83)
+  帖子4038072587474324: 被 2 个Agent选中 -> agent_001(Final=0.801,P=0.77), agent_004(Final=0.590,P=0.76)
+  帖子4038074344550661: 被 2 个Agent选中 -> agent_001(Final=0.729,P=0.73), agent_002(Final=0.740,P=0.73)
+  帖子4038079713559945: 被 1 个Agent选中 -> agent_004(Final=0.100,P=0.42)
+  帖子4038112012950997: 被 2 个Agent选中 -> agent_001(Final=0.261,P=0.40), agent_004(Final=0.050,P=0.38)
+  帖子4038116047691704: 被 2 个Agent选中 -> agent_003(Final=0.000,P=0.48), agent_004(Final=0.100,P=0.42)
+  帖子4038119739855303: 被 2 个Agent选中 -> agent_001(Final=0.502,P=0.58), agent_003(Final=0.141,P=0.58)
+  帖子4038205554083523: 被 1 个Agent选中 -> agent_004(Final=0.050,P=0.38)
+  帖子4038215646724449: 被 1 个Agent选中 -> agent_004(Final=0.120,P=0.43)
+  帖子4038333027906488: 被 1 个Agent选中 -> agent_001(Final=0.311,P=0.44)
+  帖子4038365571315477: 被 2 个Agent选中 -> agent_002(Final=0.596,P=0.64), agent_004(Final=0.374,P=0.62)
+  帖子4038415042933435: 被 2 个Agent选中 -> agent_001(Final=0.311,P=0.44), agent_002(Final=0.321,P=0.44)
+  帖子4038437952870280: 被 2 个Agent选中 -> agent_001(Final=0.261,P=0.40), agent_002(Final=0.271,P=0.40)
+
+--- 时间片 4 ---
+处理 30 条帖子
+[Feed] Agent agent_001 候选池大小: 29 (k=3, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.821, Final_Score=0.411, Sigmoid概率=0.538, ✔选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.621, Final_Score=0.312, Sigmoid概率=0.464, ✘未选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.721, Final_Score=0.499, Sigmoid概率=0.603, ✔选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.721, Final_Score=0.399, Sigmoid概率=0.529, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.821, Final_Score=0.412, Sigmoid概率=0.539, ✘未选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.821, Final_Score=0.448, Sigmoid概率=0.565, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.521, Final_Score=0.262, Sigmoid概率=0.427, ✔选中
+    帖子8: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.821, Final_Score=0.415, Sigmoid概率=0.541, ✘未选中
+    帖子9: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.921, Final_Score=0.463, Sigmoid概率=0.577, ✘未选中
+    帖子10: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.721, Final_Score=0.361, Sigmoid概率=0.500, ✔选中
+    帖子11: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.821, Final_Score=0.411, Sigmoid概率=0.538, ✘未选中
+    帖子12: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.521, Final_Score=0.261, Sigmoid概率=0.426, ✘未选中
+    帖子13: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.179, Final_Score=0.157, Sigmoid概率=0.352, ✘未选中
+    帖子14: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.821, Final_Score=0.411, Sigmoid概率=0.538, ✔选中
+    帖子15: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.621, Final_Score=0.811, Sigmoid概率=0.794, ✔选中
+    帖子16: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.621, Final_Score=0.313, Sigmoid概率=0.465, ✔选中
+    帖子17: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.279, Final_Score=0.141, Sigmoid概率=0.341, ✘未选中
+    帖子18: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.721, Final_Score=0.361, Sigmoid概率=0.500, ✘未选中
+    帖子19: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.621, Final_Score=0.317, Sigmoid概率=0.468, ✘未选中
+    帖子20: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.521, Final_Score=0.262, Sigmoid概率=0.427, ✘未选中
+    帖子21: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.521, Final_Score=0.263, Sigmoid概率=0.428, ✔选中
+    帖子22: id=4038810591603287, Score_Pop=0.008, Score_Rel=0.979, Final_Score=0.493, Sigmoid概率=0.598, ✔选中
+    帖子23: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.521, Final_Score=0.262, Sigmoid概率=0.427, ✘未选中
+    帖子24: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.521, Final_Score=0.261, Sigmoid概率=0.426, ✔选中
+    帖子25: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.921, Final_Score=0.540, Sigmoid概率=0.632, ✔选中
+    帖子26: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.721, Final_Score=0.361, Sigmoid概率=0.500, ✔选中
+    帖子27: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.421, Final_Score=0.211, Sigmoid概率=0.390, ✘未选中
+    帖子28: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.621, Final_Score=0.318, Sigmoid概率=0.469, ✘未选中
+    帖子29: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.621, Final_Score=0.311, Sigmoid概率=0.463, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038484006413069: 情绪 -0.679, 立场 -0.232, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038498984363988: 情绪 -0.671, 立场 -0.231, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038502184275708: 情绪 -0.664, 立场 -0.232, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038508018801178: 情绪 -0.677, 立场 -0.258, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038542184842770: 情绪 -0.640, 立场 -0.237, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038794732418684: 情绪 -0.516, 立场 -0.225, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038805109450116: 情绪 -0.514, 立场 -0.242, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038806002884179: 情绪 -0.543, 立场 -0.212, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038810142471681: 情绪 -0.568, 立场 -0.260, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038810591603287: 情绪 -0.555, 立场 -0.255, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038811598300707: 情绪 -0.567, 立场 -0.297, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038812788735334: 情绪 -0.549, 立场 -0.299, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038813225296951: 情绪 -0.551, 立场 -0.273, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038818430870248: 情绪 -0.576, 立场 -0.277, 置信度 0.200
+[Feed] Agent agent_002 候选池大小: 29 (k=3, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.843, Final_Score=0.421, Sigmoid概率=0.540, ✘未选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.643, Final_Score=0.323, Sigmoid概率=0.467, ✔选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.743, Final_Score=0.510, Sigmoid概率=0.605, ✘未选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.743, Final_Score=0.410, Sigmoid概率=0.532, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.843, Final_Score=0.423, Sigmoid概率=0.541, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.843, Final_Score=0.459, Sigmoid概率=0.568, ✔选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.543, Final_Score=0.273, Sigmoid概率=0.429, ✘未选中
+    帖子8: id=4038522573119368, Score_Pop=0.049, Score_Rel=0.843, Final_Score=0.446, Sigmoid概率=0.559, ✔选中
+    帖子9: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.843, Final_Score=0.425, Sigmoid概率=0.543, ✔选中
+    帖子10: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.943, Final_Score=0.474, Sigmoid概率=0.579, ✘未选中
+    帖子11: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.743, Final_Score=0.371, Sigmoid概率=0.503, ✘未选中
+    帖子12: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.843, Final_Score=0.421, Sigmoid概率=0.540, ✘未选中
+    帖子13: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.543, Final_Score=0.271, Sigmoid概率=0.429, ✔选中
+    帖子14: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.157, Final_Score=0.147, Sigmoid概率=0.340, ✔选中
+    帖子15: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.843, Final_Score=0.421, Sigmoid概率=0.540, ✘未选中
+    帖子16: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.643, Final_Score=0.821, Sigmoid概率=0.796, ✘未选中
+    帖子17: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.643, Final_Score=0.324, Sigmoid概率=0.467, ✘未选中
+    帖子18: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.257, Final_Score=0.130, Sigmoid概率=0.329, ✘未选中
+    帖子19: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.743, Final_Score=0.371, Sigmoid概率=0.503, ✔选中
+    帖子20: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.643, Final_Score=0.328, Sigmoid概率=0.470, ✔选中
+    帖子21: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.543, Final_Score=0.273, Sigmoid概率=0.429, ✘未选中
+    帖子22: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.543, Final_Score=0.274, Sigmoid概率=0.430, ✘未选中
+    帖子23: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.543, Final_Score=0.273, Sigmoid概率=0.429, ✘未选中
+    帖子24: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.543, Final_Score=0.271, Sigmoid概率=0.429, ✘未选中
+    帖子25: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.943, Final_Score=0.551, Sigmoid概率=0.634, ✔选中
+    帖子26: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.743, Final_Score=0.371, Sigmoid概率=0.503, ✘未选中
+    帖子27: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.443, Final_Score=0.221, Sigmoid概率=0.392, ✘未选中
+    帖子28: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.643, Final_Score=0.329, Sigmoid概率=0.471, ✘未选中
+    帖子29: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.643, Final_Score=0.321, Sigmoid概率=0.466, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038492562093163: 情绪 -0.704, 立场 -0.285, 置信度 0.050
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038502184275708: 情绪 -0.693, 立场 -0.334, 置信度 0.050
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038503774097013: 情绪 -0.684, 立场 -0.308, 置信度 0.050
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038508009922639: 情绪 -0.676, 立场 -0.289, 置信度 0.050
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038522573119368: 情绪 -0.664, 立场 -0.299, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038533246923455: 情绪 -0.658, 立场 -0.265, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038633260200027: 情绪 -0.665, 立场 -0.235, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038731063593762: 情绪 -0.668, 立场 -0.244, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038807260969318: 情绪 -0.655, 立场 -0.213, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038808230647115: 情绪 -0.669, 立场 -0.186, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038812788735334: 情绪 -0.646, 立场 -0.231, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038818430870248: 情绪 -0.661, 立场 -0.208, 置信度 0.100
+[Feed] Agent agent_003 候选池大小: 26 (k=3, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.484, ✘未选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.448, ✔选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.000, Final_Score=0.138, Sigmoid概率=0.550, ✔选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.000, Final_Score=0.038, Sigmoid概率=0.476, ✘未选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.485, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.100, Final_Score=0.087, Sigmoid概率=0.512, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.448, ✘未选中
+    帖子8: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.100, Final_Score=0.054, Sigmoid概率=0.487, ✔选中
+    帖子9: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.200, Final_Score=0.103, Sigmoid概率=0.524, ✘未选中
+    帖子10: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.447, ✘未选中
+    帖子11: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.484, ✘未选中
+    帖子12: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.900, Final_Score=0.518, Sigmoid概率=0.793, ✔选中
+    帖子13: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.484, ✘未选中
+    帖子14: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.449, ✘未选中
+    帖子15: id=4038806020121411, Score_Pop=0.003, Score_Rel=1.000, Final_Score=0.501, Sigmoid概率=0.784, ✔选中
+    帖子16: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.447, ✔选中
+    帖子17: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.000, Final_Score=0.006, Sigmoid概率=0.452, ✘未选中
+    帖子18: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.448, ✔选中
+    帖子19: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.449, ✔选中
+    帖子20: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.448, ✔选中
+    帖子21: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.447, ✔选中
+    帖子22: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.200, Final_Score=0.179, Sigmoid概率=0.581, ✔选中
+    帖子23: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.447, ✘未选中
+    帖子24: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.447, ✔选中
+    帖子25: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.000, Final_Score=0.008, Sigmoid概率=0.453, ✘未选中
+    帖子26: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.447, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038492562093163: 情绪 -0.709, 立场 0.500, 置信度 0.483
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038498984363988: 情绪 -0.698, 立场 0.500, 置信度 0.490
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038503774097013: 情绪 -0.688, 立场 0.500, 置信度 0.481
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038533246923455: 情绪 -0.679, 立场 0.500, 置信度 0.496
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038731063593762: 情绪 -0.682, 立场 0.500, 置信度 0.488
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038806020121411: 情绪 -0.683, 立场 0.500, 置信度 0.502
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038807260969318: 情绪 -0.669, 立场 0.500, 置信度 0.515
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038809048315946: 情绪 -0.682, 立场 0.500, 置信度 0.513
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038810142471681: 情绪 -0.694, 立场 0.500, 置信度 0.505
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038810889191409: 情绪 -0.685, 立场 0.500, 置信度 0.488
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038811598300707: 情绪 -0.690, 立场 0.500, 置信度 0.496
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038812788735334: 情绪 -0.666, 立场 0.500, 置信度 0.499
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038813313103164: 情绪 -0.669, 立场 0.500, 置信度 0.484
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038818430870248: 情绪 -0.682, 立场 0.500, 置信度 0.489
+[Feed] Agent agent_004 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.514, ✘未选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.200, Final_Score=0.101, Sigmoid概率=0.441, ✘未选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.300, Final_Score=0.288, Sigmoid概率=0.580, ✔选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.300, Final_Score=0.188, Sigmoid概率=0.506, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.400, Final_Score=0.201, Sigmoid概率=0.515, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.400, Final_Score=0.237, Sigmoid概率=0.542, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.404, ✔选中
+    帖子8: id=4038522573119368, Score_Pop=0.049, Score_Rel=0.400, Final_Score=0.224, Sigmoid概率=0.533, ✔选中
+    帖子9: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.400, Final_Score=0.204, Sigmoid概率=0.517, ✘未选中
+    帖子10: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.500, Final_Score=0.253, Sigmoid概率=0.554, ✘未选中
+    帖子11: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.477, ✘未选中
+    帖子12: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.514, ✔选中
+    帖子13: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.403, ✘未选中
+    帖子14: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.600, Final_Score=0.368, Sigmoid概率=0.637, ✘未选中
+    帖子15: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.514, ✘未选中
+    帖子16: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.600, Sigmoid概率=0.779, ✔选中
+    帖子17: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.200, Final_Score=0.103, Sigmoid概率=0.442, ✔选中
+    帖子18: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.700, Final_Score=0.351, Sigmoid概率=0.625, ✘未选中
+    帖子19: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.477, ✘未选中
+    帖子20: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.106, Sigmoid概率=0.444, ✘未选中
+    帖子21: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.404, ✘未选中
+    帖子22: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.100, Final_Score=0.053, Sigmoid概率=0.405, ✘未选中
+    帖子23: id=4038810591603287, Score_Pop=0.008, Score_Rel=0.600, Final_Score=0.304, Sigmoid概率=0.591, ✔选中
+    帖子24: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.404, ✘未选中
+    帖子25: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.403, ✔选中
+    帖子26: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.500, Final_Score=0.329, Sigmoid概率=0.610, ✘未选中
+    帖子27: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.477, ✔选中
+    帖子28: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.368, ✘未选中
+    帖子29: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.200, Final_Score=0.108, Sigmoid概率=0.445, ✘未选中
+    帖子30: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.440, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038498984363988: 情绪 -0.695, 立场 0.200, 置信度 0.377
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038502184275708: 情绪 -0.686, 立场 0.200, 置信度 0.389
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038503774097013: 情绪 -0.677, 立场 0.200, 置信度 0.393
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038508018801178: 情绪 -0.689, 立场 0.200, 置信度 0.402
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038522573119368: 情绪 -0.676, 立场 0.200, 置信度 0.352
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038596728400073: 情绪 -0.668, 立场 0.200, 置信度 0.338
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038805109450116: 情绪 -0.652, 立场 0.200, 置信度 0.331
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038806002884179: 情绪 -0.666, 立场 0.200, 置信度 0.346
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038810591603287: 情绪 -0.648, 立场 0.200, 置信度 0.360
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038811598300707: 情绪 -0.656, 立场 0.200, 置信度 0.347
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038813225296951: 情绪 -0.653, 立场 0.200, 置信度 0.359
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038818430870248: 情绪 -0.668, 立场 0.200, 置信度 0.353
+[Feed] Agent agent_001 候选池大小: 29 (k=3, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.877, Final_Score=0.439, Sigmoid概率=0.542, ✘未选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.677, Final_Score=0.340, Sigmoid概率=0.468, ✔选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.777, Final_Score=0.527, Sigmoid概率=0.607, ✘未选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.777, Final_Score=0.427, Sigmoid概率=0.534, ✘未选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.877, Final_Score=0.440, Sigmoid概率=0.543, ✘未选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.877, Final_Score=0.476, Sigmoid概率=0.570, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.577, Final_Score=0.290, Sigmoid概率=0.431, ✘未选中
+    帖子8: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.877, Final_Score=0.443, Sigmoid概率=0.545, ✔选中
+    帖子9: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.977, Final_Score=0.491, Sigmoid概率=0.581, ✔选中
+    帖子10: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.777, Final_Score=0.389, Sigmoid概率=0.505, ✘未选中
+    帖子11: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.877, Final_Score=0.439, Sigmoid概率=0.542, ✘未选中
+    帖子12: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.577, Final_Score=0.289, Sigmoid概率=0.430, ✘未选中
+    帖子13: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.123, Final_Score=0.129, Sigmoid概率=0.319, ✔选中
+    帖子14: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.877, Final_Score=0.439, Sigmoid概率=0.542, ✔选中
+    帖子15: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.677, Final_Score=0.839, Sigmoid概率=0.797, ✔选中
+    帖子16: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.677, Final_Score=0.341, Sigmoid概率=0.469, ✘未选中
+    帖子17: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.223, Final_Score=0.113, Sigmoid概率=0.308, ✘未选中
+    帖子18: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.777, Final_Score=0.389, Sigmoid概率=0.505, ✔选中
+    帖子19: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.677, Final_Score=0.345, Sigmoid概率=0.472, ✔选中
+    帖子20: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.577, Final_Score=0.290, Sigmoid概率=0.431, ✘未选中
+    帖子21: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.577, Final_Score=0.291, Sigmoid概率=0.432, ✘未选中
+    帖子22: id=4038810591603287, Score_Pop=0.008, Score_Rel=0.923, Final_Score=0.465, Sigmoid概率=0.562, ✘未选中
+    帖子23: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.577, Final_Score=0.290, Sigmoid概率=0.431, ✔选中
+    帖子24: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.577, Final_Score=0.289, Sigmoid概率=0.430, ✘未选中
+    帖子25: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.977, Final_Score=0.568, Sigmoid概率=0.636, ✘未选中
+    帖子26: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.777, Final_Score=0.389, Sigmoid概率=0.505, ✘未选中
+    帖子27: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.477, Final_Score=0.239, Sigmoid概率=0.394, ✘未选中
+    帖子28: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.677, Final_Score=0.346, Sigmoid概率=0.473, ✔选中
+    帖子29: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.677, Final_Score=0.339, Sigmoid概率=0.467, ✔选中
+[Feed] Agent agent_002 候选池大小: 28 (k=3, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.808, Final_Score=0.404, Sigmoid概率=0.534, ✔选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.608, Final_Score=0.305, Sigmoid概率=0.460, ✘未选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.708, Final_Score=0.493, Sigmoid概率=0.599, ✘未选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.708, Final_Score=0.393, Sigmoid概率=0.525, ✘未选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.808, Final_Score=0.405, Sigmoid概率=0.535, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.808, Final_Score=0.441, Sigmoid概率=0.561, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.508, Final_Score=0.255, Sigmoid概率=0.423, ✘未选中
+    帖子8: id=4038522573119368, Score_Pop=0.049, Score_Rel=0.808, Final_Score=0.428, Sigmoid概率=0.552, ✔选中
+    帖子9: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.808, Final_Score=0.408, Sigmoid概率=0.536, ✘未选中
+    帖子10: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.908, Final_Score=0.457, Sigmoid概率=0.573, ✘未选中
+    帖子11: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.708, Final_Score=0.354, Sigmoid概率=0.496, ✘未选中
+    帖子12: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.808, Final_Score=0.404, Sigmoid概率=0.534, ✘未选中
+    帖子13: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.508, Final_Score=0.254, Sigmoid概率=0.422, ✘未选中
+    帖子14: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.808, Final_Score=0.404, Sigmoid概率=0.534, ✘未选中
+    帖子15: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.608, Final_Score=0.804, Sigmoid概率=0.792, ✔选中
+    帖子16: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.608, Final_Score=0.307, Sigmoid概率=0.461, ✘未选中
+    帖子17: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.292, Final_Score=0.147, Sigmoid概率=0.346, ✘未选中
+    帖子18: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.708, Final_Score=0.354, Sigmoid概率=0.496, ✔选中
+    帖子19: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.608, Final_Score=0.311, Sigmoid概率=0.464, ✘未选中
+    帖子20: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.508, Final_Score=0.255, Sigmoid概率=0.423, ✘未选中
+    帖子21: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.508, Final_Score=0.257, Sigmoid概率=0.424, ✘未选中
+    帖子22: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.508, Final_Score=0.255, Sigmoid概率=0.423, ✔选中
+    帖子23: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.508, Final_Score=0.254, Sigmoid概率=0.422, ✘未选中
+    帖子24: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.908, Final_Score=0.534, Sigmoid概率=0.628, ✔选中
+    帖子25: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.708, Final_Score=0.354, Sigmoid概率=0.496, ✘未选中
+    帖子26: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.408, Final_Score=0.204, Sigmoid概率=0.386, ✔选中
+    帖子27: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.608, Final_Score=0.312, Sigmoid概率=0.464, ✘未选中
+    帖子28: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.608, Final_Score=0.304, Sigmoid概率=0.459, ✔选中
+[Feed] Agent agent_003 候选池大小: 13 (k=3, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.461, ✘未选中
+    帖子2: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.000, Final_Score=0.038, Sigmoid概率=0.452, ✔选中
+    帖子3: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.425, ✘未选中
+    帖子4: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.200, Final_Score=0.103, Sigmoid概率=0.500, ✔选中
+    帖子5: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.424, ✘未选中
+    帖子6: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.461, ✘未选中
+    帖子7: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.900, Final_Score=0.518, Sigmoid概率=0.777, ✘未选中
+    帖子8: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.461, ✔选中
+    帖子9: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.426, ✘未选中
+    帖子10: id=4038806020121411, Score_Pop=0.003, Score_Rel=1.000, Final_Score=0.501, Sigmoid概率=0.768, ✔选中
+    帖子11: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.000, Final_Score=0.006, Sigmoid概率=0.429, ✔选中
+    帖子12: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.424, ✘未选中
+    帖子13: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.000, Final_Score=0.008, Sigmoid概率=0.430, ✘未选中
+[Feed] Agent agent_004 候选池大小: 30 (k=3, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.514, ✔选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.200, Final_Score=0.101, Sigmoid概率=0.441, ✔选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.300, Final_Score=0.288, Sigmoid概率=0.580, ✘未选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.300, Final_Score=0.188, Sigmoid概率=0.506, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.400, Final_Score=0.201, Sigmoid概率=0.515, ✘未选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.400, Final_Score=0.237, Sigmoid概率=0.542, ✔选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.404, ✔选中
+    帖子8: id=4038522573119368, Score_Pop=0.049, Score_Rel=0.400, Final_Score=0.224, Sigmoid概率=0.533, ✘未选中
+    帖子9: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.400, Final_Score=0.204, Sigmoid概率=0.517, ✔选中
+    帖子10: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.500, Final_Score=0.253, Sigmoid概率=0.554, ✔选中
+    帖子11: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.477, ✘未选中
+    帖子12: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.514, ✘未选中
+    帖子13: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.403, ✘未选中
+    帖子14: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.600, Final_Score=0.368, Sigmoid概率=0.637, ✔选中
+    帖子15: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.200, Sigmoid概率=0.514, ✘未选中
+    帖子16: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.600, Sigmoid概率=0.779, ✔选中
+    帖子17: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.200, Final_Score=0.103, Sigmoid概率=0.442, ✔选中
+    帖子18: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.700, Final_Score=0.351, Sigmoid概率=0.625, ✘未选中
+    帖子19: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.477, ✔选中
+    帖子20: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.106, Sigmoid概率=0.444, ✘未选中
+    帖子21: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.404, ✘未选中
+    帖子22: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.100, Final_Score=0.053, Sigmoid概率=0.405, ✔选中
+    帖子23: id=4038810591603287, Score_Pop=0.008, Score_Rel=0.600, Final_Score=0.304, Sigmoid概率=0.591, ✔选中
+    帖子24: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.051, Sigmoid概率=0.404, ✘未选中
+    帖子25: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.050, Sigmoid概率=0.403, ✔选中
+    帖子26: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.500, Final_Score=0.329, Sigmoid概率=0.610, ✘未选中
+    帖子27: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.150, Sigmoid概率=0.477, ✘未选中
+    帖子28: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.368, ✘未选中
+    帖子29: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.200, Final_Score=0.108, Sigmoid概率=0.445, ✔选中
+    帖子30: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.100, Sigmoid概率=0.440, ✘未选中
+
+时间片 4 结束，Agent状态:
+  agent_001: 情绪=-0.576(波动0.111), 立场=-0.277(波动0.056), 置信度=0.200, 总波动=0.167, 本时间片阅读11条帖子
+    -> 不发帖
+  agent_002: 情绪=-0.661(波动0.043), 立场=-0.208(波动0.035), 置信度=0.100, 总波动=0.077, 本时间片阅读9条帖子
+    -> 不发帖
+  agent_003: 情绪=-0.682(波动0.028), 立场=0.500(波动0.000), 置信度=0.489, 总波动=0.028, 本时间片阅读5条帖子
+    -> 不发帖
+  agent_004: 情绪=-0.668(波动0.038), 立场=0.200(波动0.000), 置信度=0.353, 总波动=0.038, 本时间片阅读15条帖子
+    -> 不发帖
+
+[分析] 本时间片每个帖子被选中的情况：
+  帖子4038484006413069: 被 2 个Agent选中 -> agent_002(Final=0.404,P=0.53), agent_004(Final=0.200,P=0.51)
+  帖子4038492562093163: 被 2 个Agent选中 -> agent_001(Final=0.340,P=0.47), agent_004(Final=0.101,P=0.44)
+  帖子4038502184275708: 被 2 个Agent选中 -> agent_003(Final=0.038,P=0.45), agent_004(Final=0.188,P=0.51)
+  帖子4038503774097013: 被 1 个Agent选中 -> agent_002(Final=0.405,P=0.53)
+  帖子4038508009922639: 被 1 个Agent选中 -> agent_004(Final=0.237,P=0.54)
+  帖子4038508018801178: 被 1 个Agent选中 -> agent_004(Final=0.051,P=0.40)
+  帖子4038533246923455: 被 2 个Agent选中 -> agent_001(Final=0.443,P=0.55), agent_004(Final=0.204,P=0.52)
+  帖子4038535445106128: 被 3 个Agent选中 -> agent_001(Final=0.491,P=0.58), agent_003(Final=0.103,P=0.50), agent_004(Final=0.253,P=0.55)
+  帖子4038731063593762: 被 2 个Agent选中 -> agent_001(Final=0.129,P=0.32), agent_004(Final=0.368,P=0.64)
+  帖子4038794732418684: 被 2 个Agent选中 -> agent_001(Final=0.439,P=0.54), agent_003(Final=0.050,P=0.46)
+  帖子4038805109450116: 被 3 个Agent选中 -> agent_001(Final=0.839,P=0.80), agent_002(Final=0.804,P=0.79), agent_004(Final=0.600,P=0.78)
+  帖子4038806002884179: 被 1 个Agent选中 -> agent_004(Final=0.103,P=0.44)
+  帖子4038806020121411: 被 1 个Agent选中 -> agent_003(Final=0.501,P=0.77)
+  帖子4038807260969318: 被 3 个Agent选中 -> agent_001(Final=0.389,P=0.50), agent_002(Final=0.354,P=0.50), agent_004(Final=0.150,P=0.48)
+  帖子4038808230647115: 被 2 个Agent选中 -> agent_001(Final=0.345,P=0.47), agent_003(Final=0.006,P=0.43)
+  帖子4038810142471681: 被 1 个Agent选中 -> agent_004(Final=0.053,P=0.41)
+  帖子4038810591603287: 被 1 个Agent选中 -> agent_004(Final=0.304,P=0.59)
+  帖子4038810889191409: 被 2 个Agent选中 -> agent_001(Final=0.290,P=0.43), agent_002(Final=0.255,P=0.42)
+  帖子4038811598300707: 被 1 个Agent选中 -> agent_004(Final=0.050,P=0.40)
+  帖子4038812788735334: 被 1 个Agent选中 -> agent_002(Final=0.534,P=0.63)
+  帖子4038813313103164: 被 1 个Agent选中 -> agent_002(Final=0.204,P=0.39)
+  帖子4038817185336791: 被 2 个Agent选中 -> agent_001(Final=0.346,P=0.47), agent_004(Final=0.108,P=0.45)
+  帖子4038818430870248: 被 2 个Agent选中 -> agent_001(Final=0.339,P=0.47), agent_002(Final=0.304,P=0.46)
+  帖子4038522573119368: 被 1 个Agent选中 -> agent_002(Final=0.428,P=0.55)
+
+=== 模拟完成 ===

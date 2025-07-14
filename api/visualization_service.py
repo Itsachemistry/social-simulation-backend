@@ -315,10 +315,9 @@ def filter_posts():
             return jsonify({'error': '仿真尚未完成'}), 400
         
         # 获取所有帖子
-        all_posts = status['results'].get('final_posts', [])
-        
-        # 应用筛选
-        filtered_posts = all_posts
+        agent_generated_posts = status['results'].get('agent_generated_posts', [])
+        # TODO: 后续在此处合并原始数据
+        filtered_posts = agent_generated_posts
         
         # 1. 时间范围筛选
         if time_range:
@@ -456,19 +455,17 @@ def get_posts_summary():
             return jsonify({'error': '仿真不存在或未完成'}), 404
         
         # 获取并筛选帖子
-        all_posts = status['results'].get('final_posts', [])
-        
+        agent_generated_posts = status['results'].get('agent_generated_posts', [])
+        # TODO: 后续在此处合并原始数据
         if time_range:
-            all_posts = interactive_visualizer.filter_posts_by_time_range(
-                all_posts, time_range
+            agent_generated_posts = interactive_visualizer.filter_posts_by_time_range(
+                agent_generated_posts, time_range
             )
-        
-        all_posts = interactive_visualizer.filter_posts_by_type(
-            all_posts, filter_type, include_reposts
+        agent_generated_posts = interactive_visualizer.filter_posts_by_type(
+            agent_generated_posts, filter_type, include_reposts
         )
-        
         # 生成摘要
-        summary = interactive_visualizer.get_posts_summary(all_posts)
+        summary = interactive_visualizer.get_posts_summary(agent_generated_posts)
         
         return jsonify({
             'status': 'success',
@@ -527,9 +524,9 @@ def get_repost_tree():
         status = simulation_manager.get_simulation_status(simulation_id)
         if not status or status['status'] != 'completed':
             return jsonify({'error': '仿真不存在或未完成'}), 404
-        all_posts = status['results'].get('final_posts', [])
+        agent_generated_posts = status['results'].get('agent_generated_posts', [])
         agent_states = status['results'].get('agent_states', {})
-
+        # TODO: 后续在此处合并原始数据
         # 收集所有Agent的浏览过的post_id
         viewed_map = {}  # post_id -> [agent_id, ...]
         for agent_type, agents in agent_states.items():
@@ -542,14 +539,14 @@ def get_repost_tree():
                             viewed_map[pid].append(agent["agent_id"])
         # 构建节点，增加is_agent_post和viewed_by_agents
         nodes = {}
-        for p in all_posts:
+        for p in agent_generated_posts:
             node = dict(p)
             node["children"] = []
             node["is_agent_post"] = str(p.get("author_id", "")).startswith("agent_")
             node["viewed_by_agents"] = viewed_map.get(p["id"], [])
             nodes[p['id']] = node
         root_nodes = []
-        for post in all_posts:
+        for post in agent_generated_posts:
             parent_id = post.get('parent_post_id')
             if parent_id and parent_id in nodes:
                 nodes[parent_id]['children'].append(nodes[post['id']])

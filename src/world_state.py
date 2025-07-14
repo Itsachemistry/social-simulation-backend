@@ -8,20 +8,20 @@ class WorldState:
     """
     世界状态管理器，负责维护动态帖子池和全局事件注入。
     
-    帖子数据结构：
+    帖子数据结构（符合标准定义）：
     {
-        "id": str,              # 帖子唯一标识符
-        "content": str,         # 帖子内容
-        "author_id": str,       # 作者ID
-        "timestamp": str,       # ISO格式时间戳
-        "heat": int,           # 热度值 (0-100)
-        "likes": int,          # 点赞数
-        "shares": int,         # 分享数
-        "is_event": bool,      # 是否为突发事件
-        "priority": int,       # 优先级 (普通帖子=0, 事件帖子>0)
-        "is_repost": bool,     # 是否为转发
-        "parent_post_id": str|None,  # 转发自哪条帖子
-        "tags": List[str]      # 新增：微博标签列表，如 ["#科技#", "#创新#"]
+        "post_id": str,                    # 帖子唯一标识符
+        "author_id": str,                  # 作者ID
+        "content": str,                    # 帖子内容
+        "timestamp": str,                  # ISO格式时间戳
+        "emotion_category": str,           # 情绪类别 (positive/neutral/negative)
+        "emotion_score": float,            # 情绪分值 (-1.0~1.0)
+        "stance_category": str,            # 立场类别 (support/neutral/oppose)
+        "stance_score": float,             # 立场分值 (-1.0~1.0)
+        "information_strength": float,     # 信息强度 (0.0~1.0)
+        "keywords": List[str],             # 关键词列表
+        "is_repost": bool,                 # 是否为转发
+        "parent_post_id": str|None         # 转发自哪条帖子
     }
     """
     
@@ -46,48 +46,75 @@ class WorldState:
     
     def normalize_post(self, post):
         """
-        统一标准化post对象的字段名，兼容不同来源的数据格式。
+        统一标准化post对象的字段名，转换为标准属性定义。
         主要兼容以下字段：
-        - 'children'/'Children'：子节点列表，树结构用
+        - 'id'/'mid' → 'post_id'：帖子ID
         - 'author_id'/'uid'：作者ID
+        - 'content'/'text'：帖子内容
         - 'timestamp'/'t'：时间戳
+        - 'emotion_score'：情绪分值
+        - 'stance_score'：立场分值
+        - 'information_strength'：信息强度
         - 'parent_post_id'/'pid'：父帖ID
-        - 'stance'/'group'：立场标签，group字段（0/1/2）直接映射为stance（2=支持医院，1=支持患者，0=中立）
-        - 其他字段如'content'、'id'、'tags'等保持不变
-        - 详细说明见每个字段注释
-        - 'tags'：本系统当前不使用标签功能，tags字段始终为空列表
+        - 'keywords'：关键词列表
         """
         std = dict(post)  # 拷贝，避免原数据被修改
-        # 兼容children/Children
-        if 'children' not in std and 'Children' in std:
-            std['children'] = std['Children']
+        
+        # 兼容post_id字段
+        if 'post_id' not in std:
+            if 'id' in std:
+                std['post_id'] = std['id']
+            elif 'mid' in std:
+                std['post_id'] = std['mid']
+            else:
+                std['post_id'] = str(std.get('uid', '')) + '_' + str(std.get('t', ''))
+        
         # 兼容author_id/uid
         if 'author_id' not in std and 'uid' in std:
             std['author_id'] = std['uid']
+        
+        # 兼容content/text
+        if 'content' not in std and 'text' in std:
+            std['content'] = std['text']
+        elif 'content' not in std:
+            std['content'] = ''
+        
         # 兼容timestamp/t
         if 'timestamp' not in std and 't' in std:
             std['timestamp'] = std['t']
+        
         # 兼容parent_post_id/pid
         if 'parent_post_id' not in std and 'pid' in std:
             std['parent_post_id'] = std['pid']
-        # 兼容stance/group
-        if 'stance' not in std and 'group' in std:
-            std['stance'] = std['group']  # group字段直接作为stance
-        # 兼容totalChildren/heat
-        if 'heat' not in std and 'totalChildren' in std:
-            std['heat'] = std['totalChildren']
-        # 兼容tags为空的情况（本系统不使用标签功能，tags始终为空）
-        std['tags'] = []
-        # 兼容content为空的情况
-        if 'content' not in std:
-            std['content'] = ''
-        # 兼容id为空的情况
-        if 'id' not in std:
-            std['id'] = ''
-        # 兼容name字段（如有）
-        if 'name' not in std and 'user' in std and isinstance(std['user'], dict):
-            std['name'] = std['user'].get('name', '')
-        # 其他字段可按需扩展
+        
+        # 设置默认值
+        std.setdefault('emotion_score', 0.0)
+        std.setdefault('stance_score', 0.0)
+        std.setdefault('information_strength', 0.5)
+        std.setdefault('keywords', [])
+        std.setdefault('is_repost', False)
+        
+        # 设置情绪和立场类别（处理None值）
+        emotion_score = std.get('emotion_score', 0.0)
+        if emotion_score is None:
+            emotion_score = 0.0
+        if emotion_score > 0.3:
+            std['emotion_category'] = 'positive'
+        elif emotion_score < -0.3:
+            std['emotion_category'] = 'negative'
+        else:
+            std['emotion_category'] = 'neutral'
+        
+        stance_score = std.get('stance_score', 0.0)
+        if stance_score is None:
+            stance_score = 0.0
+        if stance_score > 0.3:
+            std['stance_category'] = 'support'
+        elif stance_score < -0.3:
+            std['stance_category'] = 'oppose'
+        else:
+            std['stance_category'] = 'neutral'
+        
         return std
     
     def add_post(self, post_object: Dict[str, Any]) -> str:
@@ -109,47 +136,40 @@ class WorldState:
             raise ValueError("帖子对象必须包含content和author_id字段")
         
         # 生成帖子ID（如果未提供）
-        if "id" not in post_object:
-            post_object["id"] = str(uuid.uuid4())
+        if "post_id" not in post_object:
+            post_object["post_id"] = str(uuid.uuid4())
         
         # 设置时间戳（如果未提供）
         if "timestamp" not in post_object:
             post_object["timestamp"] = datetime.now().isoformat()
         
         # 设置默认值
-        post_object.setdefault("heat", 0)
-        post_object.setdefault("likes", 0)
-        post_object.setdefault("shares", 0)
-        post_object.setdefault("is_event", False)
-        post_object.setdefault("priority", 0)
+        post_object.setdefault("emotion_score", 0.0)
+        post_object.setdefault("stance_score", 0.0)
+        post_object.setdefault("information_strength", 0.5)
+        post_object.setdefault("keywords", [])
         post_object.setdefault("is_repost", False)
         post_object.setdefault("parent_post_id", None)
-        
-        # 强制tags为空（本系统不使用标签功能）
-        post_object['tags'] = []
         
         # 添加到帖子池
         self.posts_pool.append(post_object)
         
-        return post_object["id"]
+        return post_object["post_id"]
     
     def inject_event(self, event_post_object: Dict[str, Any]) -> str:
         """
         强制插入一个高权重的突发事件帖子
         
-        Args
+        Args:
             event_post_object (Dict[str, Any]): 事件帖子对象
             
         Returns:
             str: 新添加事件帖子的ID
         """
         event_post_object = self.normalize_post(event_post_object)  # 字段标准化
-        # 标记为事件帖子
-        event_post_object["is_event"] = True
-        event_post_object["priority"] = 100  # 事件帖子具有高优先级
         
-        # 设置较高的热度值（如果未提供则使用默认值）
-        event_post_object.setdefault("heat", 80)
+        # 设置事件帖子的特殊属性
+        event_post_object["information_strength"] = 1.0  # 事件帖子具有最高信息强度
         
         # 使用add_post方法添加帖子
         return self.add_post(event_post_object)
@@ -174,12 +194,12 @@ class WorldState:
     
     def get_event_posts(self) -> List[Dict[str, Any]]:
         """
-        获取所有事件帖子
+        获取所有事件帖子（信息强度为1.0的帖子）
         
         Returns:
             List[Dict[str, Any]]: 事件帖子列表
         """
-        return [post for post in self.posts_pool if post.get("is_event", False)]
+        return [post for post in self.posts_pool if post.get("information_strength", 0.0) >= 1.0]
     
     def clear_posts(self) -> None:
         """

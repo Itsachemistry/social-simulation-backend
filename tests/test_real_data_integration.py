@@ -49,16 +49,20 @@ def load_agents(json_path):
     return agents['agents']
 
 def preprocess_post(post):
-    # 立场映射
-    stance_map = {1: 'oppose', 0: 'neutral', 2: 'support'}
-    post['stance'] = stance_map.get(post.get('group', 0), 'neutral')
-    # 强度字段适配
-    post['stance_strength'] = post.get('strength', 1.0)
-    # 情感映射
-    emotion_map = {'正面': 'positive', '负面': 'negative', '中性': 'neutral'}
-    post['emotion'] = emotion_map.get(post.get('coarse_emotion', '中性'), 'neutral')
-    # 情感强度（可根据实际情况调整）
-    post['emotion_intensity'] = 1.0 if post['emotion'] != 'neutral' else 0.5
+    # 立场映射：1=支持患者(-1.0), 0=中立(0.0), 2=支持医院(1.0)
+    stance_map = {1: -1.0, 0: 0.0, 2: 1.0}
+    post['stance_score'] = stance_map.get(post.get('group', 0), 0.0)
+    
+    # 信息强度字段适配
+    post['information_strength'] = post.get('strength', 1.0)
+    
+    # 情绪映射：正面(0.8), 负面(-0.8), 中性(0.0)
+    emotion_map = {'正面': 0.8, '负面': -0.8, '中性': 0.0}
+    post['emotion'] = emotion_map.get(post.get('coarse_emotion', '中性'), 0.0)
+    
+    # 情绪强度：基于情绪绝对值
+    post['emotion_intensity'] = abs(post['emotion'])
+    
     # 用户ID、帖子ID适配
     post['user_id'] = post.get('uid', '')
     post['post_id'] = post.get('id', '')
@@ -92,8 +96,8 @@ def test_real_data_integration():
     for agent_type, agents_list in agent_controller.agents.items():
         for agent in agents_list:
             agent._last_emotion = agent.emotion
-            agent._last_stance = agent.stance
-            agent.stance = 'neutral'
+            agent._last_stance = agent.stance_score
+            agent.stance_score = 0.0  # 初始化为中立立场
     # 输出所有Agent的初始状态
     print("\n[Agent初始状态]")
     for agent_type, agents in agent_controller.agents.items():
@@ -101,7 +105,7 @@ def test_real_data_integration():
             continue
         for agent in agents:
             summary = agent.get_status()
-            print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
+            print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance_score")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
     # 6. 遍历每个时间片，推送个性化信息流并模拟状态更新
     prev_agent_states = {}
     for agent_type, agents_list in agent_controller.agents.items():
@@ -127,38 +131,34 @@ def test_real_data_integration():
                 continue
             for agent in agents:
                 summary = agent.get_status()
-                print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
+                print(f'Agent: {agent.agent_id}, 类型: {agent.agent_type}, 立场: {summary.get("stance_score")}, 情绪: {summary.get("emotion")}, 置信度: {summary.get("confidence")}, 活跃度: {getattr(agent, "activity_level", None)}, 已读: {summary.get("viewed_posts_count")}, 交互: {summary.get("interaction_count")}')
                 # 输出增量
                 prev = prev_agent_states.get(agent.agent_id, {})
                 delta = {}
-                for key in ["stance", "emotion", "confidence", "viewed_posts_count", "interaction_count"]:
+                for key in ["stance_score", "emotion", "confidence", "viewed_posts_count", "interaction_count"]:
                     if key in summary and key in prev:
                         try:
                             val1, val2 = summary[key], prev[key]
-                            # 兼容字符串情绪/立场
+                            # 确保数值类型
                             if key == "emotion":
-                                emo_map = {'positive': 1.0, 'neutral': 0.5, 'negative': 0.0}
-                                val1 = emo_map.get(val1, 0.5) if isinstance(val1, str) else (val1 if val1 is not None else 0.5)
-                                val2 = emo_map.get(val2, 0.5) if isinstance(val2, str) else (val2 if val2 is not None else 0.5)
-                            if key == "stance":
-                                stance_map = {'support': 1.0, 'neutral': 0.5, 'oppose': 0.0}
-                                val1 = stance_map.get(val1, 0.5) if isinstance(val1, str) else (val1 if val1 is not None else 0.5)
-                                val2 = stance_map.get(val2, 0.5) if isinstance(val2, str) else (val2 if val2 is not None else 0.5)
+                                val1 = float(val1) if val1 is not None else 0.0
+                                val2 = float(val2) if val2 is not None else 0.0
+                            elif key == "stance_score":
+                                val1 = float(val1) if val1 is not None else 0.0
+                                val2 = float(val2) if val2 is not None else 0.0
                             delta[key] = val1 - val2
                         except Exception:
                             delta[key] = "N/A"
                 print(f'  属性增量: {delta}')
                 # 新增：输出波动量
-                emo_map = {'positive': 1.0, 'neutral': 0.5, 'negative': 0.0}
-                stance_map = {'support': 1.0, 'neutral': 0.5, 'oppose': 0.0}
-                e1 = summary.get("emotion", 0.5)
-                e2 = prev.get("emotion", 0.5)
-                s1 = summary.get("stance", 0.5)
-                s2 = prev.get("stance", 0.5)
-                e1 = emo_map.get(e1, 0.5) if isinstance(e1, str) else (e1 if e1 is not None else 0.5)
-                e2 = emo_map.get(e2, 0.5) if isinstance(e2, str) else (e2 if e2 is not None else 0.5)
-                s1 = stance_map.get(s1, 0.5) if isinstance(s1, str) else (s1 if s1 is not None else 0.5)
-                s2 = stance_map.get(s2, 0.5) if isinstance(s2, str) else (s2 if s2 is not None else 0.5)
+                e1 = summary.get("emotion", 0.0)
+                e2 = prev.get("emotion", 0.0)
+                s1 = summary.get("stance_score", 0.0)
+                s2 = prev.get("stance_score", 0.0)
+                e1 = float(e1) if e1 is not None else 0.0
+                e2 = float(e2) if e2 is not None else 0.0
+                s1 = float(s1) if s1 is not None else 0.0
+                s2 = float(s2) if s2 is not None else 0.0
                 delta_emotion = abs(e1 - e2)
                 delta_stance = abs(s1 - s2)
                 fluctuation = delta_emotion + delta_stance

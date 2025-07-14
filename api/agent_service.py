@@ -7,17 +7,17 @@ agent_bp = Blueprint('agent', __name__)
 
 AGENT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
 POSTS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'posts.json')
-
+#加载agents，勇于初始化
 def load_agents():
     if not os.path.exists(AGENT_CONFIG_PATH):
         return []
     with open(AGENT_CONFIG_PATH, 'r', encoding='utf-8') as f:
         return json.load(f)
-
+#保存agent历史
 def save_agents(agent_list):
     with open(AGENT_CONFIG_PATH, 'w', encoding='utf-8') as f:
         json.dump(agent_list, f, ensure_ascii=False, indent=2)
-
+#获取posts的time range
 def get_post_time_range():
     if not os.path.exists(POSTS_PATH):
         return None, None
@@ -28,12 +28,28 @@ def get_post_time_range():
         return None, None
     timestamps = sorted(timestamps)
     return timestamps[0], timestamps[-1]
-
+#获取加载agents
 @agent_bp.route('/', methods=['GET'])
 def get_agents():
     agents = load_agents()
     return jsonify(agents)
+#添加agent“
+# Agent对象属性说明：
+# - agent_id: str, Agent唯一标识符
+# - agent_type: str, Agent类型 ("opinion_leader" | "rule_based" | "regular_user")
+# - name: str, Agent名称
+# - personality: dict, 性格特征
+#   - stance: str, 立场倾向 ("positive" | "negative" | "neutral")
+#   - emotion: str, 情感倾向 ("happy" | "angry" | "sad" | "neutral")
+#   - activity_level: int, 活跃度 (1-10)
+#   - influence: int, 影响力 (1-10)
+# - join_time: str, 加入时间 (ISO格式时间戳)
+# - behavior_rules: dict, 行为规则配置
 
+#   - topic_preferences: list, 话题偏好列表
+#   - interaction_patterns: dict, 交互模式配置
+# - status: str, Agent状态 ("active" | "inactive" | "suspended")
+# - metadata: dict, 额外元数据信息
 @agent_bp.route('/', methods=['POST'])
 def add_agent():
     agents = load_agents()
