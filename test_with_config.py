@@ -11,17 +11,77 @@ from src.agent_controller import AgentController
 from src.world_state import WorldState
 from src.time_manager import TimeSliceManager
 from src.agent import Agent, RoleType
-from src.services import DataLoader, flatten_posts_recursive, filter_valid_posts
+from src.services import DataLoader, flatten_posts_recursive, filter_valid_posts, generate_context, make_prompt
+from datetime import datetime, timedelta
 
 def create_test_agents():
     """创建测试Agent"""
     agents = [
         Agent('agent_001', RoleType.ORDINARY_USER, 0.4, 0.1, 0.6, 0.0, 0.0, 0.5),
-        Agent('agent_002', RoleType.ORDINARY_USER, 0.3, 0.3, 0.4, -0.2, -0.1, 0.3),
+        Agent('agent_002', RoleType.ORDINARY_USER, 0.3, 0.3, 0.8, -0.2, -0.1, 0.3),
         Agent('agent_003', RoleType.OPINION_LEADER, 0.8, 0.2, 0.9, 0.3, 0.5, 0.7),
         Agent('agent_004', RoleType.ORDINARY_USER, 0.5, 0.0, 0.7, 0.1, 0.2, 0.6)
     ]
     return agents
+
+def compute_macro_summary(agents):
+    emotion_sum = 0
+    stance_sum = 0
+    count = 0
+    for agent in agents:
+        status = agent.get_status()
+        emotion_sum += status['current_emotion']
+        stance_sum += status['current_stance']
+        count += 1
+    return {
+        'average_emotion': emotion_sum / count if count else 0,
+        'average_stance': stance_sum / count if count else 0,
+        'agent_count': count
+    }
+
+def simulate_leader_briefing_interaction(leader, macro_summary, time_slice_index):
+    # 构造简报帖子
+    briefing_post = {
+        'id': f'briefing_{time_slice_index}',
+        'content': f"简报：本时间片全体平均情绪={macro_summary['average_emotion']:.2f}，平均立场={macro_summary['average_stance']:.2f}",
+        'emotion_score': macro_summary['average_emotion'],
+        'stance_score': macro_summary['average_stance'],
+        'information_strength': 1.0
+    }
+    # leader用轻推算法（假设有apply_environmental_nudge方法）
+    if hasattr(leader, 'apply_environmental_nudge'):
+        leader.apply_environmental_nudge({
+            'average_stance_score': macro_summary['average_stance'],
+            'average_emotion_score': macro_summary['average_emotion']
+        })
+    else:
+        leader.update_emotion_and_stance(briefing_post, time_slice_index=time_slice_index)
+    return briefing_post
+
+def build_agent_prompt(agent, posts_read, prompt_template):
+    chain = posts_read + [{'content': '（此处为agent将要发言的内容）'}]
+    context_text = generate_context(chain)
+    target_post = '（此处为agent将要发言的内容）'
+    prompt = make_prompt(context_text, target_post, prompt_template)
+    return prompt
+
+def build_post_json(agent, content, all_posts_in_slice):
+    record = getattr(agent, 'most_influential_post_record', None)
+    parent_id = record['post_id'] if record else None
+    latest_ts = max([p.get('timestamp') for p in all_posts_in_slice if p.get('timestamp')], default=None)
+    if latest_ts:
+        dt = datetime.fromisoformat(str(latest_ts))
+        new_dt = dt + timedelta(seconds=1)
+        new_timestamp = new_dt.isoformat()
+    else:
+        new_timestamp = datetime.now().isoformat()
+    return {
+        'id': f"{agent.agent_id}_{new_timestamp}",
+        'parent_post_id': parent_id,
+        'author_id': agent.agent_id,
+        'content': content,
+        'timestamp': new_timestamp
+    }
 
 def main(w_pop=0.7, k=2, save_log=False):
     print("=== 社交模拟引擎测试（重构版）===")
@@ -70,6 +130,9 @@ def main(w_pop=0.7, k=2, save_log=False):
         print(f"✅ 创建Agent: {agent}")
     # 8. 运行模拟
     print("\n8. 开始模拟...")
+    # 读取prompt模板
+    with open('data/promptdataprocess.txt', 'r', encoding='utf-8') as f:
+        prompt_template = f.read()
     for timeslice in range(min(num_timeslices, time_manager.total_slices)):
         print(f"\n--- 时间片 {timeslice + 1} ---")
         for agent in agent_controller.agents:
@@ -79,12 +142,9 @@ def main(w_pop=0.7, k=2, save_log=False):
         # 新增：统计每个Agent阅读的帖子数量
         agent_read_counts = {}
         agent_post_scores = {}
-        # 统计每个帖子被哪些agent选中
         post_read_by_agents = {}
-        # 用新流程更新情绪，并收集分数
         all_agent_scores = agent_controller.update_agent_emotions(current_posts)
         for agent in agent_controller.agents:
-            # 重新统计阅读数
             personalized_feed, post_scores = agent_controller._generate_personalized_feed(agent, current_posts)
             agent_read_counts[agent.agent_id] = len(personalized_feed)
             agent_post_scores[agent.agent_id] = post_scores
@@ -93,6 +153,21 @@ def main(w_pop=0.7, k=2, save_log=False):
                     post_read_by_agents[pid] = []
                 if personalized_feed and any(p.get('id', p.get('post_id', 'unknown')) == pid for p in personalized_feed):
                     post_read_by_agents[pid].append((agent.agent_id, final_score, prob))
+        # === 新增：宏观统计简报 ===
+        macro_summary = agent_controller.compute_macro_summary()
+        print(f"[宏观简报] {macro_summary}")
+        # === 新增：leader与简报互动 ===
+        briefing_post, leader_statuses = agent_controller.leader_read_briefing(timeslice)
+        for leader_id, leader_status in leader_statuses:
+            print(f"[Leader] {leader_id} 读简报后状态: {leader_status}")
+        # === 新增：发言prompt构造和json帖子对象构造 ===
+        for agent in agent_controller.agents:
+            prompt = agent_controller.build_agent_prompt(agent, prompt_template)
+            print(f"[Prompt] {agent.agent_id} 发言prompt示例:\n{prompt}\n")
+            # 假设得到了content
+            content = f"这是{agent.agent_id}的发言内容"
+            post_json = agent_controller.build_post_json(agent, content, current_posts)
+            print(f"[Post JSON] {agent.agent_id} 发帖json: {post_json}")
         print(f"\n时间片 {timeslice + 1} 结束，Agent状态:")
         for agent in agent_controller.agents:
             emotion_fluctuation = abs(agent.current_emotion - agent.last_emotion)
@@ -106,7 +181,10 @@ def main(w_pop=0.7, k=2, save_log=False):
                 print(f"    -> 决定发帖！")
             else:
                 print(f"    -> 不发帖")
-        # 输出每个帖子被哪些agent选中及分数
+        # 新增：输出每个agent本时间片实际阅读的帖子数
+        print("[阅读统计] 本时间片每个agent实际阅读的帖子数：")
+        for agent in agent_controller.agents:
+            print(f"  {agent.agent_id}: {len(getattr(agent, 'viewed_posts', []))} 条")
         print(f"\n[分析] 本时间片每个帖子被选中的情况：")
         for pid, agent_list in post_read_by_agents.items():
             if agent_list:
@@ -115,4 +193,7 @@ def main(w_pop=0.7, k=2, save_log=False):
     print("\n=== 模拟完成 ===")
 
 if __name__ == "__main__":
-    main() 
+    import sys
+    with open('test_with_config_output.txt', 'w', encoding='utf-8') as f:
+        sys.stdout = f
+        main() 

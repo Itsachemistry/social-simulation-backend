@@ -4,9 +4,12 @@ from time_manager import TimeSliceManager
 import json
 import random
 import math
+from typing import Optional
+from src.services import generate_context, make_prompt
+from datetime import datetime, timedelta
 
 class AgentController:
-    def __init__(self, world_state: WorldState, time_manager: TimeSliceManager, w_pop=0.7, k=2):
+    def __init__(self, world_state: WorldState, time_manager: Optional[TimeSliceManager], w_pop=0.7, k=2):
         self.world_state = world_state
         self.time_manager = time_manager
         self.agents = []
@@ -112,15 +115,20 @@ class AgentController:
         return agent_feed, list(zip(post_ids, score_pops, score_rels, final_scores, viewing_probs))
 
     # update_agent_emotions 也要适配返回值
-    def update_agent_emotions(self, posts):
+    def update_agent_emotions(self, posts, time_slice_index=None):
         """为每个Agent生成个性化Feed并逐条阅读，调用Agent自身的情绪更新算法，并统计分数"""
         all_agent_scores = {}
         for agent in self.agents:
+            # 每个时间片开始时清空已读帖子和情绪立场历史
+            agent.reset_viewed_posts()
+            agent.reset_emotion_stance_history()
             personalized_feed, post_scores = self._generate_personalized_feed(agent, posts)
             all_agent_scores[agent.agent_id] = post_scores
+            # 记录本时间片已读帖子
+            agent.viewed_posts = personalized_feed
             for post in personalized_feed:
                 agent.check_blocking(post)
-                agent.update_emotion_and_stance(post)
+                agent.update_emotion_and_stance(post, time_slice_index=time_slice_index)
                 print(f"Agent {agent.agent_id} 阅读帖子 {post.get('id', post.get('post_id', 'unknown'))}: "
                       f"情绪 {agent.current_emotion:.3f}, 立场 {agent.current_stance:.3f}, "
                       f"置信度 {agent.current_confidence:.3f}")
@@ -149,6 +157,93 @@ class AgentController:
     def get_ordinary_users(self):
         """获取普通用户Agent"""
         return self.get_agents_by_role(RoleType.ORDINARY_USER)
+
+    def compute_macro_summary(self):
+        """
+        统计当前所有agent的平均情绪、平均立场、agent数量等。
+        """
+        emotion_sum = 0
+        stance_sum = 0
+        count = 0
+        for agent in self.agents:
+            status = agent.get_status()
+            emotion_sum += status['current_emotion']
+            stance_sum += status['current_stance']
+            count += 1
+        return {
+            'average_emotion': emotion_sum / count if count else 0,
+            'average_stance': stance_sum / count if count else 0,
+            'agent_count': count
+        }
+
+    def leader_read_briefing(self, time_slice_index):
+        """
+        生成宏观简报并让所有leader agent用轻推算法读取。
+        返回简报内容和每个leader的状态。
+        """
+        macro = self.compute_macro_summary()
+        briefing_post = {
+            'id': f'briefing_{time_slice_index}',
+            'content': f"简报：本时间片全体平均情绪={macro['average_emotion']:.2f}，平均立场={macro['average_stance']:.2f}",
+            'emotion_score': macro['average_emotion'],
+            'stance_score': macro['average_stance'],
+            'information_strength': 1.0
+        }
+        results = []
+        for agent in self.get_opinion_leaders():
+            if hasattr(agent, 'apply_environmental_nudge'):
+                agent.apply_environmental_nudge({
+                    'average_stance_score': macro['average_stance'],
+                    'average_emotion_score': macro['average_emotion']
+                })
+            else:
+                agent.update_emotion_and_stance(briefing_post, time_slice_index=time_slice_index)
+            results.append((agent.agent_id, agent.get_status()))
+        return briefing_post, results
+
+    def build_agent_prompt(self, agent, prompt_template):
+        """
+        根据agent的已读帖子和prompt模板，自动组装发言prompt。
+        """
+        posts_read = getattr(agent, 'viewed_posts', [])
+        chain = posts_read + [{'content': '（此处为agent将要发言的内容）'}]
+        context_text = generate_context(chain)
+        target_post = '（此处为agent将要发言的内容）'
+        prompt = make_prompt(context_text, target_post, prompt_template)
+        return prompt
+
+    def build_post_json(self, agent, content, all_posts_in_slice):
+        """
+        根据agent的影响最大帖子、当前时间片帖子，自动拼接发帖json对象。
+        兼容纯数字（秒级）时间戳和ISO格式。
+        """
+        record = getattr(agent, 'most_influential_post_record', None)
+        parent_id = record['post_id'] if record else None
+        latest_ts = max([p.get('timestamp') for p in all_posts_in_slice if p.get('timestamp')], default=None)
+        if latest_ts:
+            try:
+                # 先尝试数字时间戳
+                ts_val = float(latest_ts)
+                # 判断是否为合理的时间戳（10位或13位）
+                if ts_val > 1e12:
+                    ts_val = ts_val / 1000  # 13位毫秒转秒
+                from datetime import datetime, timedelta
+                dt = datetime.fromtimestamp(ts_val)
+            except Exception:
+                # 回退到ISO格式
+                dt = datetime.fromisoformat(str(latest_ts))
+            new_dt = dt + timedelta(seconds=1)
+            new_timestamp = new_dt.isoformat()
+        else:
+            from datetime import datetime
+            new_timestamp = datetime.now().isoformat()
+        return {
+            'id': f"{agent.agent_id}_{new_timestamp}",
+            'parent_post_id': parent_id,
+            'author_id': agent.agent_id,
+            'content': content,
+            'timestamp': new_timestamp
+        }
 
     def __str__(self):
         return f"AgentController(agents={len(self.agents)})"

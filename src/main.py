@@ -14,7 +14,7 @@ from typing import Dict, List, Any, Optional
 from src.time_manager import TimeSliceManager
 from src.world_state import WorldState
 from src.agent_controller import AgentController
-from src.services import DataLoader, flatten_posts_recursive, filter_valid_posts
+from src.services import DataLoader, flatten_posts_recursive, filter_valid_posts, load_agents_from_file
 from src.llm_service import LLMServiceFactory
 from src.agent import Agent, RoleType
 
@@ -31,78 +31,24 @@ class SimulationEngine:
         """
         self.config = config
         self.data_loader = DataLoader()
-        
-        # 初始化各个模块
         self.world_state = WorldState()
-        
-        # 创建LLM服务
         llm_config = config.get("llm", {})
         self.llm_service = LLMServiceFactory.create_service(llm_config)
-        
-        # 加载Agent配置
-        agent_configs = self._load_agent_configs()
-        self.agent_controller = AgentController(
-            agent_configs=agent_configs,
-            world_state=self.world_state,
-            llm_service=self.llm_service
-        )
-        
-        # 初始化时间管理器（稍后设置）
+        # 从文件加载agent
+        self.agents = load_agents_from_file('config/agents.json')
+        self.agent_controller = AgentController(self.world_state, None)  # time_manager稍后设置
+        for agent in self.agents:
+            self.agent_controller.add_agent(agent)
         self.time_manager: Optional[TimeSliceManager] = None
         self.posts_per_slice = config.get("posts_per_slice", 50)
-        
-        # 仿真状态
         self.current_slice = 0
         self.total_slices = 0
         self.simulation_results = []
-        
         print("仿真引擎初始化完成")
     
     def _load_agent_configs(self) -> List[Dict[str, Any]]:
-        """加载Agent配置"""
-        agent_config_path = self.config.get("agent_config_path")
-        if agent_config_path:
-            try:
-                agent_data = self.data_loader.load_agent_config(agent_config_path)
-                return agent_data.get("agents", [])
-            except Exception as e:
-                print(f"加载Agent配置失败: {e}")
-                return self._get_default_agent_configs()
-        else:
-            return self._get_default_agent_configs()
-    
-    def _get_default_agent_configs(self) -> List[Dict[str, Any]]:
-        """获取默认Agent配置（调整了发帖概率和兴趣参数）"""
-        return [
-            {
-                "agent_id": "leader_001",
-                "type": "意见领袖",
-                "stance": 0.8,
-                "interests": ["政治", "经济"],
-                "influence": 2.0,
-        
-                "max_posts_per_slice": 3
-            },
-
-            {
-                "agent_id": "user_001",
-                "type": "普通用户",
-                "stance": 0.3,
-                "interests": ["娱乐", "科技"],
-                "influence": 1.0,
-        
-                "max_posts_per_slice": 1
-            },
-            {
-                "agent_id": "user_002",
-                "type": "普通用户",
-                "stance": 0.7,
-                "interests": ["体育", "健康"],
-                "influence": 1.0,
-        
-                "max_posts_per_slice": 1
-            }
-        ]
+        """已废弃，直接返回空列表"""
+        return []
     
     def load_initial_data(self, posts_file_path: str):
         """
@@ -205,14 +151,12 @@ class SimulationEngine:
         
         print(f"\n=== 开始仿真 ===")
         print(f"总时间片数: {self.total_slices}")
-        print(f"Agent数量: {self.agent_controller._get_total_agents_count()}")
+        print(f"Agent数量: {len(self.agent_controller.agents)}")
         
         start_time = time.time()
         
         # 获取所有Agent对象池（含未激活）
-        all_agents = []
-        for agent_type, agent_list in self.agent_controller.agents.items():
-            all_agents.extend(agent_list)
+        all_agents = self.agent_controller.agents
         
         while self.current_slice < self.total_slices:
             print(f"\n--- 时间片 {self.current_slice + 1}/{self.total_slices} ---")
@@ -230,14 +174,13 @@ class SimulationEngine:
             active_agents = [agent for agent in all_agents if getattr(agent, 'is_active', True)]
             
             # 2. 执行时间片调度（只对活跃Agent）
-            slice_results = self.agent_controller.run_time_slice(
-                active_agents, self.world_state, self.llm_service
-            )
+            # 这里假设run_time_slice已被移除，直接用update_agent_emotions
+            self.agent_controller.update_agent_emotions(current_slice_posts, time_slice_index=self.current_slice)
             
             # 3. 记录结果
             self.simulation_results.append({
                 "slice_index": self.current_slice,
-                "results": slice_results,
+                "results": {}, # No specific results to record here as update_agent_emotions doesn't return them
                 "total_posts": len(all_posts),
                 "new_posts_count": len(current_slice_posts)
             })
@@ -278,7 +221,7 @@ class SimulationEngine:
         
         return {
             "total_slices": self.total_slices,
-            "total_agents": self.agent_controller._get_total_agents_count(),
+            "total_agents": len(self.agent_controller.agents),
             "total_posts": self.world_state.get_posts_count(),
             "total_actions": total_actions,
             "event_posts": len(self.world_state.get_event_posts())
@@ -297,16 +240,6 @@ class SimulationEngine:
         
         print(f"结果已保存到: {output_file}")
 
-
-def create_test_agents():
-    """创建测试Agent"""
-    agents = [
-        Agent('agent_001', RoleType.ORDINARY_USER, 0.4, 0.1, 0.6, 0.0, 0.0, 0.5),
-        Agent('agent_002', RoleType.ORDINARY_USER, 0.3, 0.3, 0.4, -0.2, -0.1, 0.3),
-        Agent('agent_003', RoleType.OPINION_LEADER, 0.8, 0.2, 0.9, 0.3, 0.5, 0.7),
-        Agent('agent_004', RoleType.ORDINARY_USER, 0.5, 0.0, 0.7, 0.1, 0.2, 0.6)
-    ]
-    return agents
 
 def main(w_pop=0.7, k=2, save_log=False):
     print("=== 社交模拟引擎主程序（新版）===")
@@ -348,7 +281,7 @@ def main(w_pop=0.7, k=2, save_log=False):
     agent_controller = AgentController(world_state, time_manager, w_pop=w_pop, k=k)
     # 7. 创建测试Agent
     print("\n7. 创建测试Agent...")
-    test_agents = create_test_agents()
+    test_agents = load_agents_from_file('config/agents.json')
     for agent in test_agents:
         agent_controller.add_agent(agent)
         print(f"✅ 创建Agent: {agent}")

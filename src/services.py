@@ -2,6 +2,8 @@ import json
 import yaml
 from typing import Dict, List, Any
 from pathlib import Path
+import re
+from src.agent import Agent, RoleType
 
 
 class DataLoader:
@@ -136,3 +138,135 @@ def filter_valid_posts(posts):
             continue
         valid_posts.append(post)
     return valid_posts 
+
+
+def calculate_environmental_summary(posts_in_slice: list) -> dict:
+    """
+    统计时间片内所有帖子，输出结构化环境摘要，字段和语义严格遵循promptdataprocess.txt定义。
+    """
+    if not posts_in_slice:
+        return {}
+
+    total_posts = len(posts_in_slice)
+    stance_category_counts = {}
+    emotion_category_counts = {}
+    stance_score_sum = 0.0
+    emotion_score_sum = 0.0
+    stance_confidence_sum = 0.0
+    information_strength_sum = 0.0
+
+    valid_stance_score_count = 0
+    valid_emotion_score_count = 0
+    valid_stance_confidence_count = 0
+    valid_information_strength_count = 0
+
+    for post in posts_in_slice:
+        # 立场类别统计
+        sc = post.get("stance_category")
+        if sc:
+            stance_category_counts[sc] = stance_category_counts.get(sc, 0) + 1
+
+        # 情绪类别统计
+        ec = post.get("emotion_category")
+        if ec:
+            emotion_category_counts[ec] = emotion_category_counts.get(ec, 0) + 1
+
+        # 均值统计
+        ss = post.get("stance_score")
+        if ss is not None:
+            stance_score_sum += ss
+            valid_stance_score_count += 1
+
+        es = post.get("emotion_score")
+        if es is not None:
+            emotion_score_sum += es
+            valid_emotion_score_count += 1
+
+        scf = post.get("stance_confidence")
+        if scf is not None:
+            stance_confidence_sum += scf
+            valid_stance_confidence_count += 1
+
+        isf = post.get("information_strength")
+        if isf is not None:
+            information_strength_sum += isf
+            valid_information_strength_count += 1
+
+    # 归一化分布
+    stance_distribution = {k: v / total_posts for k, v in stance_category_counts.items()}
+    emotion_distribution = {k: v / total_posts for k, v in emotion_category_counts.items()}
+
+    summary = {
+        "total_posts_in_slice": total_posts,
+        "stance_distribution": stance_distribution,
+        "average_stance_score": stance_score_sum / valid_stance_score_count if valid_stance_score_count else 0.0,
+        "average_stance_confidence": stance_confidence_sum / valid_stance_confidence_count if valid_stance_confidence_count else 0.0,
+        "emotion_distribution": emotion_distribution,
+        "average_emotion_score": emotion_score_sum / valid_emotion_score_count if valid_emotion_score_count else 0.0,
+        "average_information_strength": information_strength_sum / valid_information_strength_count if valid_information_strength_count else 0.0,
+    }
+    return summary 
+
+
+def extract_chain(mid_index, target_mid):
+    """
+    从mid_index中递归抽取以target_mid为终点的帖子链（父->子顺序）。
+    """
+    chain = []
+    current_mid = target_mid
+    while current_mid and current_mid in mid_index:
+        post = mid_index[current_mid]
+        chain.append(post)
+        pid = post.get('pid')
+        if not pid or pid == '0' or pid == 0:
+            break
+        current_mid = pid
+    chain.reverse()
+    return chain
+
+def generate_context(chain):
+    """
+    根据帖子链生成对话上下文文本。
+    """
+    context_lines = []
+    for idx, post in enumerate(chain[:-1]):
+        context_lines.append(f"[父帖子 {idx+1}]: {post.get('text', post.get('content', ''))}")
+    context_lines.append(f"[目标帖子]: \"{chain[-1].get('text', chain[-1].get('content', ''))}\"")
+    return '\n'.join(context_lines)
+
+def make_prompt(context_text, target_post, prompt_template):
+    """
+    用prompt模板、上下文和目标帖内容生成最终prompt。
+    """
+    before, after = prompt_template.split('## 2. 对话上下文 (Conversational Context)', 1)
+    after_split = after.split('## 3. 你的任务 (Your Task)', 1)
+    if len(after_split) == 2:
+        context_block, after_rest = after_split
+        prompt = before + '## 2. 对话上下文 (Conversational Context)\n' + context_text + '\n\n## 3. 你的任务 (Your Task)' + after_rest
+    else:
+        prompt = before + '## 2. 对话上下文 (Conversational Context)\n' + context_text
+    # 替换所有 [目标帖子]: "..." 为当前目标帖
+    prompt = re.sub(r'\[目标帖子\]:\s*".*?"', f'[目标帖子]: "{target_post}"', prompt)
+    return prompt 
+
+
+def load_agents_from_file(filepath):
+    """
+    从json文件加载agent配置并实例化Agent对象列表。
+    """
+    with open(filepath, 'r', encoding='utf-8') as f:
+        agent_configs = json.load(f)
+    agents = []
+    for cfg in agent_configs:
+        agent = Agent(
+            cfg['agent_id'],
+            RoleType(cfg['role_type']),
+            cfg['attitude_firmness'],
+            cfg['opinion_blocking'],
+            cfg['activity_level'],
+            cfg['initial_emotion'],
+            cfg['initial_stance'],
+            cfg['initial_confidence']
+        )
+        agents.append(agent)
+    return agents 

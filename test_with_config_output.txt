@@ -1,0 +1,3610 @@
+=== 社交模拟引擎测试（重构版）===
+使用src中提供的标准接口，专注于测试核心算法
+
+[参数] w_pop=0.7, k=2
+
+1. 加载原始帖子数据...
+✅ 成功加载 203 条原始帖子
+
+2. 展开嵌套帖子...
+✅ 展开后共 4424 条帖子
+
+3. 过滤有效帖子...
+✅ 过滤后剩余 564 条有效帖子
+
+4. 字段标准化...
+✅ 完成 564 条帖子的标准化
+
+5. 时间片划分...
+✅ 时间片大小: 30
+✅ 总时间片数: 19
+
+6. 创建Agent控制器...
+
+7. 创建测试Agent...
+✅ 创建Agent: Agent(id=agent_001, role=ordinary_user, emotion=0.00, stance=0.00)
+✅ 创建Agent: Agent(id=agent_002, role=ordinary_user, emotion=-0.20, stance=-0.10)
+✅ 创建Agent: Agent(id=agent_003, role=opinion_leader, emotion=0.30, stance=0.50)
+✅ 创建Agent: Agent(id=agent_004, role=ordinary_user, emotion=0.10, stance=0.20)
+
+8. 开始模拟...
+
+--- 时间片 1 ---
+处理 30 条帖子
+[Feed] Agent agent_001 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.200, Final_Score=0.086, Sigmoid概率=0.443, ✔选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.400, Final_Score=0.512, Sigmoid概率=0.651, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✘未选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.400, Final_Score=0.199, Sigmoid概率=0.499, ✘未选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.445, ✔选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✘未选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.400, Final_Score=0.239, Sigmoid概率=0.519, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.240, Sigmoid概率=0.520, ✘未选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.400, Final_Score=0.173, Sigmoid概率=0.486, ✘未选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.700, Final_Score=0.210, Sigmoid概率=0.505, ✘未选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.159, Sigmoid概率=0.479, ✔选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✔选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✘未选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.300, Final_Score=0.288, Sigmoid概率=0.544, ✔选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.400, Final_Score=0.129, Sigmoid概率=0.464, ✘未选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.445, ✔选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.400, Final_Score=0.261, Sigmoid概率=0.530, ✔选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.600, Final_Score=0.312, Sigmoid概率=0.556, ✔选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.500, Final_Score=0.163, Sigmoid概率=0.481, ✔选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✘未选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.700, Final_Score=0.219, Sigmoid概率=0.509, ✔选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.300, Final_Score=0.094, Sigmoid概率=0.447, ✘未选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.400, Final_Score=0.820, Sigmoid概率=0.775, ✔选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✔选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.445, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.475, ✘未选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.400, Final_Score=0.124, Sigmoid概率=0.462, ✔选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.900, Final_Score=0.270, Sigmoid概率=0.535, ✘未选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.154, Sigmoid概率=0.477, ✔选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.500, Final_Score=0.216, Sigmoid概率=0.508, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4036716081432676: 情绪 -0.030, 立场 0.030, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4036784096263919: 情绪 -0.107, 立场 0.007, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037016473197395: 情绪 -0.176, 立场 0.025, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037124792139040: 情绪 -0.239, 立场 0.013, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037125542459730: 情绪 -0.295, 立场 0.053, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037128382063235: 情绪 -0.345, 立场 0.018, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037141966651655: 情绪 -0.371, 立场 0.045, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037148266670011: 情绪 -0.414, 立场 -0.002, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037149974179421: 情绪 -0.442, 立场 -0.038, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037152008120995: 情绪 -0.478, 立场 0.000, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037153069176321: 情绪 -0.500, 立场 0.043, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037319461863054: 情绪 -0.520, 立场 0.003, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037324478023375: 情绪 -0.548, 立场 0.045, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037333135457250: 情绪 -0.561, 立场 0.047, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037350071630678: 情绪 -0.565, 立场 0.084, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037385668283204: 情绪 -0.428, 立场 0.115, 置信度 0.500
+[Feed] Agent agent_002 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.300, Final_Score=0.116, Sigmoid概率=0.446, ✔选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.500, Final_Score=0.542, Sigmoid概率=0.654, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.463, ✔选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.500, Final_Score=0.229, Sigmoid概率=0.502, ✘未选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.448, ✘未选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.463, ✔选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.500, Final_Score=0.269, Sigmoid概率=0.522, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.900, Final_Score=0.270, Sigmoid概率=0.523, ✘未选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.500, Final_Score=0.203, Sigmoid概率=0.489, ✘未选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.240, Sigmoid概率=0.508, ✔选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.600, Final_Score=0.189, Sigmoid概率=0.482, ✘未选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.463, ✔选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.463, ✘未选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.400, Final_Score=0.318, Sigmoid概率=0.547, ✔选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.159, Sigmoid概率=0.467, ✘未选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.448, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.500, Final_Score=0.291, Sigmoid概率=0.533, ✘未选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.700, Final_Score=0.342, Sigmoid概率=0.559, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.600, Final_Score=0.193, Sigmoid概率=0.484, ✘未选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.463, ✔选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.800, Final_Score=0.249, Sigmoid概率=0.512, ✔选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.200, Final_Score=0.064, Sigmoid概率=0.421, ✔选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.500, Final_Score=0.850, Sigmoid概率=0.778, ✔选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.463, ✔选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.419, ✔选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.600, Final_Score=0.180, Sigmoid概率=0.478, ✔选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.154, Sigmoid概率=0.465, ✔选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=1.000, Final_Score=0.300, Sigmoid概率=0.538, ✘未选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.400, Final_Score=0.124, Sigmoid概率=0.450, ✔选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.600, Final_Score=0.246, Sigmoid概率=0.511, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4036716081432676: 情绪 -0.220, 立场 -0.124, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4036784096263919: 情绪 -0.278, 立场 -0.122, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037007263095724: 情绪 -0.304, 立场 -0.112, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037037071873683: 情绪 -0.344, 立场 -0.140, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037118331831237: 情绪 -0.369, 立场 -0.108, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037125542459730: 情绪 -0.412, 立场 -0.075, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037128382063235: 情绪 -0.451, 立场 -0.029, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037152763295775: 情绪 -0.503, 立场 -0.080, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037153069176321: 情绪 -0.523, 立场 -0.051, 置信度 0.250
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037249505368724: 情绪 -0.535, 立场 0.017, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037319461863054: 情绪 -0.551, 立场 0.006, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037324478023375: 情绪 -0.576, 立场 0.054, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037325761439459: 情绪 -0.578, 立场 0.026, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037326046850659: 情绪 -0.581, 立场 0.069, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037333135457250: 情绪 -0.592, 立场 0.046, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037350071630678: 情绪 -0.592, 立场 0.033, 置信度 0.200
+[Feed] Agent agent_003 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.000, Final_Score=0.026, Sigmoid概率=0.462, ✔选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.000, Final_Score=0.392, Sigmoid概率=0.640, ✘未选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.000, Final_Score=0.079, Sigmoid概率=0.488, ✔选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✔选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.000, Final_Score=0.119, Sigmoid概率=0.508, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.493, ✘未选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.000, Final_Score=0.053, Sigmoid概率=0.475, ✔选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.478, ✔选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.000, Final_Score=0.009, Sigmoid概率=0.453, ✔选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✔选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.000, Final_Score=0.198, Sigmoid概率=0.547, ✘未选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.000, Final_Score=0.009, Sigmoid概率=0.453, ✔选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.000, Final_Score=0.141, Sigmoid概率=0.519, ✘未选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.100, Final_Score=0.162, Sigmoid概率=0.529, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.000, Final_Score=0.013, Sigmoid概率=0.455, ✘未选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.069, Sigmoid概率=0.483, ✔选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.800, Final_Score=0.244, Sigmoid概率=0.570, ✔选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.000, Final_Score=0.700, Sigmoid概率=0.767, ✔选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.240, Sigmoid概率=0.568, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.000, Final_Score=0.004, Sigmoid概率=0.451, ✔选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.508, ✘未选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=1.000, Final_Score=0.304, Sigmoid概率=0.599, ✔选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.000, Final_Score=0.066, Sigmoid概率=0.481, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4036716081432676: 情绪 0.255, 立场 0.500, 置信度 0.719
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037013675446399: 情绪 0.149, 立场 0.500, 置信度 0.722
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037016473197395: 情绪 0.055, 立场 0.500, 置信度 0.706
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037114661914029: 情绪 -0.021, 立场 0.500, 置信度 0.686
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037118331831237: 情绪 -0.079, 立场 0.500, 置信度 0.692
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037124792139040: 情绪 -0.151, 立场 0.500, 置信度 0.697
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037126159400564: 情绪 -0.216, 立场 0.500, 置信度 0.688
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037130835022729: 情绪 -0.245, 立场 0.500, 置信度 0.702
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037153069176321: 情绪 -0.291, 立场 0.500, 置信度 0.711
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037249505368724: 情绪 -0.337, 立场 0.500, 置信度 0.761
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037319461863054: 情绪 -0.373, 立场 0.500, 置信度 0.769
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037333135457250: 情绪 -0.395, 立场 0.500, 置信度 0.772
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037350071630678: 情绪 -0.415, 立场 0.500, 置信度 0.758
+[Feed] Agent agent_004 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.000, Final_Score=0.026, Sigmoid概率=0.437, ✔选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.200, Final_Score=0.452, Sigmoid概率=0.645, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✘未选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.200, Final_Score=0.139, Sigmoid概率=0.493, ✘未选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.439, ✘未选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✘未选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.200, Final_Score=0.179, Sigmoid概率=0.513, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.600, Final_Score=0.180, Sigmoid概率=0.514, ✔选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.200, Final_Score=0.113, Sigmoid概率=0.480, ✔选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.499, ✘未选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.300, Final_Score=0.099, Sigmoid概率=0.473, ✔选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✔选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✔选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.100, Final_Score=0.228, Sigmoid概率=0.538, ✔选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.069, Sigmoid概率=0.458, ✘未选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.439, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.200, Final_Score=0.201, Sigmoid概率=0.524, ✔选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.400, Final_Score=0.252, Sigmoid概率=0.550, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.300, Final_Score=0.103, Sigmoid概率=0.475, ✔选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✔选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.159, Sigmoid概率=0.503, ✘未选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.154, Sigmoid概率=0.501, ✔选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.760, Sigmoid概率=0.771, ✘未选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✘未选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.499, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.469, ✔选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.200, Final_Score=0.064, Sigmoid概率=0.456, ✔选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.700, Final_Score=0.210, Sigmoid概率=0.529, ✔选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.700, Final_Score=0.214, Sigmoid概率=0.531, ✔选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.300, Final_Score=0.156, Sigmoid概率=0.502, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4036716081432676: 情绪 0.065, 立场 0.200, 置信度 0.584
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4036784096263919: 情绪 -0.022, 立场 0.200, 置信度 0.595
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037090738392104: 情绪 -0.123, 立场 0.200, 置信度 0.545
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037114661914029: 情绪 -0.181, 立场 0.200, 置信度 0.554
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037124792139040: 情绪 -0.243, 立场 0.200, 置信度 0.548
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037125542459730: 情绪 -0.299, 立场 0.200, 置信度 0.543
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037126159400564: 情绪 -0.349, 立场 0.200, 置信度 0.553
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037128382063235: 情绪 -0.394, 立场 0.200, 置信度 0.546
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037148266670011: 情绪 -0.434, 立场 0.200, 置信度 0.560
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037152008120995: 情绪 -0.471, 立场 0.200, 置信度 0.572
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037152763295775: 情绪 -0.520, 立场 0.200, 置信度 0.522
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037249505368724: 情绪 -0.532, 立场 0.200, 置信度 0.572
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037326046850659: 情绪 -0.539, 立场 0.200, 置信度 0.565
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037333135457250: 情绪 -0.552, 立场 0.200, 置信度 0.555
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037345017634878: 情绪 -0.527, 立场 0.200, 置信度 0.542
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037350071630678: 情绪 -0.534, 立场 0.200, 置信度 0.553
+[Feed] Agent agent_001 候选池大小: 22 (k=2, x0=auto)
+    帖子1: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.459, ✘未选中
+    帖子2: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.285, Final_Score=0.165, Sigmoid概率=0.498, ✔选中
+    帖子3: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.459, ✘未选中
+    帖子4: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.685, Final_Score=0.206, Sigmoid概率=0.518, ✘未选中
+    帖子5: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.285, Final_Score=0.138, Sigmoid概率=0.485, ✘未选中
+    帖子6: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.585, Final_Score=0.176, Sigmoid概率=0.503, ✔选中
+    帖子7: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.385, Final_Score=0.124, Sigmoid概率=0.478, ✔选中
+    帖子8: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.459, ✔选中
+    帖子9: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.459, ✔选中
+    帖子10: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.285, Final_Score=0.226, Sigmoid概率=0.529, ✘未选中
+    帖子11: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.385, Final_Score=0.129, Sigmoid概率=0.480, ✔选中
+    帖子12: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.459, ✘未选中
+    帖子13: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.585, Final_Score=0.184, Sigmoid概率=0.508, ✔选中
+    帖子14: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.415, Final_Score=0.129, Sigmoid概率=0.480, ✔选中
+    帖子15: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.285, Final_Score=0.786, Sigmoid概率=0.774, ✔选中
+    帖子16: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.459, ✔选中
+    帖子17: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.415, Final_Score=0.124, Sigmoid概率=0.478, ✔选中
+    帖子18: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.385, Final_Score=0.116, Sigmoid概率=0.473, ✘未选中
+    帖子19: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.285, Final_Score=0.090, Sigmoid概率=0.461, ✘未选中
+    帖子20: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.785, Final_Score=0.236, Sigmoid概率=0.533, ✔选中
+    帖子21: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.615, Final_Score=0.189, Sigmoid概率=0.510, ✔选中
+    帖子22: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.385, Final_Score=0.182, Sigmoid概率=0.506, ✔选中
+[Feed] Agent agent_002 候选池大小: 25 (k=2, x0=auto)
+    帖子1: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.461, ✔选中
+    帖子2: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.367, Final_Score=0.189, Sigmoid概率=0.500, ✔选中
+    帖子3: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.267, Final_Score=0.080, Sigmoid概率=0.446, ✘未选中
+    帖子4: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.461, ✔选中
+    帖子5: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.767, Final_Score=0.230, Sigmoid概率=0.521, ✔选中
+    帖子6: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.367, Final_Score=0.163, Sigmoid概率=0.487, ✘未选中
+    帖子7: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.667, Final_Score=0.200, Sigmoid概率=0.506, ✔选中
+    帖子8: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.461, ✔选中
+    帖子9: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.461, ✔选中
+    帖子10: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.267, Final_Score=0.278, Sigmoid概率=0.545, ✘未选中
+    帖子11: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.367, Final_Score=0.119, Sigmoid概率=0.465, ✔选中
+    帖子12: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.267, Final_Score=0.080, Sigmoid概率=0.446, ✘未选中
+    帖子13: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.367, Final_Score=0.251, Sigmoid概率=0.531, ✔选中
+    帖子14: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.567, Final_Score=0.302, Sigmoid概率=0.557, ✔选中
+    帖子15: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.467, Final_Score=0.153, Sigmoid概率=0.482, ✘未选中
+    帖子16: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.461, ✘未选中
+    帖子17: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.667, Final_Score=0.209, Sigmoid概率=0.510, ✘未选中
+    帖子18: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.367, Final_Score=0.810, Sigmoid概率=0.776, ✔选中
+    帖子19: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.461, ✘未选中
+    帖子20: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.333, Final_Score=0.100, Sigmoid概率=0.456, ✘未选中
+    帖子21: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.467, Final_Score=0.140, Sigmoid概率=0.476, ✘未选中
+    帖子22: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.367, Final_Score=0.114, Sigmoid概率=0.463, ✘未选中
+    帖子23: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.867, Final_Score=0.260, Sigmoid概率=0.536, ✘未选中
+    帖子24: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.533, Final_Score=0.164, Sigmoid概率=0.488, ✔选中
+    帖子25: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.467, Final_Score=0.206, Sigmoid概率=0.509, ✘未选中
+[Feed] Agent agent_003 候选池大小: 11 (k=2, x0=auto)
+    帖子1: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子2: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✔选中
+    帖子3: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.494, ✘未选中
+    帖子4: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.000, Final_Score=0.198, Sigmoid概率=0.548, ✘未选中
+    帖子5: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.100, Final_Score=0.162, Sigmoid概率=0.530, ✘未选中
+    帖子6: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.000, Final_Score=0.013, Sigmoid概率=0.455, ✔选中
+    帖子7: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✔选中
+    帖子8: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.240, Sigmoid概率=0.568, ✔选中
+    帖子9: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.449, ✘未选中
+    帖子10: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.509, ✔选中
+    帖子11: id=4037350071630678, Score_Pop=0.006, Score_Rel=1.000, Final_Score=0.304, Sigmoid概率=0.600, ✔选中
+[Feed] Agent agent_004 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.000, Final_Score=0.026, Sigmoid概率=0.437, ✘未选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.200, Final_Score=0.452, Sigmoid概率=0.645, ✔选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✘未选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.200, Final_Score=0.139, Sigmoid概率=0.493, ✘未选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.439, ✘未选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✘未选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.200, Final_Score=0.179, Sigmoid概率=0.513, ✔选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.600, Final_Score=0.180, Sigmoid概率=0.514, ✔选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.200, Final_Score=0.113, Sigmoid概率=0.480, ✔选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.499, ✔选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.300, Final_Score=0.099, Sigmoid概率=0.473, ✘未选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✔选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✘未选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.100, Final_Score=0.228, Sigmoid概率=0.538, ✔选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.069, Sigmoid概率=0.458, ✘未选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.439, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.200, Final_Score=0.201, Sigmoid概率=0.524, ✔选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.400, Final_Score=0.252, Sigmoid概率=0.550, ✔选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.300, Final_Score=0.103, Sigmoid概率=0.475, ✘未选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✘未选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.159, Sigmoid概率=0.503, ✘未选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.154, Sigmoid概率=0.501, ✔选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.760, Sigmoid概率=0.771, ✔选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.454, ✔选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.499, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.469, ✔选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.200, Final_Score=0.064, Sigmoid概率=0.456, ✘未选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.700, Final_Score=0.210, Sigmoid概率=0.529, ✘未选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.700, Final_Score=0.214, Sigmoid概率=0.531, ✘未选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.300, Final_Score=0.156, Sigmoid概率=0.502, ✔选中
+[宏观简报] {'average_emotion': -0.4925151185773077, 'average_stance': 0.21192957505540128, 'agent_count': 4}
+[Prompt] agent_001 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 【声明】|关于“产妇徐女士在潍坊市妇幼保健院生子后子宫内留有纱布”报道的说明 http://t.cn/RV14K8b
+[父帖子 2]: #潍坊纱布遗留产妇体内#产妇肚子里遗漏的纱布到底什么时间能取出来！中央到地方，一直在说去除官本位、去除官僚作风，今天要骂了TMD，事实摆在面前，官话一套套、态度恶劣，潍坊有这样的医院，真是感到可怕，医院、卫计委、的各位大领导们，作为这样的事件，你们就无动于衷？事件到现在也知道花大价钱... http://m.weibo.cn/client/version
+[父帖子 3]: 狼心霉体，莆田系，还有医闹[弱] 
+[父帖子 4]: 山东医生护士还可能会被砍死，无耻的舆论，没种的院长。
+[父帖子 5]: 无良电台，挑拨医患关系，无耻[弱]
+[父帖子 6]: 链接是这次节目视频,原po真有脸说出忠于事实，客观对待这八个字啊。山东电视台的脸集体丢进黄海了么 http://t.cn/RVrOkLa
+[父帖子 7]: 真替尼玛五毛党着急 
+[父帖子 8]: 纱布留了吗？留了就应该赔偿，至于那个不道德的记者，什么野猫，什么活宝的，你们满嘴的诈骗，判决，你们有资格吗？你们是公立，尊重事实的报道吗？谁涂改病历能改变留在体内的纱布？
+[父帖子 9]: 想起当年某记者说,她缝痔疮也等于缝了肛门啊～
+[父帖子 10]: 最右好一只野生奇葩，脑回路清奇，适合杨叔给你电一电
+[父帖子 11]: 没有满嘴喷粪的吐槽鬼龌龊
+[父帖子 12]: 好消息！央视等权威媒体将陆续介入纱布门，”客观公正”这四个字，为正直媒体同仁视为新闻理想，不会永远被个别人当成娼妓般任意蹂躏！
+[父帖子 13]: 谴责再多不如法办一次！
+[父帖子 14]: 你跟个营销号废什么话？直接操他妈就行。 
+[父帖子 15]: 关注中[挖鼻]
+[父帖子 16]: 哈哈哈哈，央视……[doge]
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_001 发帖json: {'id': 'agent_001_2016-11-02T15:20:18', 'parent_post_id': None, 'author_id': 'agent_001', 'content': '这是agent_001的发言内容', 'timestamp': '2016-11-02T15:20:18'}
+[Prompt] agent_002 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 【声明】|关于“产妇徐女士在潍坊市妇幼保健院生子后子宫内留有纱布”报道的说明 http://t.cn/RV14K8b
+[父帖子 2]: #潍坊纱布遗留产妇体内#产妇肚子里遗漏的纱布到底什么时间能取出来！中央到地方，一直在说去除官本位、去除官僚作风，今天要骂了TMD，事实摆在面前，官话一套套、态度恶劣，潍坊有这样的医院，真是感到可怕，医院、卫计委、的各位大领导们，作为这样的事件，你们就无动于衷？事件到现在也知道花大价钱... http://m.weibo.cn/client/version
+[父帖子 3]: 你妈怎么生的你？缝上纱布都没挡住你是不？ 哎呀，对不起，我是文明人不能说脏话的…… 操你姥姥的！！！
+[父帖子 4]: 用莆田的广告费搭起党和政府与百姓沟通的桥梁？
+[父帖子 5]: 病例修改不能这么乱涂，是应该双横线划掉（不能掩盖原本的字迹）之后签名并写明修改时间
+[父帖子 6]: 无良电台，挑拨医患关系，无耻[弱]
+[父帖子 7]: 链接是这次节目视频,原po真有脸说出忠于事实，客观对待这八个字啊。山东电视台的脸集体丢进黄海了么 http://t.cn/RVrOkLa
+[父帖子 8]: 回复@非洲纯血圆啊圆:医生的解释是合理合法？不是狡辩？纱布留体内，就是过错，就应该赔偿 
+[父帖子 9]: 没有满嘴喷粪的吐槽鬼龌龊
+[父帖子 10]: 该留还得留，这是救命保命招，是科学。骨科手术留钢板固定，不也是留异物吗。该取的时候取了就完了。这是医疗。做节目编故事不能煽动杀人。上山东国庆大假已经奉献过杀医生李宝华的大片了。医生是杀得完的。/@新闻24小时看见壹点:
+[父帖子 11]: 好消息！央视等权威媒体将陆续介入纱布门，”客观公正”这四个字，为正直媒体同仁视为新闻理想，不会永远被个别人当成娼妓般任意蹂躏！
+[父帖子 12]: 谴责再多不如法办一次！
+[父帖子 13]: 期待央视报道，还医院清白，给抹黑三甲医院力捧莆田系的节目组上一课[二哈]
+[父帖子 14]: 这件事充分证明贵省人民的素质和心胸，大家的是非观还是很正的。送给生活帮一句话，不作不死。 @若水三千12 @叶灵仙儿 @52赫兹的隔壁 
+[父帖子 15]: 你跟个营销号废什么话？直接操他妈就行。 
+[父帖子 16]: 关注中[挖鼻]
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_002 发帖json: {'id': 'agent_002_2016-11-02T15:20:18', 'parent_post_id': None, 'author_id': 'agent_002', 'content': '这是agent_002的发言内容', 'timestamp': '2016-11-02T15:20:18'}
+[Prompt] agent_003 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 【声明】|关于“产妇徐女士在潍坊市妇幼保健院生子后子宫内留有纱布”报道的说明 http://t.cn/RV14K8b
+[父帖子 2]: 你就是压垮你们频道的最后一根稻草。谢谢你给了我最直接打脸的材料。我已截图，晚上公号见
+[父帖子 3]: 狼心霉体，莆田系，还有医闹[弱] 
+[父帖子 4]: 原博，您真够给您的职业丢人的。1.她大姑姐不承认，但她丈夫认了，是改了，你有什么脸去否认这事？2.她丈夫说是签字后当场涂的，然而当场涂的为啥笔的颜色不一样？ http://t.cn/RVrfSbO
+[父帖子 5]: 病例修改不能这么乱涂，是应该双横线划掉（不能掩盖原本的字迹）之后签名并写明修改时间
+[父帖子 6]: 山东医生护士还可能会被砍死，无耻的舆论，没种的院长。
+[父帖子 7]: 本来就收黑钱的，当期节目下方滚动播出的广告医院就是莆田系的
+[父帖子 8]: 喷子们 五毛党出来洗地了！换做你自己 有块纱布留在体内，看看你们怎么洗地吧！
+[父帖子 9]: 没有满嘴喷粪的吐槽鬼龌龊
+[父帖子 10]: 该留还得留，这是救命保命招，是科学。骨科手术留钢板固定，不也是留异物吗。该取的时候取了就完了。这是医疗。做节目编故事不能煽动杀人。上山东国庆大假已经奉献过杀医生李宝华的大片了。医生是杀得完的。/@新闻24小时看见壹点:
+[父帖子 11]: 好消息！央视等权威媒体将陆续介入纱布门，”客观公正”这四个字，为正直媒体同仁视为新闻理想，不会永远被个别人当成娼妓般任意蹂躏！
+[父帖子 12]: 你跟个营销号废什么话？直接操他妈就行。 
+[父帖子 13]: 关注中[挖鼻]
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_003 发帖json: {'id': 'agent_003_2016-11-02T15:20:18', 'parent_post_id': None, 'author_id': 'agent_003', 'content': '这是agent_003的发言内容', 'timestamp': '2016-11-02T15:20:18'}
+[Prompt] agent_004 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 【声明】|关于“产妇徐女士在潍坊市妇幼保健院生子后子宫内留有纱布”报道的说明 http://t.cn/RV14K8b
+[父帖子 2]: #潍坊纱布遗留产妇体内#产妇肚子里遗漏的纱布到底什么时间能取出来！中央到地方，一直在说去除官本位、去除官僚作风，今天要骂了TMD，事实摆在面前，官话一套套、态度恶劣，潍坊有这样的医院，真是感到可怕，医院、卫计委、的各位大领导们，作为这样的事件，你们就无动于衷？事件到现在也知道花大价钱... http://m.weibo.cn/client/version
+[父帖子 3]: 我擦，咋直接开骂了？
+[父帖子 4]: 原博，您真够给您的职业丢人的。1.她大姑姐不承认，但她丈夫认了，是改了，你有什么脸去否认这事？2.她丈夫说是签字后当场涂的，然而当场涂的为啥笔的颜色不一样？ http://t.cn/RVrfSbO
+[父帖子 5]: 山东医生护士还可能会被砍死，无耻的舆论，没种的院长。
+[父帖子 6]: 无良电台，挑拨医患关系，无耻[弱]
+[父帖子 7]: 本来就收黑钱的，当期节目下方滚动播出的广告医院就是莆田系的
+[父帖子 8]: 链接是这次节目视频,原po真有脸说出忠于事实，客观对待这八个字啊。山东电视台的脸集体丢进黄海了么 http://t.cn/RVrOkLa
+[父帖子 9]: 纱布留了吗？留了就应该赔偿，至于那个不道德的记者，什么野猫，什么活宝的，你们满嘴的诈骗，判决，你们有资格吗？你们是公立，尊重事实的报道吗？谁涂改病历能改变留在体内的纱布？
+[父帖子 10]: 最右好一只野生奇葩，脑回路清奇，适合杨叔给你电一电
+[父帖子 11]: 回复@非洲纯血圆啊圆:医生的解释是合理合法？不是狡辩？纱布留体内，就是过错，就应该赔偿 
+[父帖子 12]: 该留还得留，这是救命保命招，是科学。骨科手术留钢板固定，不也是留异物吗。该取的时候取了就完了。这是医疗。做节目编故事不能煽动杀人。上山东国庆大假已经奉献过杀医生李宝华的大片了。医生是杀得完的。/@新闻24小时看见壹点:
+[父帖子 13]: 这件事充分证明贵省人民的素质和心胸，大家的是非观还是很正的。送给生活帮一句话，不作不死。 @若水三千12 @叶灵仙儿 @52赫兹的隔壁 
+[父帖子 14]: 你跟个营销号废什么话？直接操他妈就行。 
+[父帖子 15]: 厉害了！一定要事实真相浮出水面，不管什么 结果我们都能接受，我们错了我们给生活帮道歉，如果生活帮错了，那么请@-阿速- 和@生活帮 节目组公开在节目中向妇幼道歉，向网友道歉。
+[父帖子 16]: 关注中[挖鼻]
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_004 发帖json: {'id': 'agent_004_2016-11-02T15:20:18', 'parent_post_id': None, 'author_id': 'agent_004', 'content': '这是agent_004的发言内容', 'timestamp': '2016-11-02T15:20:18'}
+
+时间片 1 结束，Agent状态:
+  agent_001: 情绪=-0.428(波动0.428), 立场=0.115(波动0.115), 置信度=0.500, 总波动=0.543, 本时间片阅读14条帖子
+    -> 决定发帖！
+  agent_002: 情绪=-0.592(波动0.392), 立场=0.033(波动0.133), 置信度=0.200, 总波动=0.525, 本时间片阅读12条帖子
+    -> 决定发帖！
+  agent_003: 情绪=-0.415(波动0.715), 立场=0.500(波动0.000), 置信度=0.758, 总波动=0.715, 本时间片阅读6条帖子
+    -> 不发帖
+  agent_004: 情绪=-0.534(波动0.634), 立场=0.200(波动0.000), 置信度=0.553, 总波动=0.634, 本时间片阅读14条帖子
+    -> 不发帖
+[阅读统计] 本时间片每个agent实际阅读的帖子数：
+  agent_001: 16 条
+  agent_002: 16 条
+  agent_003: 13 条
+  agent_004: 16 条
+
+[分析] 本时间片每个帖子被选中的情况：
+  帖子4037007263095724: 被 1 个Agent选中 -> agent_002(Final=0.110,P=0.46)
+  帖子4037013675446399: 被 2 个Agent选中 -> agent_001(Final=0.165,P=0.50), agent_002(Final=0.189,P=0.50)
+  帖子4037037071873683: 被 2 个Agent选中 -> agent_002(Final=0.110,P=0.46), agent_003(Final=0.000,P=0.45)
+  帖子4037090738392104: 被 2 个Agent选中 -> agent_002(Final=0.230,P=0.52), agent_004(Final=0.180,P=0.51)
+  帖子4037114661914029: 被 1 个Agent选中 -> agent_004(Final=0.113,P=0.48)
+  帖子4037118331831237: 被 3 个Agent选中 -> agent_001(Final=0.176,P=0.50), agent_002(Final=0.200,P=0.51), agent_004(Final=0.150,P=0.50)
+  帖子4037124792139040: 被 1 个Agent选中 -> agent_001(Final=0.124,P=0.48)
+  帖子4037125542459730: 被 3 个Agent选中 -> agent_001(Final=0.086,P=0.46), agent_002(Final=0.110,P=0.46), agent_004(Final=0.060,P=0.45)
+  帖子4037126159400564: 被 2 个Agent选中 -> agent_001(Final=0.086,P=0.46), agent_002(Final=0.110,P=0.46)
+  帖子4037148266670011: 被 2 个Agent选中 -> agent_002(Final=0.251,P=0.53), agent_004(Final=0.201,P=0.52)
+  帖子4037152008120995: 被 2 个Agent选中 -> agent_001(Final=0.129,P=0.48), agent_003(Final=0.013,P=0.46)
+  帖子4037153069176321: 被 1 个Agent选中 -> agent_001(Final=0.184,P=0.51)
+  帖子4037249505368724: 被 2 个Agent选中 -> agent_001(Final=0.129,P=0.48), agent_004(Final=0.154,P=0.50)
+  帖子4037319461863054: 被 3 个Agent选中 -> agent_001(Final=0.786,P=0.77), agent_002(Final=0.810,P=0.78), agent_004(Final=0.760,P=0.77)
+  帖子4037324478023375: 被 3 个Agent选中 -> agent_001(Final=0.086,P=0.46), agent_003(Final=0.000,P=0.45), agent_004(Final=0.060,P=0.45)
+  帖子4037325761439459: 被 2 个Agent选中 -> agent_001(Final=0.124,P=0.48), agent_003(Final=0.240,P=0.57)
+  帖子4037326046850659: 被 1 个Agent选中 -> agent_004(Final=0.090,P=0.47)
+  帖子4037345017634878: 被 2 个Agent选中 -> agent_001(Final=0.236,P=0.53), agent_003(Final=0.120,P=0.51)
+  帖子4037350071630678: 被 3 个Agent选中 -> agent_001(Final=0.189,P=0.51), agent_002(Final=0.164,P=0.49), agent_003(Final=0.304,P=0.60)
+  帖子4037385668283204: 被 2 个Agent选中 -> agent_001(Final=0.182,P=0.51), agent_004(Final=0.156,P=0.50)
+  帖子4037128382063235: 被 1 个Agent选中 -> agent_004(Final=0.228,P=0.54)
+  帖子4037130835022729: 被 1 个Agent选中 -> agent_002(Final=0.119,P=0.47)
+  帖子4037149974179421: 被 2 个Agent选中 -> agent_002(Final=0.302,P=0.56), agent_004(Final=0.252,P=0.55)
+  帖子4036784096263919: 被 1 个Agent选中 -> agent_004(Final=0.452,P=0.65)
+  帖子4037088459942071: 被 1 个Agent选中 -> agent_004(Final=0.179,P=0.51)
+
+--- 时间片 2 ---
+处理 30 条帖子
+[Feed] Agent agent_001 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.285, Final_Score=0.786, Sigmoid概率=0.793, ✔选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.443, ✔选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.485, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.485, ✔选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.485, ✘未选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.185, Final_Score=0.058, Sigmoid概率=0.471, ✘未选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.285, Final_Score=0.094, Sigmoid概率=0.489, ✘未选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.285, Final_Score=0.093, Sigmoid概率=0.489, ✔选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.185, Final_Score=0.059, Sigmoid概率=0.472, ✘未选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.285, Final_Score=0.087, Sigmoid概率=0.486, ✔选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.485, ✔选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.585, Final_Score=0.176, Sigmoid概率=0.530, ✘未选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.485, ✔选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.285, Final_Score=0.087, Sigmoid概率=0.486, ✔选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.185, Final_Score=0.056, Sigmoid概率=0.470, ✔选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.185, Final_Score=0.057, Sigmoid概率=0.471, ✔选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.185, Final_Score=0.150, Sigmoid概率=0.517, ✘未选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.285, Final_Score=0.224, Sigmoid概率=0.554, ✘未选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.385, Final_Score=0.116, Sigmoid概率=0.500, ✔选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.285, Final_Score=0.089, Sigmoid概率=0.487, ✔选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.285, Final_Score=0.089, Sigmoid概率=0.487, ✔选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.585, Final_Score=0.178, Sigmoid概率=0.531, ✘未选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.085, Final_Score=0.026, Sigmoid概率=0.455, ✘未选中
+    帖子24: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.443, ✘未选中
+    帖子25: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.285, Final_Score=0.086, Sigmoid概率=0.485, ✔选中
+    帖子26: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.185, Final_Score=0.056, Sigmoid概率=0.470, ✘未选中
+    帖子27: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.285, Final_Score=0.101, Sigmoid概率=0.493, ✔选中
+    帖子28: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.585, Final_Score=0.191, Sigmoid概率=0.538, ✔选中
+    帖子29: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.285, Final_Score=0.098, Sigmoid概率=0.492, ✔选中
+    帖子30: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.185, Final_Score=0.070, Sigmoid概率=0.478, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037468871533108: 情绪 -0.475, 立场 0.136, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037469333061937: 情绪 -0.508, 立场 0.100, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037470360135362: 情绪 -0.537, 立场 0.077, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037482380907819: 情绪 -0.563, 立场 0.044, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037485828777530: 情绪 -0.587, 立场 0.010, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037486294974129: 情绪 -0.598, 立场 -0.003, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037496436400858: 情绪 -0.619, 立场 -0.029, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037502316793620: 情绪 -0.637, 立场 -0.039, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037509556644795: 情绪 -0.653, 立场 -0.084, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037519731098663: 情绪 -0.668, 立场 -0.120, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037556222287638: 情绪 -0.661, 立场 -0.143, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037612207228769: 情绪 -0.667, 立场 -0.184, 置信度 0.450
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037624610063495: 情绪 -0.680, 立场 -0.146, 置信度 0.450
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037655488479647: 情绪 -0.683, 立场 -0.187, 置信度 0.400
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037668302663458: 情绪 -0.685, 立场 -0.199, 置信度 0.400
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037680855660322: 情绪 -0.676, 立场 -0.208, 置信度 0.400
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037683523563257: 情绪 -0.649, 立场 -0.213, 置信度 0.400
+[Feed] Agent agent_002 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.367, Final_Score=0.810, Sigmoid概率=0.793, ✔选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.432, ✘未选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.486, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.486, ✔选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.486, ✔选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.267, Final_Score=0.082, Sigmoid概率=0.472, ✔选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.367, Final_Score=0.118, Sigmoid概率=0.490, ✘未选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.367, Final_Score=0.117, Sigmoid概率=0.490, ✘未选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.267, Final_Score=0.083, Sigmoid概率=0.473, ✔选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.367, Final_Score=0.111, Sigmoid概率=0.487, ✘未选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.486, ✔选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.667, Final_Score=0.200, Sigmoid概率=0.531, ✘未选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.486, ✘未选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.367, Final_Score=0.111, Sigmoid概率=0.487, ✔选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.267, Final_Score=0.080, Sigmoid概率=0.471, ✔选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.267, Final_Score=0.081, Sigmoid概率=0.472, ✘未选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.267, Final_Score=0.175, Sigmoid概率=0.518, ✘未选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.367, Final_Score=0.249, Sigmoid概率=0.555, ✔选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.467, Final_Score=0.140, Sigmoid概率=0.501, ✔选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.367, Final_Score=0.113, Sigmoid概率=0.488, ✔选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.367, Final_Score=0.113, Sigmoid概率=0.488, ✔选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.667, Final_Score=0.202, Sigmoid概率=0.532, ✔选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.167, Final_Score=0.050, Sigmoid概率=0.456, ✘未选中
+    帖子24: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.431, ✘未选中
+    帖子25: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.367, Final_Score=0.110, Sigmoid概率=0.486, ✔选中
+    帖子26: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.267, Final_Score=0.080, Sigmoid概率=0.471, ✔选中
+    帖子27: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.367, Final_Score=0.126, Sigmoid概率=0.494, ✘未选中
+    帖子28: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.667, Final_Score=0.216, Sigmoid概率=0.539, ✘未选中
+    帖子29: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.367, Final_Score=0.123, Sigmoid概率=0.492, ✔选中
+    帖子30: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.267, Final_Score=0.095, Sigmoid概率=0.478, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037468871533108: 情绪 -0.623, 立场 0.053, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037470360135362: 情绪 -0.641, 立场 0.004, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037472705083262: 情绪 -0.657, 立场 0.019, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037476202349175: 情绪 -0.671, 立场 0.061, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037482716825790: 情绪 -0.678, 立场 0.071, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037486294974129: 情绪 -0.680, 立场 0.086, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037502316793620: 情绪 -0.692, 立场 0.094, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037509556644795: 情绪 -0.703, 立场 0.109, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037526526024650: 情绪 -0.702, 立场 0.142, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037556222287638: 情绪 -0.692, 立场 0.179, 置信度 0.200
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037612207228769: 情绪 -0.693, 立场 0.109, 置信度 0.150
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037624610063495: 情绪 -0.704, 立场 0.111, 置信度 0.150
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037640300362283: 情绪 -0.674, 立场 0.076, 置信度 0.150
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037655488479647: 情绪 -0.678, 立场 0.015, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037655836443222: 情绪 -0.684, 立场 0.046, 置信度 0.100
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037683523563257: 情绪 -0.655, 立场 0.028, 置信度 0.100
+[Feed] Agent agent_003 候选池大小: 29 (k=2, x0=auto)
+    帖子1: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.492, ✔选中
+    帖子2: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子3: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子4: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✘未选中
+    帖子5: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.492, ✘未选中
+    帖子6: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.000, Final_Score=0.008, Sigmoid概率=0.495, ✔选中
+    帖子7: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.000, Final_Score=0.007, Sigmoid概率=0.495, ✘未选中
+    帖子8: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.493, ✘未选中
+    帖子9: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.492, ✘未选中
+    帖子10: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✘未选中
+    帖子11: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.521, ✘未选中
+    帖子12: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子13: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.492, ✘未选中
+    帖子14: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子15: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.492, ✔选中
+    帖子16: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.000, Final_Score=0.094, Sigmoid概率=0.538, ✘未选中
+    帖子17: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.000, Final_Score=0.139, Sigmoid概率=0.560, ✔选中
+    帖子18: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子19: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.493, ✔选中
+    帖子20: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.493, ✔选中
+    帖子21: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.200, Final_Score=0.062, Sigmoid概率=0.522, ✔选中
+    帖子22: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子23: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✘未选中
+    帖子24: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✘未选中
+    帖子25: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.491, ✔选中
+    帖子26: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.000, Final_Score=0.016, Sigmoid概率=0.499, ✘未选中
+    帖子27: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.200, Final_Score=0.076, Sigmoid概率=0.529, ✘未选中
+    帖子28: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.000, Final_Score=0.013, Sigmoid概率=0.498, ✘未选中
+    帖子29: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.000, Final_Score=0.015, Sigmoid概率=0.499, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037469333061937: 情绪 -0.454, 立场 0.500, 置信度 0.746
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037469706040849: 情绪 -0.471, 立场 0.500, 置信度 0.749
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037470360135362: 情绪 -0.504, 立场 0.500, 置信度 0.737
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037479382140704: 情绪 -0.533, 立场 0.500, 置信度 0.743
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037496436400858: 情绪 -0.560, 立场 0.500, 置信度 0.763
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037509556644795: 情绪 -0.584, 立场 0.500, 置信度 0.764
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037519731098663: 情绪 -0.606, 立场 0.500, 置信度 0.777
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037526526024650: 情绪 -0.615, 立场 0.500, 置信度 0.767
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037556222287638: 情绪 -0.614, 立场 0.500, 置信度 0.764
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037612207228769: 情绪 -0.627, 立场 0.500, 置信度 0.714
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037624610063495: 情绪 -0.644, 立场 0.500, 置信度 0.705
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037640300362283: 情绪 -0.620, 立场 0.500, 置信度 0.697
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037640942131137: 情绪 -0.618, 立场 0.500, 置信度 0.706
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037655836443222: 情绪 -0.627, 立场 0.500, 置信度 0.725
+[Feed] Agent agent_004 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.760, Sigmoid概率=0.792, ✔选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.455, ✘未选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✔选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✘未选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✘未选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.470, ✔选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.200, Final_Score=0.068, Sigmoid概率=0.489, ✘未选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.200, Final_Score=0.067, Sigmoid概率=0.488, ✔选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.100, Final_Score=0.033, Sigmoid概率=0.471, ✔选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.200, Final_Score=0.061, Sigmoid概率=0.485, ✘未选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✔选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.529, ✔选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✘未选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.200, Final_Score=0.061, Sigmoid概率=0.485, ✘未选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.469, ✘未选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.100, Final_Score=0.031, Sigmoid概率=0.470, ✔选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.100, Final_Score=0.124, Sigmoid概率=0.517, ✔选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.200, Final_Score=0.199, Sigmoid概率=0.553, ✔选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.499, ✘未选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.200, Final_Score=0.063, Sigmoid概率=0.486, ✘未选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.200, Final_Score=0.063, Sigmoid概率=0.486, ✔选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.500, Final_Score=0.152, Sigmoid概率=0.530, ✘未选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.455, ✘未选中
+    帖子24: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.455, ✔选中
+    帖子25: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✘未选中
+    帖子26: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.469, ✘未选中
+    帖子27: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.200, Final_Score=0.076, Sigmoid概率=0.492, ✘未选中
+    帖子28: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.500, Final_Score=0.166, Sigmoid概率=0.537, ✔选中
+    帖子29: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.200, Final_Score=0.073, Sigmoid概率=0.491, ✘未选中
+    帖子30: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.100, Final_Score=0.045, Sigmoid概率=0.477, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037468871533108: 情绪 -0.571, 立场 0.200, 置信度 0.556
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037469706040849: 情绪 -0.582, 立场 0.200, 置信度 0.576
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037476202349175: 情绪 -0.604, 立场 0.200, 置信度 0.561
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037482380907819: 情绪 -0.624, 立场 0.200, 置信度 0.578
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037482716825790: 情绪 -0.632, 立场 0.200, 置信度 0.559
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037486294974129: 情绪 -0.639, 立场 0.200, 置信度 0.570
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037494938379719: 情绪 -0.637, 立场 0.200, 置信度 0.553
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037519731098663: 情绪 -0.654, 立场 0.200, 置信度 0.564
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037523090702447: 情绪 -0.661, 立场 0.200, 置信度 0.581
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037526526024650: 情绪 -0.665, 立场 0.200, 置信度 0.581
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037624610063495: 情绪 -0.678, 立场 0.200, 置信度 0.593
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037654611276362: 情绪 -0.690, 立场 0.200, 置信度 0.580
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037680855660322: 情绪 -0.681, 立场 0.200, 置信度 0.561
+[Feed] Agent agent_001 候选池大小: 28 (k=2, x0=auto)
+    帖子1: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.496, ✘未选中
+    帖子2: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.496, ✘未选中
+    帖子3: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.496, ✘未选中
+    帖子4: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.513, Final_Score=0.156, Sigmoid概率=0.482, ✔选中
+    帖子5: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.613, Final_Score=0.192, Sigmoid概率=0.500, ✔选中
+    帖子6: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.613, Final_Score=0.191, Sigmoid概率=0.499, ✘未选中
+    帖子7: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.513, Final_Score=0.157, Sigmoid概率=0.482, ✘未选中
+    帖子8: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.613, Final_Score=0.185, Sigmoid概率=0.496, ✔选中
+    帖子9: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.496, ✔选中
+    帖子10: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.913, Final_Score=0.274, Sigmoid概率=0.541, ✔选中
+    帖子11: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.496, ✔选中
+    帖子12: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.613, Final_Score=0.185, Sigmoid概率=0.496, ✘未选中
+    帖子13: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.513, Final_Score=0.154, Sigmoid概率=0.481, ✘未选中
+    帖子14: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.513, Final_Score=0.155, Sigmoid概率=0.481, ✔选中
+    帖子15: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.513, Final_Score=0.248, Sigmoid概率=0.528, ✔选中
+    帖子16: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.613, Final_Score=0.322, Sigmoid概率=0.565, ✘未选中
+    帖子17: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.713, Final_Score=0.214, Sigmoid概率=0.511, ✔选中
+    帖子18: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.613, Final_Score=0.187, Sigmoid概率=0.497, ✔选中
+    帖子19: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.613, Final_Score=0.187, Sigmoid概率=0.497, ✔选中
+    帖子20: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.913, Final_Score=0.276, Sigmoid概率=0.542, ✔选中
+    帖子21: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.413, Final_Score=0.124, Sigmoid概率=0.466, ✘未选中
+    帖子22: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.213, Final_Score=0.064, Sigmoid概率=0.436, ✘未选中
+    帖子23: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.496, ✘未选中
+    帖子24: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.513, Final_Score=0.154, Sigmoid概率=0.481, ✘未选中
+    帖子25: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.613, Final_Score=0.200, Sigmoid概率=0.504, ✘未选中
+    帖子26: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.913, Final_Score=0.290, Sigmoid概率=0.549, ✔选中
+    帖子27: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.613, Final_Score=0.196, Sigmoid概率=0.502, ✔选中
+    帖子28: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.513, Final_Score=0.168, Sigmoid概率=0.488, ✔选中
+[Feed] Agent agent_002 候选池大小: 19 (k=2, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.372, Final_Score=0.811, Sigmoid概率=0.791, ✔选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.428, ✘未选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.482, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.482, ✘未选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.482, ✘未选中
+    帖子6: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.372, Final_Score=0.120, Sigmoid概率=0.487, ✘未选中
+    帖子7: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.372, Final_Score=0.119, Sigmoid概率=0.486, ✘未选中
+    帖子8: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.372, Final_Score=0.113, Sigmoid概率=0.483, ✘未选中
+    帖子9: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.482, ✔选中
+    帖子10: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.672, Final_Score=0.201, Sigmoid概率=0.527, ✘未选中
+    帖子11: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.482, ✘未选中
+    帖子12: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.372, Final_Score=0.113, Sigmoid概率=0.483, ✘未选中
+    帖子13: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.272, Final_Score=0.083, Sigmoid概率=0.468, ✔选中
+    帖子14: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.272, Final_Score=0.176, Sigmoid概率=0.515, ✘未选中
+    帖子15: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.472, Final_Score=0.141, Sigmoid概率=0.497, ✘未选中
+    帖子16: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.672, Final_Score=0.204, Sigmoid概率=0.528, ✔选中
+    帖子17: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.172, Final_Score=0.051, Sigmoid概率=0.453, ✘未选中
+    帖子18: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.427, ✘未选中
+    帖子19: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.272, Final_Score=0.096, Sigmoid概率=0.475, ✔选中
+[Feed] Agent agent_003 候选池大小: 11 (k=2, x0=auto)
+    帖子1: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.492, ✘未选中
+    帖子2: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.493, ✔选中
+    帖子3: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.000, Final_Score=0.007, Sigmoid概率=0.495, ✘未选中
+    帖子4: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.000, Final_Score=0.003, Sigmoid概率=0.493, ✔选中
+    帖子5: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.492, ✔选中
+    帖子6: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.492, ✘未选中
+    帖子7: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.522, ✘未选中
+    帖子8: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.492, ✔选中
+    帖子9: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.000, Final_Score=0.094, Sigmoid概率=0.539, ✔选中
+    帖子10: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.492, ✘未选中
+    帖子11: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.000, Final_Score=0.015, Sigmoid概率=0.499, ✔选中
+[Feed] Agent agent_004 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4037468871533108, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.760, Sigmoid概率=0.792, ✘未选中
+    帖子2: id=4037469333061937, Score_Pop=0.001, Score_Rel=0.000, Final_Score=0.001, Sigmoid概率=0.455, ✘未选中
+    帖子3: id=4037469706040849, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✘未选中
+    帖子4: id=4037470360135362, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✔选中
+    帖子5: id=4037472705083262, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✔选中
+    帖子6: id=4037476202349175, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.470, ✘未选中
+    帖子7: id=4037479382140704, Score_Pop=0.012, Score_Rel=0.200, Final_Score=0.068, Sigmoid概率=0.489, ✘未选中
+    帖子8: id=4037482380907819, Score_Pop=0.010, Score_Rel=0.200, Final_Score=0.067, Sigmoid概率=0.488, ✔选中
+    帖子9: id=4037482716825790, Score_Pop=0.004, Score_Rel=0.100, Final_Score=0.033, Sigmoid概率=0.471, ✘未选中
+    帖子10: id=4037485828777530, Score_Pop=0.001, Score_Rel=0.200, Final_Score=0.061, Sigmoid概率=0.485, ✔选中
+    帖子11: id=4037486294974129, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✘未选中
+    帖子12: id=4037494938379719, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.529, ✔选中
+    帖子13: id=4037496436400858, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✔选中
+    帖子14: id=4037502316793620, Score_Pop=0.001, Score_Rel=0.200, Final_Score=0.061, Sigmoid概率=0.485, ✘未选中
+    帖子15: id=4037509556644795, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.469, ✘未选中
+    帖子16: id=4037519731098663, Score_Pop=0.001, Score_Rel=0.100, Final_Score=0.031, Sigmoid概率=0.470, ✘未选中
+    帖子17: id=4037523090702447, Score_Pop=0.135, Score_Rel=0.100, Final_Score=0.124, Sigmoid概率=0.517, ✔选中
+    帖子18: id=4037526526024650, Score_Pop=0.198, Score_Rel=0.200, Final_Score=0.199, Sigmoid概率=0.553, ✔选中
+    帖子19: id=4037556222287638, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.499, ✔选中
+    帖子20: id=4037612207228769, Score_Pop=0.004, Score_Rel=0.200, Final_Score=0.063, Sigmoid概率=0.486, ✔选中
+    帖子21: id=4037624610063495, Score_Pop=0.004, Score_Rel=0.200, Final_Score=0.063, Sigmoid概率=0.486, ✘未选中
+    帖子22: id=4037640300362283, Score_Pop=0.003, Score_Rel=0.500, Final_Score=0.152, Sigmoid概率=0.530, ✘未选中
+    帖子23: id=4037640942131137, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.455, ✔选中
+    帖子24: id=4037654611276362, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.455, ✘未选中
+    帖子25: id=4037655488479647, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.484, ✘未选中
+    帖子26: id=4037655836443222, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.469, ✘未选中
+    帖子27: id=4037668302663458, Score_Pop=0.022, Score_Rel=0.200, Final_Score=0.076, Sigmoid概率=0.492, ✘未选中
+    帖子28: id=4037680855660322, Score_Pop=0.022, Score_Rel=0.500, Final_Score=0.166, Sigmoid概率=0.537, ✔选中
+    帖子29: id=4037683523563257, Score_Pop=0.018, Score_Rel=0.200, Final_Score=0.073, Sigmoid概率=0.491, ✘未选中
+    帖子30: id=4037688232933919, Score_Pop=0.021, Score_Rel=0.100, Final_Score=0.045, Sigmoid概率=0.477, ✘未选中
+[宏观简报] {'average_emotion': -0.6530195335188426, 'average_stance': 0.12895461979267753, 'agent_count': 4}
+[Prompt] agent_001 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 「曹尼玛！怒了！必须严惩！」
+    潍坊纱布门，潍坊妇幼保健院都记不清多少次希望产妇取出纱布，表示本院专家取，明确说这并不复杂，家属不同意。后请来山大二院专家，家属还是不同意。30号，生活帮记者和产妇家属都在医院现场，产妇丈夫表示，即便北京专家来了也不签字，不承担风险。
+    曹尼玛！你... http://m.weibo.cn/client/version
+[父帖子 2]: 严惩恶人一家，什么东西。
+[父帖子 3]: [吃惊][吃惊]
+[父帖子 4]: [哆啦A梦吃惊]
+[父帖子 5]: 法医最好，因为没有医闹[doge]
+[父帖子 6]: 有诈尸啊！[摊手][摊手][摊手] 
+[父帖子 7]: 在手术室的每个人都不能忍这种事情！每天工作就为了不落下一点多余的东西在肚子里，我们承受着巨大的压力，精神都是高度紧张的，每天轻清点几百甚至上千个物品。[怒骂]
+[父帖子 8]: 无非就是以后遇到大出血统统子宫切除，产科医生本身就位列风险最高的前三甲，保护性医疗以后会被贯彻到底，到底倒霉的是谁[二哈]
+[父帖子 9]: 强烈呼吁国家对黑医的事件立法！立法！立法！严惩医闹，严惩帮助医闹获利的黑心媒体！愿谣媒原地爆炸！
+[父帖子 10]: 这可以算是寻衅滋事了吧！
+[父帖子 11]: 联盟里的所有家人们，你们这些做主持人，记者滴都给我听好了，你们要是不好好滴工作，我就让这个潍坊大姑姐来给你们洗脑上政治课！哼[摊手][哈哈]
+[父帖子 12]: 右边太天真，先不论医疗是人权的基本构成之一，单黑名单建立谁来监督制约？人有善恶，不以行业而分，有救死扶伤也有明知手术失败而不言，看着患者死去的。众口铄金，当话语权掌一家之手你还指望天理昭昭？
+[父帖子 13]: 傻逼[微笑]非要逼的中国无医生
+[父帖子 14]: 既然纱布缝上了致关腹时不能立即取出，那不管患者知不知情，这都是手术缝合造成，产妇的肉体和精神痛苦可想而知，凭什么医院不担此责?
+[父帖子 15]: @共青团中央 @环球时报  @一个有点理想的记者  @烧伤超人阿宝 @白衣山猫 @地瓜熊老六 @-阿速- @飞鱼军军 @小洁洁爱赫本 @健康中国 @紫光阁
+[父帖子 16]: 涂改这个问题 ，是医患双方互相隐瞒歪曲的焦点，目的在于占领道德高地
+[父帖子 17]: 回复@云白:这是带立场的选择证据了：大姑姐涂改，和丈夫涂改，互为矛盾，不能同时成立→_→ 
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_001 发帖json: {'id': 'agent_001_2016-11-03T11:22:36', 'parent_post_id': None, 'author_id': 'agent_001', 'content': '这是agent_001的发言内容', 'timestamp': '2016-11-03T11:22:36'}
+[Prompt] agent_002 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 「曹尼玛！怒了！必须严惩！」
+    潍坊纱布门，潍坊妇幼保健院都记不清多少次希望产妇取出纱布，表示本院专家取，明确说这并不复杂，家属不同意。后请来山大二院专家，家属还是不同意。30号，生活帮记者和产妇家属都在医院现场，产妇丈夫表示，即便北京专家来了也不签字，不承担风险。
+    曹尼玛！你... http://m.weibo.cn/client/version
+[父帖子 2]: [吃惊][吃惊]
+[父帖子 3]: 同意，绝非危言耸听，如果让这种恶意造谣、制造仇恨的东西逍遥法外那就真的是国无宁日了。
+[父帖子 4]: 真的是，这样的人要严惩。
+[父帖子 5]: 诈骗吧这是[怒]
+[父帖子 6]: 有诈尸啊！[摊手][摊手][摊手] 
+[父帖子 7]: 无非就是以后遇到大出血统统子宫切除，产科医生本身就位列风险最高的前三甲，保护性医疗以后会被贯彻到底，到底倒霉的是谁[二哈]
+[父帖子 8]: 强烈呼吁国家对黑医的事件立法！立法！立法！严惩医闹，严惩帮助医闹获利的黑心媒体！愿谣媒原地爆炸！
+[父帖子 9]: 毫无疑问的是：如果这种由社会行业组织形成的舆论势力，拒绝、抵制甚至恐吓公众舆论和媒体的监督的行为，一旦形成态势，那么，所谓的医患对立和纠纷，将越演越烈。 http://t.cn/RVg84cC
+[父帖子 10]: 联盟里的所有家人们，你们这些做主持人，记者滴都给我听好了，你们要是不好好滴工作，我就让这个潍坊大姑姐来给你们洗脑上政治课！哼[摊手][哈哈]
+[父帖子 11]: 右边太天真，先不论医疗是人权的基本构成之一，单黑名单建立谁来监督制约？人有善恶，不以行业而分，有救死扶伤也有明知手术失败而不言，看着患者死去的。众口铄金，当话语权掌一家之手你还指望天理昭昭？
+[父帖子 12]: 傻逼[微笑]非要逼的中国无医生
+[父帖子 13]: 麻烦先看完整再转发[摊手]学会思考
+[父帖子 14]: 既然纱布缝上了致关腹时不能立即取出，那不管患者知不知情，这都是手术缝合造成，产妇的肉体和精神痛苦可想而知，凭什么医院不担此责?
+[父帖子 15]: 广而告之:公立医院里盘踞着一伙心术不正谋财害民红了眼的中老年人渣→嗜血谋财祸国害民、伪造病历连环做假、扰乱司法操控舆论、勾结黑恶杀人越货、好话说尽坏事做绝!心狠手辣的老油条们把控公立位置污染新生力量，呦喝勒令一群也许无知也许本身心性恶毒的医、护生蝗虫丧心病狂地站队栽赃洞穿职业底线!
+[父帖子 16]: 回复@云白:这是带立场的选择证据了：大姑姐涂改，和丈夫涂改，互为矛盾，不能同时成立→_→ 
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_002 发帖json: {'id': 'agent_002_2016-11-03T11:22:36', 'parent_post_id': None, 'author_id': 'agent_002', 'content': '这是agent_002的发言内容', 'timestamp': '2016-11-03T11:22:36'}
+[Prompt] agent_003 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 严惩恶人一家，什么东西。
+[父帖子 2]: 作，有本事就一直留在里面
+[父帖子 3]: [吃惊][吃惊]
+[父帖子 4]: 这产妇摊上这种婆家也是够了
+[父帖子 5]: 在手术室的每个人都不能忍这种事情！每天工作就为了不落下一点多余的东西在肚子里，我们承受着巨大的压力，精神都是高度紧张的，每天轻清点几百甚至上千个物品。[怒骂]
+[父帖子 6]: 强烈呼吁国家对黑医的事件立法！立法！立法！严惩医闹，严惩帮助医闹获利的黑心媒体！愿谣媒原地爆炸！
+[父帖子 7]: 这可以算是寻衅滋事了吧！
+[父帖子 8]: 毫无疑问的是：如果这种由社会行业组织形成的舆论势力，拒绝、抵制甚至恐吓公众舆论和媒体的监督的行为，一旦形成态势，那么，所谓的医患对立和纠纷，将越演越烈。 http://t.cn/RVg84cC
+[父帖子 9]: 联盟里的所有家人们，你们这些做主持人，记者滴都给我听好了，你们要是不好好滴工作，我就让这个潍坊大姑姐来给你们洗脑上政治课！哼[摊手][哈哈]
+[父帖子 10]: 右边太天真，先不论医疗是人权的基本构成之一，单黑名单建立谁来监督制约？人有善恶，不以行业而分，有救死扶伤也有明知手术失败而不言，看着患者死去的。众口铄金，当话语权掌一家之手你还指望天理昭昭？
+[父帖子 11]: 傻逼[微笑]非要逼的中国无医生
+[父帖子 12]: 麻烦先看完整再转发[摊手]学会思考
+[父帖子 13]: 觉得你没有话语权，本事大道理多去造反啊，别当键盘侠[摊手]
+[父帖子 14]: 广而告之:公立医院里盘踞着一伙心术不正谋财害民红了眼的中老年人渣→嗜血谋财祸国害民、伪造病历连环做假、扰乱司法操控舆论、勾结黑恶杀人越货、好话说尽坏事做绝!心狠手辣的老油条们把控公立位置污染新生力量，呦喝勒令一群也许无知也许本身心性恶毒的医、护生蝗虫丧心病狂地站队栽赃洞穿职业底线!
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_003 发帖json: {'id': 'agent_003_2016-11-03T11:22:36', 'parent_post_id': None, 'author_id': 'agent_003', 'content': '这是agent_003的发言内容', 'timestamp': '2016-11-03T11:22:36'}
+[Prompt] agent_004 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 「曹尼玛！怒了！必须严惩！」
+    潍坊纱布门，潍坊妇幼保健院都记不清多少次希望产妇取出纱布，表示本院专家取，明确说这并不复杂，家属不同意。后请来山大二院专家，家属还是不同意。30号，生活帮记者和产妇家属都在医院现场，产妇丈夫表示，即便北京专家来了也不签字，不承担风险。
+    曹尼玛！你... http://m.weibo.cn/client/version
+[父帖子 2]: 作，有本事就一直留在里面
+[父帖子 3]: 真的是，这样的人要严惩。
+[父帖子 4]: [哆啦A梦吃惊]
+[父帖子 5]: 诈骗吧这是[怒]
+[父帖子 6]: 有诈尸啊！[摊手][摊手][摊手] 
+[父帖子 7]: 竟然还有人看电视？！ 
+[父帖子 8]: 这可以算是寻衅滋事了吧！
+[父帖子 9]: 还特么BB没完呢？直接加入医院黑名单！让这一家子臭傻逼去一辈子莆田系就好了啊
+[父帖子 10]: 毫无疑问的是：如果这种由社会行业组织形成的舆论势力，拒绝、抵制甚至恐吓公众舆论和媒体的监督的行为，一旦形成态势，那么，所谓的医患对立和纠纷，将越演越烈。 http://t.cn/RVg84cC
+[父帖子 11]: 傻逼[微笑]非要逼的中国无医生
+[父帖子 12]: 支持建立医闹黑名单，全特么滚蛋
+[父帖子 13]: 涂改这个问题 ，是医患双方互相隐瞒歪曲的焦点，目的在于占领道德高地
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_004 发帖json: {'id': 'agent_004_2016-11-03T11:22:36', 'parent_post_id': None, 'author_id': 'agent_004', 'content': '这是agent_004的发言内容', 'timestamp': '2016-11-03T11:22:36'}
+
+时间片 2 结束，Agent状态:
+  agent_001: 情绪=-0.649(波动0.220), 立场=-0.213(波动0.327), 置信度=0.400, 总波动=0.548, 本时间片阅读15条帖子
+    -> 不发帖
+  agent_002: 情绪=-0.655(波动0.063), 立场=0.028(波动0.005), 置信度=0.100, 总波动=0.068, 本时间片阅读5条帖子
+    -> 不发帖
+  agent_003: 情绪=-0.627(波动0.212), 立场=0.500(波动0.000), 置信度=0.725, 总波动=0.212, 本时间片阅读6条帖子
+    -> 不发帖
+  agent_004: 情绪=-0.681(波动0.147), 立场=0.200(波动0.000), 置信度=0.561, 总波动=0.147, 本时间片阅读12条帖子
+    -> 不发帖
+[阅读统计] 本时间片每个agent实际阅读的帖子数：
+  agent_001: 17 条
+  agent_002: 16 条
+  agent_003: 14 条
+  agent_004: 13 条
+
+[分析] 本时间片每个帖子被选中的情况：
+  帖子4037470360135362: 被 1 个Agent选中 -> agent_004(Final=0.060,P=0.48)
+  帖子4037472705083262: 被 1 个Agent选中 -> agent_004(Final=0.060,P=0.48)
+  帖子4037476202349175: 被 2 个Agent选中 -> agent_001(Final=0.156,P=0.48), agent_003(Final=0.002,P=0.49)
+  帖子4037479382140704: 被 1 个Agent选中 -> agent_001(Final=0.192,P=0.50)
+  帖子4037482380907819: 被 1 个Agent选中 -> agent_004(Final=0.067,P=0.49)
+  帖子4037482716825790: 被 1 个Agent选中 -> agent_003(Final=0.003,P=0.49)
+  帖子4037485828777530: 被 3 个Agent选中 -> agent_001(Final=0.185,P=0.50), agent_003(Final=0.001,P=0.49), agent_004(Final=0.061,P=0.48)
+  帖子4037486294974129: 被 2 个Agent选中 -> agent_001(Final=0.184,P=0.50), agent_002(Final=0.111,P=0.48)
+  帖子4037494938379719: 被 2 个Agent选中 -> agent_001(Final=0.274,P=0.54), agent_004(Final=0.150,P=0.53)
+  帖子4037496436400858: 被 2 个Agent选中 -> agent_001(Final=0.184,P=0.50), agent_004(Final=0.060,P=0.48)
+  帖子4037502316793620: 被 1 个Agent选中 -> agent_003(Final=0.001,P=0.49)
+  帖子4037519731098663: 被 2 个Agent选中 -> agent_001(Final=0.155,P=0.48), agent_002(Final=0.083,P=0.47)
+  帖子4037523090702447: 被 3 个Agent选中 -> agent_001(Final=0.248,P=0.53), agent_003(Final=0.094,P=0.54), agent_004(Final=0.124,P=0.52)
+  帖子4037526526024650: 被 1 个Agent选中 -> agent_004(Final=0.199,P=0.55)
+  帖子4037556222287638: 被 2 个Agent选中 -> agent_001(Final=0.214,P=0.51), agent_004(Final=0.090,P=0.50)
+  帖子4037612207228769: 被 2 个Agent选中 -> agent_001(Final=0.187,P=0.50), agent_004(Final=0.063,P=0.49)
+  帖子4037624610063495: 被 1 个Agent选中 -> agent_001(Final=0.187,P=0.50)
+  帖子4037640300362283: 被 2 个Agent选中 -> agent_001(Final=0.276,P=0.54), agent_002(Final=0.204,P=0.53)
+  帖子4037640942131137: 被 1 个Agent选中 -> agent_004(Final=0.000,P=0.45)
+  帖子4037680855660322: 被 2 个Agent选中 -> agent_001(Final=0.290,P=0.55), agent_004(Final=0.166,P=0.54)
+  帖子4037683523563257: 被 1 个Agent选中 -> agent_001(Final=0.196,P=0.50)
+  帖子4037688232933919: 被 3 个Agent选中 -> agent_001(Final=0.168,P=0.49), agent_002(Final=0.096,P=0.47), agent_003(Final=0.015,P=0.50)
+  帖子4037468871533108: 被 1 个Agent选中 -> agent_002(Final=0.811,P=0.79)
+
+--- 时间片 3 ---
+处理 30 条帖子
+[Feed] Agent agent_001 候选池大小: 28 (k=2, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.613, Final_Score=0.327, Sigmoid概率=0.521, ✔选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.713, Final_Score=0.399, Sigmoid概率=0.557, ✔选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.913, Final_Score=0.388, Sigmoid概率=0.551, ✘未选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.913, Final_Score=0.417, Sigmoid概率=0.565, ✘未选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.513, Final_Score=0.225, Sigmoid概率=0.470, ✘未选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.187, Final_Score=0.128, Sigmoid概率=0.422, ✘未选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.513, Final_Score=0.168, Sigmoid概率=0.442, ✘未选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.449, ✘未选中
+    帖子9: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.713, Final_Score=0.271, Sigmoid概率=0.493, ✘未选中
+    帖子10: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.187, Final_Score=0.099, Sigmoid概率=0.408, ✘未选中
+    帖子11: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.613, Final_Score=0.212, Sigmoid概率=0.464, ✘未选中
+    帖子12: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.513, Final_Score=0.168, Sigmoid概率=0.442, ✘未选中
+    帖子13: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.449, ✘未选中
+    帖子14: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.613, Final_Score=0.541, Sigmoid概率=0.625, ✔选中
+    帖子15: id=4038072587474324, Score_Pop=0.980, Score_Rel=0.613, Final_Score=0.869, Sigmoid概率=0.763, ✔选中
+    帖子16: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.613, Final_Score=0.769, Sigmoid概率=0.725, ✔选中
+    帖子17: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.449, ✔选中
+    帖子18: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.513, Final_Score=0.154, Sigmoid概率=0.435, ✘未选中
+    帖子19: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.449, ✔选中
+    帖子20: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.913, Final_Score=0.331, Sigmoid概率=0.523, ✘未选中
+    帖子21: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.513, Final_Score=0.154, Sigmoid概率=0.435, ✔选中
+    帖子22: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.449, ✘未选中
+    帖子23: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.613, Final_Score=0.212, Sigmoid概率=0.464, ✔选中
+    帖子24: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.449, ✔选中
+    帖子25: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.449, ✘未选中
+    帖子26: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.713, Final_Score=0.528, Sigmoid概率=0.619, ✘未选中
+    帖子27: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.613, Final_Score=0.184, Sigmoid概率=0.449, ✘未选中
+    帖子28: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.513, Final_Score=0.154, Sigmoid概率=0.435, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037688631643626: 情绪 -0.654, 立场 -0.222, 置信度 0.400
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4037689735195221: 情绪 -0.646, 立场 -0.247, 置信度 0.350
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038005671022625: 情绪 -0.651, 立场 -0.197, 置信度 0.350
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038072587474324: 情绪 -0.656, 立场 -0.245, 置信度 0.350
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038074344550661: 情绪 -0.660, 立场 -0.215, 置信度 0.350
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038079713559945: 情绪 -0.681, 立场 -0.249, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038116047691704: 情绪 -0.683, 立场 -0.275, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038205554083523: 情绪 -0.695, 立场 -0.285, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038215646724449: 情绪 -0.705, 立场 -0.254, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038233580773956: 情绪 -0.715, 立场 -0.214, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038437952870280: 情绪 -0.723, 立场 -0.194, 置信度 0.300
+[Feed] Agent agent_002 候选池大小: 21 (k=2, x0=auto)
+    帖子1: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.272, Final_Score=0.153, Sigmoid概率=0.466, ✔选中
+    帖子2: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.272, Final_Score=0.096, Sigmoid概率=0.438, ✘未选中
+    帖子3: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.445, ✘未选中
+    帖子4: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.445, ✘未选中
+    帖子5: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.472, Final_Score=0.199, Sigmoid概率=0.489, ✔选中
+    帖子6: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.372, Final_Score=0.140, Sigmoid概率=0.460, ✘未选中
+    帖子7: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.372, Final_Score=0.469, Sigmoid概率=0.621, ✔选中
+    帖子8: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.672, Final_Score=0.901, Sigmoid概率=0.796, ✔选中
+    帖子9: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.372, Final_Score=0.697, Sigmoid概率=0.722, ✔选中
+    帖子10: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.445, ✘未选中
+    帖子11: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.272, Final_Score=0.081, Sigmoid概率=0.431, ✔选中
+    帖子12: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.445, ✔选中
+    帖子13: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.672, Final_Score=0.259, Sigmoid概率=0.519, ✔选中
+    帖子14: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.272, Final_Score=0.081, Sigmoid概率=0.431, ✔选中
+    帖子15: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.445, ✔选中
+    帖子16: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.372, Final_Score=0.140, Sigmoid概率=0.460, ✔选中
+    帖子17: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.445, ✘未选中
+    帖子18: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.445, ✔选中
+    帖子19: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.472, Final_Score=0.456, Sigmoid概率=0.615, ✔选中
+    帖子20: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.372, Final_Score=0.111, Sigmoid概率=0.445, ✘未选中
+    帖子21: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.272, Final_Score=0.081, Sigmoid概率=0.431, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037697233932565: 情绪 -0.647, 立场 -0.037, 置信度 0.050
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4037781711826073: 情绪 -0.670, 立场 -0.079, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038005671022625: 情绪 -0.673, 立场 -0.099, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038019029551423: 情绪 -0.656, 立场 -0.058, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038074344550661: 情绪 -0.660, 立场 -0.070, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038112012950997: 情绪 -0.674, 立场 -0.096, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038116047691704: 情绪 -0.677, 立场 -0.085, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038119739855303: 情绪 -0.669, 立场 -0.056, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038205554083523: 情绪 -0.682, 立场 -0.034, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038205684136962: 情绪 -0.684, 立场 -0.052, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038215646724449: 情绪 -0.696, 立场 -0.032, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038333027906488: 情绪 -0.706, 立场 -0.028, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038365571315477: 情绪 -0.705, 立场 -0.070, 置信度 0.000
+[Feed] Agent agent_003 候选池大小: 19 (k=2, x0=auto)
+    帖子1: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.000, Final_Score=0.071, Sigmoid概率=0.494, ✘未选中
+    帖子2: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.000, Final_Score=0.014, Sigmoid概率=0.466, ✔选中
+    帖子3: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✔选中
+    帖子4: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.000, Final_Score=0.057, Sigmoid概率=0.487, ✔选中
+    帖子5: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.000, Final_Score=0.029, Sigmoid概率=0.473, ✔选中
+    帖子6: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.000, Final_Score=0.357, Sigmoid概率=0.634, ✔选中
+    帖子7: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.000, Final_Score=0.586, Sigmoid概率=0.732, ✔选中
+    帖子8: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✔选中
+    帖子9: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✘未选中
+    帖子10: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✔选中
+    帖子11: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.200, Final_Score=0.117, Sigmoid概率=0.517, ✘未选中
+    帖子12: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✘未选中
+    帖子13: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✘未选中
+    帖子14: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.000, Final_Score=0.029, Sigmoid概率=0.473, ✔选中
+    帖子15: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✘未选中
+    帖子16: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✔选中
+    帖子17: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.000, Final_Score=0.314, Sigmoid概率=0.614, ✔选中
+    帖子18: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✔选中
+    帖子19: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.459, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037717069087119: 情绪 -0.644, 立场 0.500, 置信度 0.723
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037717584607669: 情绪 -0.660, 立场 0.500, 置信度 0.718
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037781711826073: 情绪 -0.681, 立场 0.500, 置信度 0.668
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4037794085230624: 情绪 -0.699, 立场 0.500, 置信度 0.618
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038005671022625: 情绪 -0.699, 立场 0.500, 置信度 0.608
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038074344550661: 情绪 -0.699, 立场 0.500, 置信度 0.596
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038079713559945: 情绪 -0.714, 立场 0.500, 置信度 0.546
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038116047691704: 情绪 -0.713, 立场 0.500, 置信度 0.529
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038215646724449: 情绪 -0.721, 立场 0.500, 置信度 0.519
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038333027906488: 情绪 -0.729, 立场 0.500, 置信度 0.506
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038365571315477: 情绪 -0.725, 立场 0.500, 置信度 0.456
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038415042933435: 情绪 -0.727, 立场 0.500, 置信度 0.449
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038437952870280: 情绪 -0.735, 立场 0.500, 置信度 0.459
+[Feed] Agent agent_004 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.200, Final_Score=0.203, Sigmoid概率=0.503, ✔选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.300, Final_Score=0.276, Sigmoid概率=0.539, ✘未选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.500, Final_Score=0.264, Sigmoid概率=0.533, ✔选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.500, Final_Score=0.293, Sigmoid概率=0.548, ✔选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.100, Final_Score=0.101, Sigmoid概率=0.452, ✔选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.600, Final_Score=0.251, Sigmoid概率=0.527, ✘未选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.100, Final_Score=0.044, Sigmoid概率=0.424, ✘未选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子9: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子10: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.300, Final_Score=0.147, Sigmoid概率=0.475, ✘未选中
+    帖子11: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.600, Final_Score=0.223, Sigmoid概率=0.513, ✔选中
+    帖子12: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.200, Final_Score=0.089, Sigmoid概率=0.446, ✘未选中
+    帖子13: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.100, Final_Score=0.044, Sigmoid概率=0.424, ✘未选中
+    帖子14: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✔选中
+    帖子15: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.200, Final_Score=0.417, Sigmoid概率=0.608, ✔选中
+    帖子16: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.500, Final_Score=0.850, Sigmoid概率=0.787, ✔选中
+    帖子17: id=4038072587474324, Score_Pop=0.980, Score_Rel=0.200, Final_Score=0.746, Sigmoid概率=0.750, ✘未选中
+    帖子18: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.200, Final_Score=0.646, Sigmoid概率=0.710, ✔选中
+    帖子19: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子20: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.417, ✔选中
+    帖子21: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✔选中
+    帖子22: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.500, Final_Score=0.207, Sigmoid概率=0.505, ✔选中
+    帖子23: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.417, ✘未选中
+    帖子24: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✔选中
+    帖子25: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.200, Final_Score=0.089, Sigmoid概率=0.446, ✘未选中
+    帖子26: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✔选中
+    帖子27: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✔选中
+    帖子28: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.300, Final_Score=0.404, Sigmoid概率=0.602, ✔选中
+    帖子29: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子30: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.417, ✘未选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037688631643626: 情绪 -0.683, 立场 0.200, 置信度 0.546
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037692885079893: 情绪 -0.665, 立场 0.200, 置信度 0.545
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037697091525950: 情绪 -0.658, 立场 0.200, 置信度 0.562
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037697233932565: 情绪 -0.650, 立场 0.200, 置信度 0.512
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037782940768173: 情绪 -0.637, 立场 0.200, 置信度 0.522
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4037802024558229: 情绪 -0.647, 立场 0.200, 置信度 0.472
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038005671022625: 情绪 -0.652, 立场 0.200, 置信度 0.487
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038019029551423: 情绪 -0.637, 立场 0.200, 置信度 0.491
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038074344550661: 情绪 -0.643, 立场 0.200, 置信度 0.506
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038112012950997: 情绪 -0.659, 立场 0.200, 置信度 0.495
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038116047691704: 情绪 -0.663, 立场 0.200, 置信度 0.500
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038119739855303: 情绪 -0.657, 立场 0.200, 置信度 0.497
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038205684136962: 情绪 -0.661, 立场 0.200, 置信度 0.491
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038233580773956: 情绪 -0.675, 立场 0.200, 置信度 0.483
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038333027906488: 情绪 -0.687, 立场 0.200, 置信度 0.490
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038365571315477: 情绪 -0.689, 立场 0.200, 置信度 0.440
+[Feed] Agent agent_001 候选池大小: 28 (k=2, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.594, Final_Score=0.321, Sigmoid概率=0.520, ✔选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.694, Final_Score=0.394, Sigmoid概率=0.557, ✘未选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.894, Final_Score=0.383, Sigmoid概率=0.551, ✘未选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.894, Final_Score=0.411, Sigmoid概率=0.565, ✔选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.494, Final_Score=0.220, Sigmoid概率=0.470, ✘未选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.206, Final_Score=0.133, Sigmoid概率=0.427, ✘未选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.494, Final_Score=0.163, Sigmoid概率=0.441, ✘未选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.449, ✔选中
+    帖子9: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.694, Final_Score=0.265, Sigmoid概率=0.492, ✔选中
+    帖子10: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.206, Final_Score=0.105, Sigmoid概率=0.413, ✔选中
+    帖子11: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.594, Final_Score=0.207, Sigmoid概率=0.463, ✘未选中
+    帖子12: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.494, Final_Score=0.163, Sigmoid概率=0.441, ✔选中
+    帖子13: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.449, ✔选中
+    帖子14: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.594, Final_Score=0.535, Sigmoid概率=0.625, ✔选中
+    帖子15: id=4038072587474324, Score_Pop=0.980, Score_Rel=0.594, Final_Score=0.864, Sigmoid概率=0.763, ✔选中
+    帖子16: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.594, Final_Score=0.764, Sigmoid概率=0.725, ✔选中
+    帖子17: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.449, ✘未选中
+    帖子18: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.494, Final_Score=0.148, Sigmoid概率=0.434, ✘未选中
+    帖子19: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.449, ✔选中
+    帖子20: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.894, Final_Score=0.325, Sigmoid概率=0.522, ✘未选中
+    帖子21: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.494, Final_Score=0.148, Sigmoid概率=0.434, ✔选中
+    帖子22: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.449, ✔选中
+    帖子23: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.594, Final_Score=0.207, Sigmoid概率=0.463, ✔选中
+    帖子24: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.449, ✔选中
+    帖子25: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.449, ✘未选中
+    帖子26: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.694, Final_Score=0.523, Sigmoid概率=0.619, ✔选中
+    帖子27: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.449, ✔选中
+    帖子28: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.494, Final_Score=0.148, Sigmoid概率=0.434, ✔选中
+[Feed] Agent agent_002 候选池大小: 18 (k=2, x0=auto)
+    帖子1: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.470, Final_Score=0.141, Sigmoid概率=0.437, ✘未选中
+    帖子2: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.570, Final_Score=0.228, Sigmoid概率=0.480, ✘未选中
+    帖子3: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.470, Final_Score=0.170, Sigmoid概率=0.451, ✔选中
+    帖子4: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.470, Final_Score=0.498, Sigmoid概率=0.613, ✔选中
+    帖子5: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.770, Final_Score=0.931, Sigmoid概率=0.790, ✔选中
+    帖子6: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.470, Final_Score=0.727, Sigmoid概率=0.715, ✔选中
+    帖子7: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.470, Final_Score=0.141, Sigmoid概率=0.437, ✘未选中
+    帖子8: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.370, Final_Score=0.111, Sigmoid概率=0.422, ✔选中
+    帖子9: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.470, Final_Score=0.141, Sigmoid概率=0.437, ✔选中
+    帖子10: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.770, Final_Score=0.288, Sigmoid概率=0.510, ✔选中
+    帖子11: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.370, Final_Score=0.111, Sigmoid概率=0.422, ✘未选中
+    帖子12: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.470, Final_Score=0.141, Sigmoid概率=0.437, ✔选中
+    帖子13: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.470, Final_Score=0.170, Sigmoid概率=0.451, ✘未选中
+    帖子14: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.470, Final_Score=0.141, Sigmoid概率=0.437, ✘未选中
+    帖子15: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.470, Final_Score=0.141, Sigmoid概率=0.437, ✘未选中
+    帖子16: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.570, Final_Score=0.485, Sigmoid概率=0.607, ✔选中
+    帖子17: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.470, Final_Score=0.141, Sigmoid概率=0.437, ✔选中
+    帖子18: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.370, Final_Score=0.111, Sigmoid概率=0.422, ✘未选中
+[Feed] Agent agent_003 候选池大小: 5 (k=2, x0=auto)
+    帖子1: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.488, ✔选中
+    帖子2: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.200, Final_Score=0.117, Sigmoid概率=0.547, ✔选中
+    帖子3: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.488, ✘未选中
+    帖子4: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.488, ✘未选中
+    帖子5: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.488, ✔选中
+[Feed] Agent agent_004 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4037688631643626, Score_Pop=0.204, Score_Rel=0.200, Final_Score=0.203, Sigmoid概率=0.503, ✔选中
+    帖子2: id=4037689735195221, Score_Pop=0.265, Score_Rel=0.300, Final_Score=0.276, Sigmoid概率=0.539, ✘未选中
+    帖子3: id=4037692885079893, Score_Pop=0.163, Score_Rel=0.500, Final_Score=0.264, Sigmoid概率=0.533, ✔选中
+    帖子4: id=4037697091525950, Score_Pop=0.204, Score_Rel=0.500, Final_Score=0.293, Sigmoid概率=0.548, ✘未选中
+    帖子5: id=4037697233932565, Score_Pop=0.102, Score_Rel=0.100, Final_Score=0.101, Sigmoid概率=0.452, ✔选中
+    帖子6: id=4037703068028311, Score_Pop=0.102, Score_Rel=0.600, Final_Score=0.251, Sigmoid概率=0.527, ✔选中
+    帖子7: id=4037717069087119, Score_Pop=0.020, Score_Rel=0.100, Final_Score=0.044, Sigmoid概率=0.424, ✘未选中
+    帖子8: id=4037717584607669, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子9: id=4037725864724805, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子10: id=4037781711826073, Score_Pop=0.082, Score_Rel=0.300, Final_Score=0.147, Sigmoid概率=0.475, ✘未选中
+    帖子11: id=4037782940768173, Score_Pop=0.061, Score_Rel=0.600, Final_Score=0.223, Sigmoid概率=0.513, ✔选中
+    帖子12: id=4037794085230624, Score_Pop=0.041, Score_Rel=0.200, Final_Score=0.089, Sigmoid概率=0.446, ✔选中
+    帖子13: id=4037799092710331, Score_Pop=0.020, Score_Rel=0.100, Final_Score=0.044, Sigmoid概率=0.424, ✔选中
+    帖子14: id=4037802024558229, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子15: id=4038005671022625, Score_Pop=0.510, Score_Rel=0.200, Final_Score=0.417, Sigmoid概率=0.608, ✘未选中
+    帖子16: id=4038019029551423, Score_Pop=1.000, Score_Rel=0.500, Final_Score=0.850, Sigmoid概率=0.787, ✔选中
+    帖子17: id=4038072587474324, Score_Pop=0.980, Score_Rel=0.200, Final_Score=0.746, Sigmoid概率=0.750, ✘未选中
+    帖子18: id=4038074344550661, Score_Pop=0.837, Score_Rel=0.200, Final_Score=0.646, Sigmoid概率=0.710, ✘未选中
+    帖子19: id=4038079713559945, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✔选中
+    帖子20: id=4038112012950997, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.417, ✘未选中
+    帖子21: id=4038116047691704, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✔选中
+    帖子22: id=4038119739855303, Score_Pop=0.082, Score_Rel=0.500, Final_Score=0.207, Sigmoid概率=0.505, ✘未选中
+    帖子23: id=4038205554083523, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.417, ✘未选中
+    帖子24: id=4038205684136962, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子25: id=4038215646724449, Score_Pop=0.041, Score_Rel=0.200, Final_Score=0.089, Sigmoid概率=0.446, ✘未选中
+    帖子26: id=4038233580773956, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✔选中
+    帖子27: id=4038333027906488, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子28: id=4038365571315477, Score_Pop=0.449, Score_Rel=0.300, Final_Score=0.404, Sigmoid概率=0.602, ✘未选中
+    帖子29: id=4038415042933435, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.432, ✘未选中
+    帖子30: id=4038437952870280, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.417, ✔选中
+[宏观简报] {'average_emotion': -0.7130843169538411, 'average_stance': 0.10881530092457982, 'agent_count': 4}
+[Prompt] agent_001 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 回复@傅尚:病程记录上，原本就没有需要家属签字的要求，签与没签，不影响责任的认定，双方在这个问题上都没说真话，无非是试图把医患纠纷的成因，归结于对方→_→ 
+[父帖子 2]: 如果你对这个观点是成立的，那么，同理，你不觉得张洋作为记者，混迹在“中国医疗自媒体联盟”，难道不也是被医疗行业舆论势力保养了吗？→_→
+[父帖子 3]: 耍赖三部曲之“压不下众怒就讲情怀”
+[父帖子 4]: 和帮助潍坊妇幼保健院一起医疗纠纷的复杂化，帮某帮医院成功实现利润最大化，这一切都不值一提。搅局公立妇幼医院医疗纠纷，助推民营不孕不育医院营利。你们一直在努力。我们都看得见。
+[父帖子 5]: 《生活帮》转移焦点，这种公关方式，网友不买账哦
+[父帖子 6]: 把我看哭了，这么好的一档节目，怎么就走上偏门了呢？背后的故事，耐人深思。 医生的剪刀，在治病救人； 你们的剪刀，在歪曲事实。 任何人，一旦被金钱迷惑，就会忘记当初的誓言。“不忘初心，方得始终”你们的初心呢？
+[父帖子 7]: [doge]我来翻译一下:十年了，骗了这群蠢比观众十年没被发现，我们也是不容易的，怎么被你们发现了一次，你们就觉得自己有多厉害呢？我们互相关注，一起骗人，这样的团伙精神是值得肯定的！(PS:封面是莆田系联欢会吗？[doge])
+[父帖子 8]: 拜托，真的纱布取不出来，他妻子死了，一定闹医院赔钱啊。钱，可以慢慢花，新妻也可以再娶。到头来媳妇没缺，还白拿了这一大笔钱，少奋斗了多少年啊！
+[父帖子 9]: 不要脸到家了，还死鸭子嘴硬
+[父帖子 10]: @小怪兽Echo是好青年 太恶心了…！这些人良心哪去了！
+[父帖子 11]: 请各位亲收看http://t.cn/RVFkshC ，敬请关注‘纱布门’！给生活 帮扒扒皮，一起痛打落水狗！[发怒][发怒]
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_001 发帖json: {'id': 'agent_001_2016-11-05T13:01:42', 'parent_post_id': None, 'author_id': 'agent_001', 'content': '这是agent_001的发言内容', 'timestamp': '2016-11-05T13:01:42'}
+[Prompt] agent_002 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 住过院，签过字的都知道，这是有很严格而规范的标准及程序，院方辩解明显站不住脚。
+[父帖子 2]: 我很佩服司马居然还敢把这篇东西放在置顶的位置，如果不是脑子坏了，那就真的是收了莆田帮的钱了。
+[父帖子 3]: 耍赖三部曲之“压不下众怒就讲情怀”
+[父帖子 4]: 潍坊纱布门事件引起了新闻界同行和高校新闻专业师生们的关注，这是某著名高校新闻专业老师，联系我希望以纱布门作为教学案例，让学生们成为有理想的新闻人。～很欣慰，尽管大浪潮涌，媒体人真的生存不易，新闻民工比比皆是，也许谁也无法百分百完美，但心中的理想和职业底线，就算要饭吃也要努力坚守！
+[父帖子 5]: 《生活帮》转移焦点，这种公关方式，网友不买账哦
+[父帖子 6]: 他想向世人证明，十年了，潍坊医院这样的缺德事，他没少干。
+[父帖子 7]: [doge]我来翻译一下:十年了，骗了这群蠢比观众十年没被发现，我们也是不容易的，怎么被你们发现了一次，你们就觉得自己有多厉害呢？我们互相关注，一起骗人，这样的团伙精神是值得肯定的！(PS:封面是莆田系联欢会吗？[doge])
+[父帖子 8]: 那个被欠了一盒子医药费欠条的乡村医生，最后帮人家要回医药费了吗？
+[父帖子 9]: 拜托，真的纱布取不出来，他妻子死了，一定闹医院赔钱啊。钱，可以慢慢花，新妻也可以再娶。到头来媳妇没缺，还白拿了这一大笔钱，少奋斗了多少年啊！
+[父帖子 10]: 对！就是这个道理啊！
+[父帖子 11]: 不要脸到家了，还死鸭子嘴硬
+[父帖子 12]: 医患关系就是在这群无耻媒体的演绎下变得越来越差的！最终受害的，都是普通患者消费者。
+[父帖子 13]: 打赏@麻醉超人钢铁侠 的文章《生活帮到底要造一个怎样的‘‘纱布门’’？》9.90元，加油！#微博打赏#http://t.cn/RVgfnHn
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_002 发帖json: {'id': 'agent_002_2016-11-05T13:01:42', 'parent_post_id': None, 'author_id': 'agent_002', 'content': '这是agent_002的发言内容', 'timestamp': '2016-11-05T13:01:42'}
+[Prompt] agent_003 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 回复@傅尚:难道贵院随便扯一张纸就可以签字吗？难道贵院对病人有关资料随便到处放吗？
+[父帖子 2]: 难道贵院随便扯一张纸就可以签字吗？难道贵院对病人有关资料随便到处放吗？特别讲究严谨与规章的地方，如此随便，不是坑人骗钱，又是什么？
+[父帖子 3]: 我很佩服司马居然还敢把这篇东西放在置顶的位置，如果不是脑子坏了，那就真的是收了莆田帮的钱了。
+[父帖子 4]: 何必揣着明白装糊涂呢，你攻击的机构是什么性质？他们若都倒下了谁最得益？你打萌芽，打韩寒时强大的逻辑分析能力哪去了？还是在那个时候跟某些机构搞“合作了” ？
+[父帖子 5]: 耍赖三部曲之“压不下众怒就讲情怀”
+[父帖子 6]: 《生活帮》转移焦点，这种公关方式，网友不买账哦
+[父帖子 7]: 把我看哭了，这么好的一档节目，怎么就走上偏门了呢？背后的故事，耐人深思。 医生的剪刀，在治病救人； 你们的剪刀，在歪曲事实。 任何人，一旦被金钱迷惑，就会忘记当初的誓言。“不忘初心，方得始终”你们的初心呢？
+[父帖子 8]: [doge]我来翻译一下:十年了，骗了这群蠢比观众十年没被发现，我们也是不容易的，怎么被你们发现了一次，你们就觉得自己有多厉害呢？我们互相关注，一起骗人，这样的团伙精神是值得肯定的！(PS:封面是莆田系联欢会吗？[doge])
+[父帖子 9]: 不要脸到家了，还死鸭子嘴硬
+[父帖子 10]: 医患关系就是在这群无耻媒体的演绎下变得越来越差的！最终受害的，都是普通患者消费者。
+[父帖子 11]: 打赏@麻醉超人钢铁侠 的文章《生活帮到底要造一个怎样的‘‘纱布门’’？》9.90元，加油！#微博打赏#http://t.cn/RVgfnHn
+[父帖子 12]: 当初@新安晚报 散布谣言被扒掉内裤之后，其编辑也是写了一段半文半白的话，长舒一口气胸中闷气。其实镇妖的泰山石就在那里，只是妖怪出了很多变种，操着一副为民请命实则鸡鸣狗盗的嘴脸，泰山石因此凌乱了而已。可见妖怪多厉害[二哈]@-阿速- @山东广播电视台 
+[父帖子 13]: 请各位亲收看http://t.cn/RVFkshC ，敬请关注‘纱布门’！给生活 帮扒扒皮，一起痛打落水狗！[发怒][发怒]
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_003 发帖json: {'id': 'agent_003_2016-11-05T13:01:42', 'parent_post_id': None, 'author_id': 'agent_003', 'content': '这是agent_003的发言内容', 'timestamp': '2016-11-05T13:01:42'}
+[Prompt] agent_004 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 回复@傅尚:病程记录上，原本就没有需要家属签字的要求，签与没签，不影响责任的认定，双方在这个问题上都没说真话，无非是试图把医患纠纷的成因，归结于对方→_→ 
+[父帖子 2]: 回复@傅尚:谁涂改的，什么时候涂改的，都不影响责任的认定，但是，如果医方认为确有需要书面告知患者，规范的应该是使用《知情同意书》，而不是简单、图方便的在病程记录上签字→_→
+[父帖子 3]: 回复@云白:生活帮的第一次节目，显然是带有明显的倾向性的，但这种倾向性，不影响纱布门医患纠纷的责任认定的性质，反之，你能找出一个不带有倾向性的媒体和报纸吗？→_→ 
+[父帖子 4]: 住过院，签过字的都知道，这是有很严格而规范的标准及程序，院方辩解明显站不住脚。
+[父帖子 5]: 这和莆田系有啥关系？→_→
+[父帖子 6]: 回复@荆棘鸟126:你说对了，山东电视台如有报道上的问题，和纱布门的医患纠纷本身无关，你看看他们几个上蹿下跳的，有哪个敢于站出来就事论的？所谓违法广告问题，不就是假道伐虢企图恐吓媒体对医疗行业的监督吗？患者的权益谁来维护？
+[父帖子 7]: 耍赖三部曲之“压不下众怒就讲情怀”
+[父帖子 8]: 潍坊纱布门事件引起了新闻界同行和高校新闻专业师生们的关注，这是某著名高校新闻专业老师，联系我希望以纱布门作为教学案例，让学生们成为有理想的新闻人。～很欣慰，尽管大浪潮涌，媒体人真的生存不易，新闻民工比比皆是，也许谁也无法百分百完美，但心中的理想和职业底线，就算要饭吃也要努力坚守！
+[父帖子 9]: 《生活帮》转移焦点，这种公关方式，网友不买账哦
+[父帖子 10]: 他想向世人证明，十年了，潍坊医院这样的缺德事，他没少干。
+[父帖子 11]: [doge]我来翻译一下:十年了，骗了这群蠢比观众十年没被发现，我们也是不容易的，怎么被你们发现了一次，你们就觉得自己有多厉害呢？我们互相关注，一起骗人，这样的团伙精神是值得肯定的！(PS:封面是莆田系联欢会吗？[doge])
+[父帖子 12]: 那个被欠了一盒子医药费欠条的乡村医生，最后帮人家要回医药费了吗？
+[父帖子 13]: 对！就是这个道理啊！
+[父帖子 14]: @小怪兽Echo是好青年 太恶心了…！这些人良心哪去了！
+[父帖子 15]: 医患关系就是在这群无耻媒体的演绎下变得越来越差的！最终受害的，都是普通患者消费者。
+[父帖子 16]: 打赏@麻醉超人钢铁侠 的文章《生活帮到底要造一个怎样的‘‘纱布门’’？》9.90元，加油！#微博打赏#http://t.cn/RVgfnHn
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_004 发帖json: {'id': 'agent_004_2016-11-05T13:01:42', 'parent_post_id': None, 'author_id': 'agent_004', 'content': '这是agent_004的发言内容', 'timestamp': '2016-11-05T13:01:42'}
+
+时间片 3 结束，Agent状态:
+  agent_001: 情绪=-0.723(波动0.075), 立场=-0.194(波动0.018), 置信度=0.300, 总波动=0.093, 本时间片阅读18条帖子
+    -> 不发帖
+  agent_002: 情绪=-0.705(波动0.050), 立场=-0.070(波动0.099), 置信度=0.000, 总波动=0.149, 本时间片阅读10条帖子
+    -> 不发帖
+  agent_003: 情绪=-0.735(波动0.108), 立场=0.500(波动0.000), 置信度=0.459, 总波动=0.108, 本时间片阅读3条帖子
+    -> 不发帖
+  agent_004: 情绪=-0.689(波动0.008), 立场=0.200(波动0.000), 置信度=0.440, 总波动=0.008, 本时间片阅读12条帖子
+    -> 不发帖
+[阅读统计] 本时间片每个agent实际阅读的帖子数：
+  agent_001: 11 条
+  agent_002: 13 条
+  agent_003: 13 条
+  agent_004: 16 条
+
+[分析] 本时间片每个帖子被选中的情况：
+  帖子4037688631643626: 被 2 个Agent选中 -> agent_001(Final=0.321,P=0.52), agent_004(Final=0.203,P=0.50)
+  帖子4037692885079893: 被 1 个Agent选中 -> agent_004(Final=0.264,P=0.53)
+  帖子4037697091525950: 被 1 个Agent选中 -> agent_001(Final=0.411,P=0.56)
+  帖子4037697233932565: 被 1 个Agent选中 -> agent_004(Final=0.101,P=0.45)
+  帖子4037703068028311: 被 1 个Agent选中 -> agent_004(Final=0.251,P=0.53)
+  帖子4037717584607669: 被 1 个Agent选中 -> agent_001(Final=0.178,P=0.45)
+  帖子4037781711826073: 被 1 个Agent选中 -> agent_001(Final=0.265,P=0.49)
+  帖子4037782940768173: 被 2 个Agent选中 -> agent_001(Final=0.105,P=0.41), agent_004(Final=0.223,P=0.51)
+  帖子4037794085230624: 被 2 个Agent选中 -> agent_002(Final=0.170,P=0.45), agent_004(Final=0.089,P=0.45)
+  帖子4037799092710331: 被 2 个Agent选中 -> agent_001(Final=0.163,P=0.44), agent_004(Final=0.044,P=0.42)
+  帖子4037802024558229: 被 1 个Agent选中 -> agent_001(Final=0.178,P=0.45)
+  帖子4038005671022625: 被 2 个Agent选中 -> agent_001(Final=0.535,P=0.62), agent_002(Final=0.498,P=0.61)
+  帖子4038072587474324: 被 1 个Agent选中 -> agent_001(Final=0.864,P=0.76)
+  帖子4038074344550661: 被 2 个Agent选中 -> agent_001(Final=0.764,P=0.72), agent_002(Final=0.727,P=0.71)
+  帖子4038079713559945: 被 1 个Agent选中 -> agent_004(Final=0.060,P=0.43)
+  帖子4038112012950997: 被 2 个Agent选中 -> agent_002(Final=0.111,P=0.42), agent_003(Final=0.000,P=0.49)
+  帖子4038116047691704: 被 3 个Agent选中 -> agent_001(Final=0.178,P=0.45), agent_002(Final=0.141,P=0.44), agent_004(Final=0.060,P=0.43)
+  帖子4038119739855303: 被 2 个Agent选中 -> agent_002(Final=0.288,P=0.51), agent_003(Final=0.117,P=0.55)
+  帖子4038205554083523: 被 1 个Agent选中 -> agent_001(Final=0.148,P=0.43)
+  帖子4038205684136962: 被 2 个Agent选中 -> agent_001(Final=0.178,P=0.45), agent_002(Final=0.141,P=0.44)
+  帖子4038215646724449: 被 1 个Agent选中 -> agent_001(Final=0.207,P=0.46)
+  帖子4038233580773956: 被 3 个Agent选中 -> agent_001(Final=0.178,P=0.45), agent_003(Final=0.000,P=0.49), agent_004(Final=0.060,P=0.43)
+  帖子4038365571315477: 被 2 个Agent选中 -> agent_001(Final=0.523,P=0.62), agent_002(Final=0.485,P=0.61)
+  帖子4038415042933435: 被 2 个Agent选中 -> agent_001(Final=0.178,P=0.45), agent_002(Final=0.141,P=0.44)
+  帖子4038437952870280: 被 2 个Agent选中 -> agent_001(Final=0.148,P=0.43), agent_004(Final=0.030,P=0.42)
+  帖子4038019029551423: 被 2 个Agent选中 -> agent_002(Final=0.931,P=0.79), agent_004(Final=0.850,P=0.79)
+
+--- 时间片 4 ---
+处理 30 条帖子
+[Feed] Agent agent_001 候选池大小: 27 (k=2, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.794, Final_Score=0.238, Sigmoid概率=0.512, ✔选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.594, Final_Score=0.180, Sigmoid概率=0.483, ✘未选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.694, Final_Score=0.402, Sigmoid概率=0.593, ✔选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.694, Final_Score=0.262, Sigmoid概率=0.524, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.794, Final_Score=0.240, Sigmoid概率=0.513, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.794, Final_Score=0.290, Sigmoid概率=0.538, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.494, Final_Score=0.150, Sigmoid概率=0.468, ✔选中
+    帖子8: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.794, Final_Score=0.244, Sigmoid概率=0.515, ✔选中
+    帖子9: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.894, Final_Score=0.272, Sigmoid概率=0.529, ✔选中
+    帖子10: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.694, Final_Score=0.208, Sigmoid概率=0.497, ✘未选中
+    帖子11: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.794, Final_Score=0.238, Sigmoid概率=0.512, ✘未选中
+    帖子12: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.206, Final_Score=0.157, Sigmoid概率=0.472, ✘未选中
+    帖子13: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.794, Final_Score=0.238, Sigmoid概率=0.512, ✘未选中
+    帖子14: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.594, Final_Score=0.182, Sigmoid概率=0.484, ✘未选中
+    帖子15: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.306, Final_Score=0.093, Sigmoid概率=0.440, ✔选中
+    帖子16: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.694, Final_Score=0.208, Sigmoid概率=0.497, ✔选中
+    帖子17: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.594, Final_Score=0.187, Sigmoid概率=0.487, ✘未选中
+    帖子18: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.494, Final_Score=0.150, Sigmoid概率=0.468, ✔选中
+    帖子19: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.494, Final_Score=0.152, Sigmoid概率=0.469, ✘未选中
+    帖子20: id=4038810591603287, Score_Pop=0.008, Score_Rel=0.994, Final_Score=0.304, Sigmoid概率=0.545, ✔选中
+    帖子21: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.494, Final_Score=0.150, Sigmoid概率=0.468, ✔选中
+    帖子22: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.494, Final_Score=0.148, Sigmoid概率=0.467, ✔选中
+    帖子23: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.894, Final_Score=0.380, Sigmoid概率=0.582, ✘未选中
+    帖子24: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.694, Final_Score=0.208, Sigmoid概率=0.497, ✔选中
+    帖子25: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.394, Final_Score=0.118, Sigmoid概率=0.452, ✔选中
+    帖子26: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.594, Final_Score=0.189, Sigmoid概率=0.488, ✔选中
+    帖子27: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.594, Final_Score=0.178, Sigmoid概率=0.482, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038484006413069: 情绪 -0.711, 立场 -0.150, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038498984363988: 情绪 -0.700, 立场 -0.193, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038502184275708: 情绪 -0.690, 立场 -0.168, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038503774097013: 情绪 -0.681, 立场 -0.188, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038508018801178: 情绪 -0.693, 立场 -0.182, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038533246923455: 情绪 -0.684, 立场 -0.196, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038535445106128: 情绪 -0.685, 立场 -0.179, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038806020121411: 情绪 -0.687, 立场 -0.193, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038807260969318: 情绪 -0.672, 立场 -0.219, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038809048315946: 情绪 -0.685, 立场 -0.198, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038810591603287: 情绪 -0.666, 立场 -0.227, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038810889191409: 情绪 -0.659, 立场 -0.193, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038811598300707: 情绪 -0.666, 立场 -0.210, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038813225296951: 情绪 -0.663, 立场 -0.236, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038813313103164: 情绪 -0.667, 立场 -0.276, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038817185336791: 情绪 -0.670, 立场 -0.256, 置信度 0.300
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_001
+Agent agent_001 阅读帖子 4038818430870248: 情绪 -0.683, 立场 -0.302, 置信度 0.300
+[Feed] Agent agent_002 候选池大小: 28 (k=2, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.670, Final_Score=0.201, Sigmoid概率=0.501, ✔选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.470, Final_Score=0.143, Sigmoid概率=0.471, ✘未选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.570, Final_Score=0.365, Sigmoid概率=0.582, ✔选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.570, Final_Score=0.225, Sigmoid概率=0.512, ✘未选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.670, Final_Score=0.203, Sigmoid概率=0.501, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.670, Final_Score=0.253, Sigmoid概率=0.527, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.370, Final_Score=0.113, Sigmoid概率=0.457, ✘未选中
+    帖子8: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.670, Final_Score=0.207, Sigmoid概率=0.503, ✔选中
+    帖子9: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.770, Final_Score=0.235, Sigmoid概率=0.517, ✔选中
+    帖子10: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.570, Final_Score=0.171, Sigmoid概率=0.486, ✔选中
+    帖子11: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.670, Final_Score=0.201, Sigmoid概率=0.501, ✔选中
+    帖子12: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.370, Final_Score=0.111, Sigmoid概率=0.456, ✘未选中
+    帖子13: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.330, Final_Score=0.194, Sigmoid概率=0.497, ✔选中
+    帖子14: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.670, Final_Score=0.201, Sigmoid概率=0.501, ✔选中
+    帖子15: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.470, Final_Score=0.841, Sigmoid概率=0.783, ✔选中
+    帖子16: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.470, Final_Score=0.145, Sigmoid概率=0.472, ✔选中
+    帖子17: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.430, Final_Score=0.131, Sigmoid概率=0.465, ✘未选中
+    帖子18: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.570, Final_Score=0.171, Sigmoid概率=0.486, ✘未选中
+    帖子19: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.470, Final_Score=0.150, Sigmoid概率=0.475, ✘未选中
+    帖子20: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.370, Final_Score=0.113, Sigmoid概率=0.457, ✘未选中
+    帖子21: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.370, Final_Score=0.115, Sigmoid概率=0.457, ✔选中
+    帖子22: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.370, Final_Score=0.113, Sigmoid概率=0.457, ✘未选中
+    帖子23: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.370, Final_Score=0.111, Sigmoid概率=0.456, ✔选中
+    帖子24: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.770, Final_Score=0.342, Sigmoid概率=0.571, ✘未选中
+    帖子25: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.570, Final_Score=0.171, Sigmoid概率=0.486, ✔选中
+    帖子26: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.270, Final_Score=0.081, Sigmoid概率=0.441, ✘未选中
+    帖子27: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.470, Final_Score=0.152, Sigmoid概率=0.476, ✘未选中
+    帖子28: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.470, Final_Score=0.141, Sigmoid概率=0.471, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038484006413069: 情绪 -0.695, 立场 -0.115, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038498984363988: 情绪 -0.685, 立场 -0.155, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038503774097013: 情绪 -0.677, 立场 -0.205, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038533246923455: 情绪 -0.669, 立场 -0.170, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038535445106128: 情绪 -0.672, 立场 -0.161, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038542184842770: 情绪 -0.635, 立场 -0.198, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038596728400073: 情绪 -0.631, 立场 -0.229, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038731063593762: 情绪 -0.638, 立场 -0.270, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038794732418684: 情绪 -0.514, 立场 -0.255, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038805109450116: 情绪 -0.513, 立场 -0.245, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038806002884179: 情绪 -0.542, 立场 -0.263, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038810142471681: 情绪 -0.567, 立场 -0.278, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038811598300707: 情绪 -0.579, 立场 -0.232, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038813225296951: 情绪 -0.580, 立场 -0.193, 置信度 0.000
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_002
+Agent agent_002 阅读帖子 4038818430870248: 情绪 -0.602, 立场 -0.195, 置信度 0.000
+[Feed] Agent agent_003 候选池大小: 25 (k=2, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.487, ✘未选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.473, ✔选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.000, Final_Score=0.194, Sigmoid概率=0.568, ✘未选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.000, Final_Score=0.054, Sigmoid概率=0.499, ✘未选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.488, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.100, Final_Score=0.082, Sigmoid概率=0.513, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.473, ✘未选中
+    帖子8: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.100, Final_Score=0.035, Sigmoid概率=0.489, ✔选中
+    帖子9: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.200, Final_Score=0.064, Sigmoid概率=0.504, ✔选中
+    帖子10: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.472, ✔选中
+    帖子11: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.487, ✘未选中
+    帖子12: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.900, Final_Score=0.365, Sigmoid概率=0.650, ✔选中
+    帖子13: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.487, ✘未选中
+    帖子14: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.000, Final_Score=0.004, Sigmoid概率=0.474, ✘未选中
+    帖子15: id=4038806020121411, Score_Pop=0.003, Score_Rel=1.000, Final_Score=0.302, Sigmoid概率=0.620, ✔选中
+    帖子16: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.472, ✔选中
+    帖子17: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.000, Final_Score=0.009, Sigmoid概率=0.476, ✘未选中
+    帖子18: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.473, ✘未选中
+    帖子19: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.000, Final_Score=0.004, Sigmoid概率=0.474, ✔选中
+    帖子20: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.473, ✔选中
+    帖子21: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.472, ✘未选中
+    帖子22: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.200, Final_Score=0.171, Sigmoid概率=0.557, ✔选中
+    帖子23: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.472, ✘未选中
+    帖子24: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.472, ✘未选中
+    帖子25: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.472, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038492562093163: 情绪 -0.731, 立场 0.500, 置信度 0.462
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038503774097013: 情绪 -0.718, 立场 0.500, 置信度 0.462
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038533246923455: 情绪 -0.706, 立场 0.500, 置信度 0.443
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038535445106128: 情绪 -0.706, 立场 0.500, 置信度 0.429
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038542184842770: 情绪 -0.665, 立场 0.500, 置信度 0.429
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038731063593762: 情绪 -0.669, 立场 0.500, 置信度 0.429
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038806020121411: 情绪 -0.672, 立场 0.500, 置信度 0.431
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038807260969318: 情绪 -0.658, 立场 0.500, 置信度 0.449
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038810142471681: 情绪 -0.672, 立场 0.500, 置信度 0.467
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038810889191409: 情绪 -0.665, 立场 0.500, 置信度 0.451
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038812788735334: 情绪 -0.642, 立场 0.500, 置信度 0.467
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_003
+Agent agent_003 阅读帖子 4038818430870248: 情绪 -0.658, 立场 0.500, 置信度 0.486
+[Feed] Agent agent_004 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.493, ✔选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.200, Final_Score=0.062, Sigmoid概率=0.464, ✘未选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.300, Final_Score=0.284, Sigmoid概率=0.575, ✔选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.300, Final_Score=0.144, Sigmoid概率=0.505, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.400, Final_Score=0.122, Sigmoid概率=0.494, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.400, Final_Score=0.172, Sigmoid概率=0.519, ✘未选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.450, ✘未选中
+    帖子8: id=4038522573119368, Score_Pop=0.049, Score_Rel=0.400, Final_Score=0.154, Sigmoid概率=0.511, ✘未选中
+    帖子9: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.400, Final_Score=0.125, Sigmoid概率=0.496, ✔选中
+    帖子10: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.500, Final_Score=0.154, Sigmoid概率=0.510, ✔选中
+    帖子11: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.478, ✔选中
+    帖子12: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.493, ✘未选中
+    帖子13: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.449, ✘未选中
+    帖子14: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.600, Final_Score=0.275, Sigmoid概率=0.571, ✔选中
+    帖子15: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.493, ✔选中
+    帖子16: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.760, Sigmoid概率=0.778, ✔选中
+    帖子17: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.200, Final_Score=0.064, Sigmoid概率=0.465, ✘未选中
+    帖子18: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.700, Final_Score=0.212, Sigmoid概率=0.539, ✘未选中
+    帖子19: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.478, ✔选中
+    帖子20: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.069, Sigmoid概率=0.468, ✘未选中
+    帖子21: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.450, ✔选中
+    帖子22: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.100, Final_Score=0.034, Sigmoid概率=0.450, ✔选中
+    帖子23: id=4038810591603287, Score_Pop=0.008, Score_Rel=0.600, Final_Score=0.185, Sigmoid概率=0.526, ✘未选中
+    帖子24: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.450, ✘未选中
+    帖子25: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.449, ✘未选中
+    帖子26: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.500, Final_Score=0.261, Sigmoid概率=0.564, ✔选中
+    帖子27: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.478, ✘未选中
+    帖子28: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.434, ✔选中
+    帖子29: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.200, Final_Score=0.071, Sigmoid概率=0.469, ✘未选中
+    帖子30: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.464, ✔选中
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038484006413069: 情绪 -0.680, 立场 0.200, 置信度 0.432
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038498984363988: 情绪 -0.672, 立场 0.200, 置信度 0.415
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038502184275708: 情绪 -0.665, 立场 0.200, 置信度 0.432
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038503774097013: 情绪 -0.659, 立场 0.200, 置信度 0.442
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038533246923455: 情绪 -0.653, 立场 0.200, 置信度 0.443
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038535445106128: 情绪 -0.657, 立场 0.200, 置信度 0.431
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038542184842770: 情绪 -0.622, 立场 0.200, 置信度 0.413
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038731063593762: 情绪 -0.630, 立场 0.200, 置信度 0.396
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038794732418684: 情绪 -0.507, 立场 0.200, 置信度 0.411
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038805109450116: 情绪 -0.506, 立场 0.200, 置信度 0.417
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038807260969318: 情绪 -0.501, 立场 0.200, 置信度 0.429
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038809048315946: 情绪 -0.531, 立场 0.200, 置信度 0.414
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038810142471681: 情绪 -0.558, 立场 0.200, 置信度 0.414
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038812788735334: 情绪 -0.540, 立场 0.200, 置信度 0.398
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038813313103164: 情绪 -0.556, 立场 0.200, 置信度 0.411
+[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: agent_004
+Agent agent_004 阅读帖子 4038818430870248: 情绪 -0.580, 立场 0.200, 置信度 0.426
+[Feed] Agent agent_001 候选池大小: 27 (k=2, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.902, Final_Score=0.271, Sigmoid概率=0.516, ✔选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.702, Final_Score=0.212, Sigmoid概率=0.487, ✔选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.802, Final_Score=0.434, Sigmoid概率=0.597, ✔选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.802, Final_Score=0.294, Sigmoid概率=0.528, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.902, Final_Score=0.272, Sigmoid概率=0.517, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.902, Final_Score=0.323, Sigmoid概率=0.542, ✔选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.602, Final_Score=0.182, Sigmoid概率=0.472, ✘未选中
+    帖子8: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.902, Final_Score=0.276, Sigmoid概率=0.519, ✘未选中
+    帖子9: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.998, Final_Score=0.303, Sigmoid概率=0.532, ✔选中
+    帖子10: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.802, Final_Score=0.241, Sigmoid概率=0.501, ✘未选中
+    帖子11: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.902, Final_Score=0.271, Sigmoid概率=0.516, ✘未选中
+    帖子12: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.098, Final_Score=0.125, Sigmoid概率=0.443, ✘未选中
+    帖子13: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.902, Final_Score=0.271, Sigmoid概率=0.516, ✘未选中
+    帖子14: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.702, Final_Score=0.214, Sigmoid概率=0.488, ✔选中
+    帖子15: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.198, Final_Score=0.061, Sigmoid概率=0.412, ✔选中
+    帖子16: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.802, Final_Score=0.241, Sigmoid概率=0.501, ✔选中
+    帖子17: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.702, Final_Score=0.220, Sigmoid概率=0.490, ✔选中
+    帖子18: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.602, Final_Score=0.182, Sigmoid概率=0.472, ✘未选中
+    帖子19: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.602, Final_Score=0.184, Sigmoid概率=0.473, ✘未选中
+    帖子20: id=4038810591603287, Score_Pop=0.008, Score_Rel=0.898, Final_Score=0.275, Sigmoid概率=0.518, ✘未选中
+    帖子21: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.602, Final_Score=0.182, Sigmoid概率=0.472, ✘未选中
+    帖子22: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.602, Final_Score=0.181, Sigmoid概率=0.471, ✔选中
+    帖子23: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.998, Final_Score=0.411, Sigmoid概率=0.585, ✔选中
+    帖子24: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.802, Final_Score=0.241, Sigmoid概率=0.501, ✘未选中
+    帖子25: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.502, Final_Score=0.151, Sigmoid概率=0.456, ✔选中
+    帖子26: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.702, Final_Score=0.221, Sigmoid概率=0.491, ✔选中
+    帖子27: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.702, Final_Score=0.211, Sigmoid概率=0.486, ✘未选中
+[Feed] Agent agent_002 候选池大小: 27 (k=2, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.795, Final_Score=0.239, Sigmoid概率=0.502, ✘未选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.595, Final_Score=0.180, Sigmoid概率=0.473, ✘未选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.695, Final_Score=0.402, Sigmoid概率=0.583, ✔选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.695, Final_Score=0.262, Sigmoid概率=0.514, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.795, Final_Score=0.240, Sigmoid概率=0.503, ✘未选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.795, Final_Score=0.291, Sigmoid概率=0.528, ✔选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.495, Final_Score=0.150, Sigmoid概率=0.458, ✘未选中
+    帖子8: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.795, Final_Score=0.244, Sigmoid概率=0.505, ✔选中
+    帖子9: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.895, Final_Score=0.272, Sigmoid概率=0.519, ✘未选中
+    帖子10: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.695, Final_Score=0.209, Sigmoid概率=0.487, ✘未选中
+    帖子11: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.795, Final_Score=0.239, Sigmoid概率=0.502, ✘未选中
+    帖子12: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.495, Final_Score=0.149, Sigmoid概率=0.457, ✘未选中
+    帖子13: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.795, Final_Score=0.239, Sigmoid概率=0.502, ✔选中
+    帖子14: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.595, Final_Score=0.879, Sigmoid概率=0.784, ✔选中
+    帖子15: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.595, Final_Score=0.182, Sigmoid概率=0.474, ✔选中
+    帖子16: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.305, Final_Score=0.093, Sigmoid概率=0.430, ✔选中
+    帖子17: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.695, Final_Score=0.209, Sigmoid概率=0.487, ✔选中
+    帖子18: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.595, Final_Score=0.187, Sigmoid概率=0.476, ✘未选中
+    帖子19: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.495, Final_Score=0.150, Sigmoid概率=0.458, ✘未选中
+    帖子20: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.495, Final_Score=0.152, Sigmoid概率=0.459, ✘未选中
+    帖子21: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.495, Final_Score=0.150, Sigmoid概率=0.458, ✘未选中
+    帖子22: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.495, Final_Score=0.149, Sigmoid概率=0.457, ✘未选中
+    帖子23: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.895, Final_Score=0.380, Sigmoid概率=0.572, ✔选中
+    帖子24: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.695, Final_Score=0.209, Sigmoid概率=0.487, ✔选中
+    帖子25: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.395, Final_Score=0.119, Sigmoid概率=0.442, ✘未选中
+    帖子26: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.595, Final_Score=0.189, Sigmoid概率=0.477, ✔选中
+    帖子27: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.595, Final_Score=0.179, Sigmoid概率=0.472, ✔选中
+[Feed] Agent agent_003 候选池大小: 15 (k=2, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.478, ✘未选中
+    帖子2: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.000, Final_Score=0.194, Sigmoid概率=0.560, ✘未选中
+    帖子3: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.000, Final_Score=0.054, Sigmoid概率=0.490, ✘未选中
+    帖子4: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.100, Final_Score=0.082, Sigmoid概率=0.504, ✘未选中
+    帖子5: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.464, ✘未选中
+    帖子6: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.478, ✘未选中
+    帖子7: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.900, Final_Score=0.365, Sigmoid概率=0.642, ✘未选中
+    帖子8: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.478, ✔选中
+    帖子9: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.000, Final_Score=0.004, Sigmoid概率=0.465, ✘未选中
+    帖子10: id=4038806020121411, Score_Pop=0.003, Score_Rel=1.000, Final_Score=0.302, Sigmoid概率=0.612, ✔选中
+    帖子11: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.000, Final_Score=0.009, Sigmoid概率=0.468, ✘未选中
+    帖子12: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.000, Final_Score=0.002, Sigmoid概率=0.464, ✔选中
+    帖子13: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.463, ✔选中
+    帖子14: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.463, ✘未选中
+    帖子15: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.463, ✔选中
+[Feed] Agent agent_004 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4038484006413069, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.493, ✘未选中
+    帖子2: id=4038492562093163, Score_Pop=0.003, Score_Rel=0.200, Final_Score=0.062, Sigmoid概率=0.464, ✔选中
+    帖子3: id=4038498984363988, Score_Pop=0.277, Score_Rel=0.300, Final_Score=0.284, Sigmoid概率=0.575, ✘未选中
+    帖子4: id=4038502184275708, Score_Pop=0.077, Score_Rel=0.300, Final_Score=0.144, Sigmoid概率=0.505, ✔选中
+    帖子5: id=4038503774097013, Score_Pop=0.003, Score_Rel=0.400, Final_Score=0.122, Sigmoid概率=0.494, ✔选中
+    帖子6: id=4038508009922639, Score_Pop=0.074, Score_Rel=0.400, Final_Score=0.172, Sigmoid概率=0.519, ✔选中
+    帖子7: id=4038508018801178, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.450, ✘未选中
+    帖子8: id=4038522573119368, Score_Pop=0.049, Score_Rel=0.400, Final_Score=0.154, Sigmoid概率=0.511, ✘未选中
+    帖子9: id=4038533246923455, Score_Pop=0.008, Score_Rel=0.400, Final_Score=0.125, Sigmoid概率=0.496, ✔选中
+    帖子10: id=4038535445106128, Score_Pop=0.005, Score_Rel=0.500, Final_Score=0.154, Sigmoid概率=0.510, ✔选中
+    帖子11: id=4038542184842770, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.478, ✔选中
+    帖子12: id=4038596728400073, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.493, ✔选中
+    帖子13: id=4038633260200027, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.449, ✘未选中
+    帖子14: id=4038731063593762, Score_Pop=0.136, Score_Rel=0.600, Final_Score=0.275, Sigmoid概率=0.571, ✘未选中
+    帖子15: id=4038794732418684, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.493, ✘未选中
+    帖子16: id=4038805109450116, Score_Pop=1.000, Score_Rel=0.200, Final_Score=0.760, Sigmoid概率=0.778, ✔选中
+    帖子17: id=4038806002884179, Score_Pop=0.005, Score_Rel=0.200, Final_Score=0.064, Sigmoid概率=0.465, ✘未选中
+    帖子18: id=4038806020121411, Score_Pop=0.003, Score_Rel=0.700, Final_Score=0.212, Sigmoid概率=0.539, ✔选中
+    帖子19: id=4038807260969318, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.478, ✘未选中
+    帖子20: id=4038808230647115, Score_Pop=0.013, Score_Rel=0.200, Final_Score=0.069, Sigmoid概率=0.468, ✘未选中
+    帖子21: id=4038809048315946, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.450, ✔选中
+    帖子22: id=4038810142471681, Score_Pop=0.005, Score_Rel=0.100, Final_Score=0.034, Sigmoid概率=0.450, ✘未选中
+    帖子23: id=4038810591603287, Score_Pop=0.008, Score_Rel=0.600, Final_Score=0.185, Sigmoid概率=0.526, ✔选中
+    帖子24: id=4038810889191409, Score_Pop=0.003, Score_Rel=0.100, Final_Score=0.032, Sigmoid概率=0.450, ✔选中
+    帖子25: id=4038811598300707, Score_Pop=0.000, Score_Rel=0.100, Final_Score=0.030, Sigmoid概率=0.449, ✔选中
+    帖子26: id=4038812788735334, Score_Pop=0.159, Score_Rel=0.500, Final_Score=0.261, Sigmoid概率=0.564, ✘未选中
+    帖子27: id=4038813225296951, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.478, ✔选中
+    帖子28: id=4038813313103164, Score_Pop=0.000, Score_Rel=0.000, Final_Score=0.000, Sigmoid概率=0.434, ✔选中
+    帖子29: id=4038817185336791, Score_Pop=0.015, Score_Rel=0.200, Final_Score=0.071, Sigmoid概率=0.469, ✔选中
+    帖子30: id=4038818430870248, Score_Pop=0.000, Score_Rel=0.200, Final_Score=0.060, Sigmoid概率=0.464, ✔选中
+[宏观简报] {'average_emotion': -0.6307263032302005, 'average_stance': 0.05078288206795023, 'agent_count': 4}
+[Prompt] agent_001 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 生活帮能不能出来说说这次纱布门和“帮助”那个不孕不育医疗机构中没有拿“好处费”？
+[父帖子 2]: 山东电视台要火了，各位亲今晚记得收看21:30中央台CCTV13新闻频道《新闻调查》，敬请关注‘纱布门’！给生活 帮扒扒皮……
+[父帖子 3]: 老六怼政府了！公知粉们 你们在哪里？
+[父帖子 4]: 央视扒出来的真相，是黑心媒体制造舆情让山东电视台人知羞，还是又搅起仇医杀医的舆情？
+[父帖子 5]: 不签字就不做手术呗，反正这女的也不要命的，那就成全他们好了
+[父帖子 6]: @王志安 ，这期新闻调查你会出镜吗？ 从http://t.cn/RGsmSPl 来看，你名列调查记者之中，但似乎确实是差不多一年的新闻调查没有出镜了。是工作内容有调整吗？
+[父帖子 7]: 晚上看看呗，找了快一年了还没找到正经工作。 
+[父帖子 8]: 666 以后这种事直接切子宫就好了
+[父帖子 9]: 为啥不写60秒？？？
+[父帖子 10]: 产妇一家和某媒体的厚颜无耻程度简直引人发笑[微笑]
+[父帖子 11]: 什么是烂。
+[父帖子 12]: 总结：历时六十多天没办成的事儿经过生活帮记者助攻，潍坊妇幼保健院全体同仁和医疗自媒体及各路吃瓜群众的关注下，终于由北京坐飞机辗转六小时来潍坊的专家花费六十秒时间办成了，这是中国医疗界的耻辱，是中国新闻界的胜利，终于把生活帮从民生新闻变成了娱乐头条板块。楼下吃瓜大爷可以睡了[doge]
+[父帖子 13]: 这些傻逼。公共财政应该把编导主持产妇全家再请去吃牢饭。或者直接突突突掉。
+[父帖子 14]: 我草.... 
+[父帖子 15]: 如果最后有确凿证据讹诈，坐牢罚款回来，不想纳的税在这种人身上有去无回[微笑] 
+[父帖子 16]: 这种可吸收线，1～2周自然吸收，当时勾出纱布，后面自己断掉。救了一位产妇的子宫，惹了一身骚，古有“农夫与蛇”，今有“要钱不要命的大姑姐”。 1分钟的操作，产妇在医院滞留100800分钟，就为了索赔300000块钱。这么闹，好玩吗？
+[父帖子 17]: 数字间对比的反差太黑色幽默了，纳税人的钱就是被这种垃圾糟蹋的！
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_001 发帖json: {'id': 'agent_001_2016-11-06T14:13:35', 'parent_post_id': None, 'author_id': 'agent_001', 'content': '这是agent_001的发言内容', 'timestamp': '2016-11-06T14:13:35'}
+[Prompt] agent_002 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 生活帮能不能出来说说这次纱布门和“帮助”那个不孕不育医疗机构中没有拿“好处费”？
+[父帖子 2]: 山东电视台要火了，各位亲今晚记得收看21:30中央台CCTV13新闻频道《新闻调查》，敬请关注‘纱布门’！给生活 帮扒扒皮……
+[父帖子 3]: 央视扒出来的真相，是黑心媒体制造舆情让山东电视台人知羞，还是又搅起仇医杀医的舆情？
+[父帖子 4]: @王志安 ，这期新闻调查你会出镜吗？ 从http://t.cn/RGsmSPl 来看，你名列调查记者之中，但似乎确实是差不多一年的新闻调查没有出镜了。是工作内容有调整吗？
+[父帖子 5]: 晚上看看呗，找了快一年了还没找到正经工作。 
+[父帖子 6]: 我觉得大家有个误区，签字不是说就要家属承担风险（家属不要自认清高，你没有患者重要），风险都是医生和患者本人承担的，签字是证明医生跟你说过这事儿了，证明告知和已知。
+[父帖子 7]: @王志安 关于山东电视台两期虚假的"纱布门"新闻的评论，引起了关于国内现有电视台的数量和存在价值，以及作恶行为的讨论。看了评论，感觉很少有正确的理解以及清晰的判断，写一写我的看法。
+[父帖子 8]: 「纱布门」新更：共青团中央遭威胁，产妇纱布将多人见证取出。@千里马常有@余迪@慈溪赌王@法律顾问张翻译@医生的一些事一些情@医生护士那在点事@中国医生联盟@徐毓才@波子哥-廖新波@华西医院廖志林@李青大夫@青龙山1号@胥荣东主任医师@肿瘤学博士蔺宏伟@护士网@好医友官方微博@慈溪三北@余姚淘米哥... http://m.weibo.cn/client/version
+[父帖子 9]: 生活帮终于走出山东走向全国😂
+[父帖子 10]: 直播第十五条：数读潍坊纱布门：
+#史上最强取纱布事件# 
+7：潍坊纱布门发酵七天后，山东电视台声明将成立调查组调查此事，而院方则表态，除公检法外，电视台并无调查取证权。（公检法外调查取证仅本单位可以）。
+
+3：生活帮节目总计针对这一事件报道3次。
+
+6：从9月6号至10月19期间，产妇家属先后6次跟... http://m.weibo.cn/client/version
+[父帖子 11]: 全民为他们家的无耻买单😞
+[父帖子 12]: 最后一句话神讽刺
+[父帖子 13]: 这些傻逼。公共财政应该把编导主持产妇全家再请去吃牢饭。或者直接突突突掉。
+[父帖子 14]: 我草.... 
+[父帖子 15]: 数字间对比的反差太黑色幽默了，纳税人的钱就是被这种垃圾糟蹋的！
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_002 发帖json: {'id': 'agent_002_2016-11-06T14:13:35', 'parent_post_id': None, 'author_id': 'agent_002', 'content': '这是agent_002的发言内容', 'timestamp': '2016-11-06T14:13:35'}
+[Prompt] agent_003 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 请各位收看http://t.cn/RVs4Ruh ，敬请关注‘纱布门’！给生活 帮扒扒皮。患者明显敲诈勒索，媒体明知医疗的准确性，刻意制造医患矛盾，长此以往，谁还救助重症患者、疑难杂症，为国家级媒体主持正义点赞！ http://t.cn/R2W6540
+[父帖子 2]: 央视扒出来的真相，是黑心媒体制造舆情让山东电视台人知羞，还是又搅起仇医杀医的舆情？
+[父帖子 3]: @王志安 ，这期新闻调查你会出镜吗？ 从http://t.cn/RGsmSPl 来看，你名列调查记者之中，但似乎确实是差不多一年的新闻调查没有出镜了。是工作内容有调整吗？
+[父帖子 4]: 晚上看看呗，找了快一年了还没找到正经工作。 
+[父帖子 5]: 我觉得大家有个误区，签字不是说就要家属承担风险（家属不要自认清高，你没有患者重要），风险都是医生和患者本人承担的，签字是证明医生跟你说过这事儿了，证明告知和已知。
+[父帖子 6]: 「纱布门」新更：共青团中央遭威胁，产妇纱布将多人见证取出。@千里马常有@余迪@慈溪赌王@法律顾问张翻译@医生的一些事一些情@医生护士那在点事@中国医生联盟@徐毓才@波子哥-廖新波@华西医院廖志林@李青大夫@青龙山1号@胥荣东主任医师@肿瘤学博士蔺宏伟@护士网@好医友官方微博@慈溪三北@余姚淘米哥... http://m.weibo.cn/client/version
+[父帖子 7]: 666 以后这种事直接切子宫就好了
+[父帖子 8]: 为啥不写60秒？？？
+[父帖子 9]: 最后一句话神讽刺
+[父帖子 10]: 总结：历时六十多天没办成的事儿经过生活帮记者助攻，潍坊妇幼保健院全体同仁和医疗自媒体及各路吃瓜群众的关注下，终于由北京坐飞机辗转六小时来潍坊的专家花费六十秒时间办成了，这是中国医疗界的耻辱，是中国新闻界的胜利，终于把生活帮从民生新闻变成了娱乐头条板块。楼下吃瓜大爷可以睡了[doge]
+[父帖子 11]: 我纳税，我光荣。
+[父帖子 12]: 数字间对比的反差太黑色幽默了，纳税人的钱就是被这种垃圾糟蹋的！
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_003 发帖json: {'id': 'agent_003_2016-11-06T14:13:35', 'parent_post_id': None, 'author_id': 'agent_003', 'content': '这是agent_003的发言内容', 'timestamp': '2016-11-06T14:13:35'}
+[Prompt] agent_004 发言prompt示例:
+[角色与目标]
+你是一位专攻公共舆论分析的社会学数据分析专家。你的任务是基于提供的事件背景和对话上下文，对指定的“目标帖子”进行精准、客观的多维度属性标注。请严格遵循下方的格式和定义，输出一个JSON对象。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东“纱布门”事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+
+
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内 。
+
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹 。
+
+
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转 。
+
+
+三方立场摘要:
+
+
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是“医闹”行为 。
+
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦 。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+[父帖子 1]: 生活帮能不能出来说说这次纱布门和“帮助”那个不孕不育医疗机构中没有拿“好处费”？
+[父帖子 2]: 山东电视台要火了，各位亲今晚记得收看21:30中央台CCTV13新闻频道《新闻调查》，敬请关注‘纱布门’！给生活 帮扒扒皮……
+[父帖子 3]: 老六怼政府了！公知粉们 你们在哪里？
+[父帖子 4]: 央视扒出来的真相，是黑心媒体制造舆情让山东电视台人知羞，还是又搅起仇医杀医的舆情？
+[父帖子 5]: @王志安 ，这期新闻调查你会出镜吗？ 从http://t.cn/RGsmSPl 来看，你名列调查记者之中，但似乎确实是差不多一年的新闻调查没有出镜了。是工作内容有调整吗？
+[父帖子 6]: 晚上看看呗，找了快一年了还没找到正经工作。 
+[父帖子 7]: 我觉得大家有个误区，签字不是说就要家属承担风险（家属不要自认清高，你没有患者重要），风险都是医生和患者本人承担的，签字是证明医生跟你说过这事儿了，证明告知和已知。
+[父帖子 8]: 「纱布门」新更：共青团中央遭威胁，产妇纱布将多人见证取出。@千里马常有@余迪@慈溪赌王@法律顾问张翻译@医生的一些事一些情@医生护士那在点事@中国医生联盟@徐毓才@波子哥-廖新波@华西医院廖志林@李青大夫@青龙山1号@胥荣东主任医师@肿瘤学博士蔺宏伟@护士网@好医友官方微博@慈溪三北@余姚淘米哥... http://m.weibo.cn/client/version
+[父帖子 9]: 生活帮终于走出山东走向全国😂
+[父帖子 10]: 直播第十五条：数读潍坊纱布门：
+#史上最强取纱布事件# 
+7：潍坊纱布门发酵七天后，山东电视台声明将成立调查组调查此事，而院方则表态，除公检法外，电视台并无调查取证权。（公检法外调查取证仅本单位可以）。
+
+3：生活帮节目总计针对这一事件报道3次。
+
+6：从9月6号至10月19期间，产妇家属先后6次跟... http://m.weibo.cn/client/version
+[父帖子 11]: 为啥不写60秒？？？
+[父帖子 12]: 产妇一家和某媒体的厚颜无耻程度简直引人发笑[微笑]
+[父帖子 13]: 最后一句话神讽刺
+[父帖子 14]: 我纳税，我光荣。
+[父帖子 15]: 如果最后有确凿证据讹诈，坐牢罚款回来，不想纳的税在这种人身上有去无回[微笑] 
+[父帖子 16]: 数字间对比的反差太黑色幽默了，纳税人的钱就是被这种垃圾糟蹋的！
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+## 3. 你的任务 (Your Task)
+基于上述事件背景和对话上下文，对 [目标帖子] 进行分析，并输出一个包含以下属性的JSON对象。
+
+## 4. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+JSON
+
+{
+  "emotion_score": "浮点数，-1.0 到 1.0 之间",
+  "stance_category": "枚举字符串",
+  "stance_confidence": "浮点数，0.0 到 1.0 之间",
+  "information_strength": "浮点数，0.0 到 1.0 之间",
+  "keywords": "字符串列表",
+  "stance_score": "浮点数，-1到1之间”
+
+
+}
+emotion_score (情感分值)
+
+数据类型: Float
+
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立。
+
+含义: 衡量帖子作者在表达时所蕴含的情绪。请注意识别愤世嫉俗、嘲讽、无奈等复杂负面情绪。对于目标帖子“走正常途径不如闹来钱多又快”，这是一种消极、 cynicism (玩世不恭) 的情绪。
+
+stance_category (立场分类)
+
+数据类型: Enum String
+
+取值范围:
+
+"SUPPORT_HOSPITAL": 支持医院方，或批评“医闹”行为。
+
+"SUPPORT_PATIENT": 支持患者方，或批评医院/医疗体系。
+
+"NEUTRAL_MEDIATING": 呼吁理性、中立，或在讨论更宏观的第三方问题。
+
+含义: 帖子在“纱布门”事件或更广泛的医患纠纷议题上所持的立场。目标帖子虽然没有直接评论纱布门，但通过评论“闹”来影射患者方的行为，应归类为对“医闹”行为的批评，即间接支持医院立场。
+
+stance_confidence (立场置信度)
+
+数据类型: Float
+
+取值范围: 0.0 (完全不确定) 到 1.0 (完全确定)。
+
+含义: 你对上述立场分类判断的确定程度。如果帖子立场明确、毫不含糊，则置信度高。如果立场模糊或间接，则置信度可以稍低。
+
+stance_score (立场分值)
+
+数据类型: Float
+
+取值范围: 
+如果 stance_category 为 "SUPPORT_HOSPITAL"，那么 stance_score 必须为正数 (0.0 < score <= 1.0)。
+
+如果 stance_category 为 "SUPPORT_PATIENT"，那么 stance_score 必须为负数 (-1.0 <= score < 0.0)。
+
+如果 stance_category 为 "NEUTRAL_MEDIATING"，那么 stance_score 可以是在0.0附近数量较小的正负值
+含义: 对帖子立场倾向的定量衡量。这个数值将作为核心输入，用于Agent立场更新算法中计算“立场差异”等。它与stance_category（定性分类）互为补充，一个用于分析，一个用于计算。
+
+
+information_strength (信息强度)
+
+数据类型: Float
+
+取值范围: 0.0 (纯情绪/观点输出) 到 1.0 (包含大量事实、数据或深度逻辑)。
+
+含义: 衡量帖子包含的“信息量”或“论证力量”。目标帖子是一种高度概括的、情绪化的观点，几乎没有提供新的事实信息，因此其信息强度应该很低。
+
+keywords (关键词)
+
+数据类型: List[String]
+
+含义: 提取帖子中能反映其核心思想的1-3个关键词。例如，对于目标帖子，关键词可以是 ["闹", "正常途径", "钱"]。
+
+## 5. 请开始处理
+[目标帖子]: "（此处为agent将要发言的内容）"
+
+请根据以上所有信息，生成最终的JSON输出。
+
+[Post JSON] agent_004 发帖json: {'id': 'agent_004_2016-11-06T14:13:35', 'parent_post_id': None, 'author_id': 'agent_004', 'content': '这是agent_004的发言内容', 'timestamp': '2016-11-06T14:13:35'}
+
+时间片 4 结束，Agent状态:
+  agent_001: 情绪=-0.683(波动0.040), 立场=-0.302(波动0.107), 置信度=0.300, 总波动=0.148, 本时间片阅读15条帖子
+    -> 不发帖
+  agent_002: 情绪=-0.602(波动0.103), 立场=-0.195(波动0.125), 置信度=0.000, 总波动=0.228, 本时间片阅读13条帖子
+    -> 决定发帖！
+  agent_003: 情绪=-0.658(波动0.077), 立场=0.500(波动0.000), 置信度=0.486, 总波动=0.077, 本时间片阅读5条帖子
+    -> 不发帖
+  agent_004: 情绪=-0.580(波动0.109), 立场=0.200(波动0.000), 置信度=0.426, 总波动=0.109, 本时间片阅读18条帖子
+    -> 不发帖
+[阅读统计] 本时间片每个agent实际阅读的帖子数：
+  agent_001: 17 条
+  agent_002: 15 条
+  agent_003: 12 条
+  agent_004: 16 条
+
+[分析] 本时间片每个帖子被选中的情况：
+  帖子4038484006413069: 被 1 个Agent选中 -> agent_001(Final=0.271,P=0.52)
+  帖子4038492562093163: 被 2 个Agent选中 -> agent_001(Final=0.212,P=0.49), agent_004(Final=0.062,P=0.46)
+  帖子4038498984363988: 被 2 个Agent选中 -> agent_001(Final=0.434,P=0.60), agent_002(Final=0.402,P=0.58)
+  帖子4038502184275708: 被 3 个Agent选中 -> agent_001(Final=0.294,P=0.53), agent_002(Final=0.262,P=0.51), agent_004(Final=0.144,P=0.51)
+  帖子4038503774097013: 被 2 个Agent选中 -> agent_001(Final=0.272,P=0.52), agent_004(Final=0.122,P=0.49)
+  帖子4038508009922639: 被 3 个Agent选中 -> agent_001(Final=0.323,P=0.54), agent_002(Final=0.291,P=0.53), agent_004(Final=0.172,P=0.52)
+  帖子4038533246923455: 被 2 个Agent选中 -> agent_002(Final=0.244,P=0.50), agent_004(Final=0.125,P=0.50)
+  帖子4038535445106128: 被 2 个Agent选中 -> agent_001(Final=0.303,P=0.53), agent_004(Final=0.154,P=0.51)
+  帖子4038542184842770: 被 1 个Agent选中 -> agent_004(Final=0.090,P=0.48)
+  帖子4038596728400073: 被 1 个Agent选中 -> agent_004(Final=0.120,P=0.49)
+  帖子4038794732418684: 被 2 个Agent选中 -> agent_002(Final=0.239,P=0.50), agent_003(Final=0.030,P=0.48)
+  帖子4038806002884179: 被 2 个Agent选中 -> agent_001(Final=0.214,P=0.49), agent_002(Final=0.182,P=0.47)
+  帖子4038806020121411: 被 4 个Agent选中 -> agent_001(Final=0.061,P=0.41), agent_002(Final=0.093,P=0.43), agent_003(Final=0.302,P=0.61), agent_004(Final=0.212,P=0.54)
+  帖子4038807260969318: 被 2 个Agent选中 -> agent_001(Final=0.241,P=0.50), agent_002(Final=0.209,P=0.49)
+  帖子4038808230647115: 被 1 个Agent选中 -> agent_001(Final=0.220,P=0.49)
+  帖子4038809048315946: 被 2 个Agent选中 -> agent_003(Final=0.002,P=0.46), agent_004(Final=0.032,P=0.45)
+  帖子4038810591603287: 被 1 个Agent选中 -> agent_004(Final=0.185,P=0.53)
+  帖子4038810889191409: 被 1 个Agent选中 -> agent_004(Final=0.032,P=0.45)
+  帖子4038811598300707: 被 3 个Agent选中 -> agent_001(Final=0.181,P=0.47), agent_003(Final=0.000,P=0.46), agent_004(Final=0.030,P=0.45)
+  帖子4038812788735334: 被 2 个Agent选中 -> agent_001(Final=0.411,P=0.59), agent_002(Final=0.380,P=0.57)
+  帖子4038813225296951: 被 2 个Agent选中 -> agent_002(Final=0.209,P=0.49), agent_004(Final=0.090,P=0.48)
+  帖子4038813313103164: 被 3 个Agent选中 -> agent_001(Final=0.151,P=0.46), agent_003(Final=0.000,P=0.46), agent_004(Final=0.000,P=0.43)
+  帖子4038817185336791: 被 3 个Agent选中 -> agent_001(Final=0.221,P=0.49), agent_002(Final=0.189,P=0.48), agent_004(Final=0.071,P=0.47)
+  帖子4038818430870248: 被 2 个Agent选中 -> agent_002(Final=0.179,P=0.47), agent_004(Final=0.060,P=0.46)
+  帖子4038805109450116: 被 2 个Agent选中 -> agent_002(Final=0.879,P=0.78), agent_004(Final=0.760,P=0.78)
+
+=== 模拟完成 ===

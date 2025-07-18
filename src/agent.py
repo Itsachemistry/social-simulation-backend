@@ -45,6 +45,10 @@ class Agent:
         
         # 交互属性
         self.blocked_user_ids = blocked_user_ids or []
+        # 新增：记录本时间片已读帖子
+        self.viewed_posts = []
+        # 新增：记录本时间片每次读帖后的情绪和立场变化
+        self.emotion_stance_history = []
         
         # LLM相关配置
         self.llm_api_key = os.getenv('LLM_API_KEY')
@@ -52,7 +56,7 @@ class Agent:
         self.llm_model = os.getenv('LLM_MODEL')
         
         # 发帖算法相关参数
-        self.expression_threshold = 0.1  # 表达欲阈值
+        self.expression_threshold = 0.05  # 表达欲阈值
         self.scale_constant = 2.0  # 全局缩放常数
         self.emotion_sensitivity = 0.5  # 情绪敏感度
 
@@ -85,12 +89,26 @@ class Agent:
         rand = random.random()
         return rand < p_reply
 
-    def update_emotion_and_stance(self, post, event_description=None):
+    def update_emotion_and_stance(self, post, event_description=None, time_slice_index=None):
         """
-        更新情绪状态和观点立场，使用LLM融合算法
+        更新情绪状态和观点立场，使用LLM融合算法，并记录变化历史
         """
+        prev_emotion = self.current_emotion
+        prev_stance = self.current_stance
+        prev_confidence = self.current_confidence
         self._update_emotion_llm_fusion(post, event_description)
         self._update_stance(post)
+        # 记录本次变化
+        self.emotion_stance_history.append({
+            'post_id': post.get('id', post.get('post_id', None)),
+            'emotion_before': prev_emotion,
+            'stance_before': prev_stance,
+            'confidence_before': prev_confidence,
+            'emotion_after': self.current_emotion,
+            'stance_after': self.current_stance,
+            'confidence_after': self.current_confidence,
+            'time_slice_index': time_slice_index
+        })
 
     def _update_emotion_llm_fusion(self, post, event_description=None):
         """
@@ -276,6 +294,34 @@ class Agent:
 
     def __str__(self):
         return f"Agent(id={self.agent_id}, role={self.role_type.value}, emotion={self.current_emotion:.2f}, stance={self.current_stance:.2f})"
+
+    def apply_environmental_nudge(self, env_summary, kc=0.1, ke=0.05):
+        """
+        根据环境摘要微调意见领袖的置信度和情绪。
+        公式：
+        C' = C * (1 - kc * abs(S_agent - S_macro)/2)
+        E' = E * (1 - ke) + E_macro * ke
+        """
+        if not env_summary:
+            return
+        S_macro = env_summary.get('average_stance_score', 0.0)
+        E_macro = env_summary.get('average_emotion_score', 0.0)
+        S_agent = getattr(self, 'current_stance', 0.0)
+        C_agent = getattr(self, 'current_confidence', 0.5)
+        E_agent = getattr(self, 'current_emotion', 0.0)
+        # 立场置信度微调
+        stance_diff = abs(S_agent - S_macro)
+        self.current_confidence = C_agent * (1 - kc * stance_diff / 2)
+        # 情绪感染微调
+        self.current_emotion = E_agent * (1 - ke) + E_macro * ke
+
+    def reset_viewed_posts(self):
+        """清空本时间片已读帖子记录"""
+        self.viewed_posts = []
+
+    def reset_emotion_stance_history(self):
+        """清空本时间片情绪立场变化历史"""
+        self.emotion_stance_history = []
 
 def load_agents_from_csv(csv_path):
     """从CSV文件读取智能体状态并恢复为对象列表"""
