@@ -116,6 +116,14 @@ class SimulationManager:
 # 创建全局仿真管理器
 simulation_manager = SimulationManager()
 
+def filter_agent_fields(agent_info):
+    """只保留agent初始化需要的字段"""
+    allowed_fields = [
+        "agent_id", "role_type", "attitude_firmness", "opinion_blocking",
+        "activity_level", "initial_emotion", "initial_stance", "initial_confidence"
+    ]
+    return {k: v for k, v in agent_info.items() if k in allowed_fields}
+
 @simulation_bp.route('/start', methods=['POST'])
 def start_simulation():
     """启动仿真API"""
@@ -125,9 +133,10 @@ def start_simulation():
             return jsonify({'error': '请求体不能为空'}), 400
         config = data.get("config", {})
         agent_configs = data.get("agents", [])
-        
-        # 启动仿真
-        simulation_id = simulation_manager.start_simulation(config, agent_configs)
+        # 过滤agent参数
+        filtered_agents = [filter_agent_fields(a) for a in agent_configs]
+        # 启动仿真时只用filtered_agents
+        simulation_id = simulation_manager.start_simulation(config, filtered_agents)
         
         return jsonify({
             "status": "success",

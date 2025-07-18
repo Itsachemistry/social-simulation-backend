@@ -33,6 +33,14 @@ def get_post_time_range():
 def get_agents():
     agents = load_agents()
     return jsonify(agents)
+
+@agent_bp.route('/list', methods=['GET'])
+def list_agents():
+    """返回所有可用的agent配置"""
+    agents_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
+    with open(agents_path, 'r', encoding='utf-8') as f:
+        agents = json.load(f)
+    return jsonify({'status': 'success', 'agents': agents})
 #添加agent“
 # Agent对象属性说明：
 # - agent_id: str, Agent唯一标识符
@@ -50,72 +58,51 @@ def get_agents():
 #   - interaction_patterns: dict, 交互模式配置
 # - status: str, Agent状态 ("active" | "inactive" | "suspended")
 # - metadata: dict, 额外元数据信息
-@agent_bp.route('/', methods=['POST'])
+@agent_bp.route('/add', methods=['POST'])
 def add_agent():
-    agents = load_agents()
+    """新增一个agent"""
     new_agent = request.json
-    if not new_agent:
-        return jsonify({'error': '请求体不能为空'}), 400
-    # 检查agent_id唯一性
+    if not new_agent or 'agent_id' not in new_agent:
+        return jsonify({'error': '缺少agent_id'}), 400
+    agents_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
+    with open(agents_path, 'r', encoding='utf-8') as f:
+        agents = json.load(f)
+    # 检查重复
     if any(a['agent_id'] == new_agent['agent_id'] for a in agents):
         return jsonify({'error': 'agent_id已存在'}), 400
-    # 校验join_time范围
-    join_ts = new_agent.get('join_time') or new_agent.get('join_timestamp')
-    if join_ts:
-        try:
-            join_dt = datetime.fromisoformat(str(join_ts))
-        except Exception:
-            return jsonify({'error': 'join_time格式错误，需为ISO格式字符串'}), 400
-        min_ts, max_ts = get_post_time_range()
-        if min_ts and max_ts:
-            min_dt = datetime.fromisoformat(str(min_ts))
-            max_dt = datetime.fromisoformat(str(max_ts))
-            if not (min_dt <= join_dt <= max_dt):
-                return jsonify({'error': f'join_time需在所有帖子时间戳范围内：{min_ts} ~ {max_ts}'}), 400
     agents.append(new_agent)
-    save_agents(agents)
-    return jsonify({'status': 'success', 'agent': new_agent})
+    with open(agents_path, 'w', encoding='utf-8') as f:
+        json.dump(agents, f, ensure_ascii=False, indent=2)
+    return jsonify({'status': 'success'})
 
-@agent_bp.route('/<agent_id>', methods=['PUT'])
+@agent_bp.route('/update/<agent_id>', methods=['PUT'])
 def update_agent(agent_id):
-    agents = load_agents()
+    """更新指定agent"""
     update_data = request.json
-    if not update_data:
-        return jsonify({'error': '请求体不能为空'}), 400
-    # 校验join_time范围
-    join_ts = update_data.get('join_time') or update_data.get('join_timestamp')
-    if join_ts:
-        try:
-            join_dt = datetime.fromisoformat(str(join_ts))
-        except Exception:
-            return jsonify({'error': 'join_time格式错误，需为ISO格式字符串'}), 400
-        min_ts, max_ts = get_post_time_range()
-        if min_ts and max_ts:
-            min_dt = datetime.fromisoformat(str(min_ts))
-            max_dt = datetime.fromisoformat(str(max_ts))
-            if not (min_dt <= join_dt <= max_dt):
-                return jsonify({'error': f'join_time需在所有帖子时间戳范围内：{min_ts} ~ {max_ts}'}), 400
-    found = False
-    for idx, agent in enumerate(agents):
-        if agent['agent_id'] == agent_id:
-            agents[idx].update(update_data)
-            found = True
-            break
-    if not found:
-        return jsonify({'error': '未找到指定agent_id'}), 404
-    save_agents(agents)
-    return jsonify({'status': 'success', 'agent': agents[idx]})
-
-@agent_bp.route('/<agent_id>', methods=['DELETE'])
-def delete_agent(agent_id):
-    agents = load_agents()
+    agents_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
+    with open(agents_path, 'r', encoding='utf-8') as f:
+        agents = json.load(f)
     found = False
     for agent in agents:
         if agent['agent_id'] == agent_id:
-            agent['is_active'] = False
+            agent.update(update_data)
             found = True
             break
     if not found:
-        return jsonify({'error': '未找到指定agent_id'}), 404
-    save_agents(agents)
-    return jsonify({'status': 'success', 'agent_id': agent_id}) 
+        return jsonify({'error': '未找到该agent'}), 404
+    with open(agents_path, 'w', encoding='utf-8') as f:
+        json.dump(agents, f, ensure_ascii=False, indent=2)
+    return jsonify({'status': 'success'})
+
+@agent_bp.route('/delete/<agent_id>', methods=['DELETE'])
+def delete_agent(agent_id):
+    """删除指定agent"""
+    agents_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
+    with open(agents_path, 'r', encoding='utf-8') as f:
+        agents = json.load(f)
+    new_agents = [a for a in agents if a['agent_id'] != agent_id]
+    if len(new_agents) == len(agents):
+        return jsonify({'error': '未找到该agent'}), 404
+    with open(agents_path, 'w', encoding='utf-8') as f:
+        json.dump(new_agents, f, ensure_ascii=False, indent=2)
+    return jsonify({'status': 'success'}) 
