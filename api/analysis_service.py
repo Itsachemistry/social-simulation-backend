@@ -163,7 +163,7 @@ def analyze_temporal():
         if not simulation_id:
             return jsonify({'error': '缺少simulation_id参数'}), 400
         
-        # 从仿真管理器获取结果（这里需要导入simulation_manager）
+        # 从仿真管理器获取结果（这里需要导入simulation_manager
         from .simulation_service import simulation_manager
         status = simulation_manager.get_simulation_status(simulation_id)
         
