@@ -81,10 +81,20 @@ class LLMService:
         Returns:
             str: 生成的帖子内容
         """
+        # 记录LLM请求
+        print(f"[LLM Request] 开始处理prompt (长度: {len(prompt)})")
+        print(f"[Prompt] {prompt[:200]}...")  # 显示前200字符
+        
         if self.use_mock:
-            return self._mock_generate(prompt)
+            response = self._mock_generate(prompt)
         else:
-            return self._modelscope_generate(prompt, max_length)
+            response = self._modelscope_generate(prompt, max_length)
+        
+        # 记录LLM响应
+        print(f"[LLM Response] 生成完成 (长度: {len(response)})")
+        print(f"[Response] {response}")
+        
+        return response
     
     def _modelscope_generate(self, prompt: str, max_length: int) -> str:
         """使用ModelScope生成内容"""

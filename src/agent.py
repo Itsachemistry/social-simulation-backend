@@ -89,18 +89,18 @@ class Agent:
         rand = random.random()
         return rand < p_reply
 
-    def update_emotion_and_stance(self, post, event_description=None, time_slice_index=None):
+    def update_emotion_and_stance(self, post, event_description=None, time_slice_index=None, all_posts=None):
         """
         更新情绪状态和观点立场，使用LLM融合算法，并记录变化历史
         """
         prev_emotion = self.current_emotion
         prev_stance = self.current_stance
         prev_confidence = self.current_confidence
-        self._update_emotion_llm_fusion(post, event_description)
-        self._update_stance(post)
+        emotion_suggested, stance_suggested = self._update_emotion_llm_fusion(post, event_description, all_posts)
+        self._update_stance(post, llm_stance_suggested=stance_suggested)
         # 记录本次变化
         self.emotion_stance_history.append({
-            'post_id': post.get('id', post.get('post_id', None)),
+            'post_id': post.get('mid', post.get('id', post.get('post_id', None))),
             'emotion_before': prev_emotion,
             'stance_before': prev_stance,
             'confidence_before': prev_confidence,
@@ -110,7 +110,7 @@ class Agent:
             'time_slice_index': time_slice_index
         })
 
-    def _update_emotion_llm_fusion(self, post, event_description=None):
+    def _update_emotion_llm_fusion(self, post, event_description=None, all_posts=None):
         """
         LLM建议融合算法：
         1. 构造prompt，传递当前情绪、帖子内容、事件描述给LLM，获得建议情绪E_suggested（-1~1）
@@ -120,10 +120,68 @@ class Agent:
         """
         # 1. 构造prompt并请求LLM
         if not self.llm_api_key or not self.llm_endpoint:
+            print(f"[LLM Debug] Agent {self.agent_id}: api_key={bool(self.llm_api_key)}, endpoint={bool(self.llm_endpoint)}")
             print(f"[LLM] 未设置API KEY或endpoint，跳过LLM情绪推理，直接赋值。Agent: {self.agent_id}")
             E_suggested = post.get('emotion_score', post.get('emotion', 0.0))
+            S_suggested = post.get('stance_score', 0.0)
         else:
-            prompt = f"""你是一个社交媒体用户。你当前的情绪值为：{self.current_emotion}（范围-1到1）。\n你刚刚浏览了一条内容如下的帖子：{post.get('content', '')}。\n事件描述：{event_description or ''}\n请你根据当前情绪、帖子内容和事件描述，判断你现在的情绪值（-1到1之间的小数），并以如下JSON格式输出：{{'emotion': 0.xx}}。"""
+            # 读取外部prompt模板
+            template_path = 'data/agent_reading_prompt_template_enhanced.txt'
+            try:
+                with open(template_path, 'r', encoding='utf-8') as f:
+                    prompt_template = f.read()
+            except FileNotFoundError:
+                print(f"[Warning] 找不到prompt模板文件: {template_path}，跳过LLM调用")
+                E_suggested = post.get('emotion_score', post.get('emotion', 0.0))
+                S_suggested = post.get('stance_score', 0.0)
+                alpha = self.emotion_sensitivity
+                I_strength = float(post.get('information_strength', 1.0))
+                E_current = self.current_emotion
+                lr = alpha * I_strength
+                self.current_emotion = E_current * (1 - lr) + E_suggested * lr
+                return E_suggested, S_suggested
+
+            # 构建mid_index并提取对话链条
+            if all_posts:
+                # 动态导入避免循环依赖
+                from .services import extract_chain, generate_context
+                
+                mid_index = {}
+                def build_index(posts):
+                    for p in posts:
+                        mid_index[p.get('mid', p.get('id'))] = p
+                        if 'children' in p:
+                            build_index(p['children'])
+                build_index(all_posts)
+                
+                # 提取对话链条
+                target_mid = post.get('mid', post.get('id'))
+                chain = extract_chain(mid_index, target_mid)
+                context_text = generate_context(chain)
+            else:
+                # 没有all_posts，生成简单上下文
+                context_text = "(这是一个独立帖子，没有回复关系)"
+
+            # 获取帖子内容
+            post_content = post.get('text', post.get('content', post.get('original_text', '')))
+            
+            # 替换模板中的占位符
+            prompt = prompt_template.format(
+                current_emotion=self.current_emotion,
+                current_stance=self.current_stance,
+                current_confidence=self.current_confidence,
+                role_type=self.role_type.value,
+                attitude_firmness=self.attitude_firmness,
+                opinion_blocking=self.opinion_blocking,
+                post_context=context_text,
+                post_content=post_content,
+                event_description=event_description or ""
+            )
+            
+            print(f"[LLM] Agent {self.agent_id} 正在调用LLM分析情绪...")
+            print(f"[LLM Prompt] {prompt}")
+            print(f"[LLM Post] 帖子内容: '{post_content}'")
+            print(f"[LLM Post] 帖子字段: {list(post.keys())}")
             try:
                 response = requests.post(
                     self.llm_endpoint,
@@ -131,34 +189,75 @@ class Agent:
                     json={'model': self.llm_model, 'messages': [{'role': 'user', 'content': prompt}]}
                 )
                 response.raise_for_status()
+                print(f"[LLM API Response] Status: {response.status_code}")
+                print(f"[LLM API Response] Raw: {response.text[:500]}...")  # 只显示前500字符
+                
                 import json as _json
-                result = _json.loads(response.json()['choices'][0]['message']['content'].strip().replace("'", '"'))
-                E_suggested = float(result.get('emotion', self.current_emotion))
+                api_response = response.json()
+                print(f"[LLM API Response] JSON: {api_response}")
+                
+                llm_content = api_response['choices'][0]['message']['content']
+                print(f"[LLM Content] {llm_content}")
+                
+                # 尝试解析LLM返回的JSON，处理markdown代码块格式
+                content_to_parse = llm_content.strip()
+                
+                # 如果内容被markdown代码块包围，提取其中的JSON
+                if content_to_parse.startswith('```json') and content_to_parse.endswith('```'):
+                    # 移除开头的```json和结尾的```
+                    content_to_parse = content_to_parse[7:-3].strip()
+                elif content_to_parse.startswith('```') and content_to_parse.endswith('```'):
+                    # 移除开头和结尾的```
+                    content_to_parse = content_to_parse[3:-3].strip()
+                
+                print(f"[LLM JSON to parse] {content_to_parse}")
+                
+                result = _json.loads(content_to_parse.replace("'", '"'))
+                E_suggested = float(result.get('emotion_suggested', self.current_emotion))
+                S_suggested = float(result.get('stance_suggested', self.current_stance))
+                print(f"[LLM] Agent {self.agent_id} LLM分析完成，建议情绪: {E_suggested}, 建议立场: {S_suggested}")
             except Exception as e:
                 print(f"[LLM] API调用失败: {e}，使用默认值。Agent: {self.agent_id}")
+                print(f"[LLM Debug] Exception type: {type(e).__name__}")
                 E_suggested = self.current_emotion
-        
+                S_suggested = self.current_stance
+
         # 2. 融合更新
         alpha = self.emotion_sensitivity
         I_strength = float(post.get('information_strength', 1.0))  # 信息强度，0.0~1.0
         E_current = self.current_emotion
         lr = alpha * I_strength
+        old_emotion = self.current_emotion
         self.current_emotion = E_current * (1 - lr) + E_suggested * lr
+        
+        print(f"[Emotion Debug] Agent {self.agent_id}: 情绪融合更新")
+        print(f"[Emotion Debug] Agent {self.agent_id}: alpha={alpha}, I_strength={I_strength}, lr={lr:.3f}")
+        print(f"[Emotion Debug] Agent {self.agent_id}: E_suggested={E_suggested}, E_current={E_current}")
+        print(f"[Emotion Debug] Agent {self.agent_id}: 情绪更新: {old_emotion:.3f} -> {self.current_emotion:.3f}")
+        
+        return E_suggested, S_suggested
 
-    def _update_stance(self, post):
+    def _update_stance(self, post, llm_stance_suggested=None):
         """
         立场更新算法：分为坚定型和不坚定型Agent
         """
         def clamp(val, minv, maxv):
             return max(minv, min(maxv, val))
         
-        stance_score = post.get('stance_score')
+        # 使用LLM建议的立场，如果没有则使用帖子的stance_score
+        stance_score = llm_stance_suggested if llm_stance_suggested is not None else post.get('stance_score')
         information_strength = post.get('information_strength')
+        
+        print(f"[Stance Update] Agent {self.agent_id}: LLM建议立场={llm_stance_suggested}, 帖子立场={post.get('stance_score')}, 使用立场={stance_score}")
+        print(f"[Stance Debug] Agent {self.agent_id}: information_strength={information_strength}, attitude_firmness={self.attitude_firmness}")
+        
         if stance_score is None or information_strength is None:
+            print(f"[Stance Debug] Agent {self.agent_id}: 跳过立场更新 - stance_score={stance_score}, information_strength={information_strength}")
             return
         
         # 判断类型
         is_firm = self.attitude_firmness >= 0.5
+        print(f"[Stance Debug] Agent {self.agent_id}: 类型={'坚定型' if is_firm else '不坚定型'}, 当前立场={self.current_stance}, 当前置信度={self.current_confidence}")
         
         # 阈值常量
         THRESHOLD_PROCESS = 0.3
@@ -168,42 +267,62 @@ class Agent:
         
         if is_firm:
             # 坚定型Agent
+            print(f"[Stance Debug] Agent {self.agent_id}: 坚定型Agent处理开始")
             if information_strength < THRESHOLD_PROCESS:
                 # 信息强度太低，置信度随机扰动
                 disturbance = random.uniform(-0.02, 0.02)
+                old_conf = self.current_confidence
                 self.current_confidence = clamp(self.current_confidence + disturbance, 0.0, 1.0)
+                print(f"[Stance Debug] Agent {self.agent_id}: 信息强度太低({information_strength}<{THRESHOLD_PROCESS})，置信度扰动: {old_conf:.3f} -> {self.current_confidence:.3f}")
                 return
             
             # 判断立场方向是否一致
             stance_match = (self.current_stance * stance_score >= 0)
+            print(f"[Stance Debug] Agent {self.agent_id}: 立场匹配检查: current={self.current_stance}, target={stance_score}, match={stance_match}")
             if stance_match:
                 # 立场一致，置信度小幅提升
+                old_conf = self.current_confidence
                 self.current_confidence = clamp(self.current_confidence + DELTA_CONF_SMALL, 0.0, 1.0)
+                print(f"[Stance Debug] Agent {self.agent_id}: 立场一致，置信度提升: {old_conf:.3f} -> {self.current_confidence:.3f}")
             else:
                 if information_strength >= THRESHOLD_CHANGE:
                     # 强度足够，立场反转，置信度大幅下降
+                    old_stance = self.current_stance
+                    old_conf = self.current_confidence
                     self.current_stance = stance_score
                     self.current_confidence = clamp(self.current_confidence - DELTA_CONF_LARGE, 0.0, 1.0)
+                    print(f"[Stance Debug] Agent {self.agent_id}: 立场反转! 立场: {old_stance:.3f} -> {self.current_stance:.3f}, 置信度: {old_conf:.3f} -> {self.current_confidence:.3f}")
                 else:
                     # 强度不足，置信度小幅下降
+                    old_conf = self.current_confidence
                     self.current_confidence = clamp(self.current_confidence - DELTA_CONF_SMALL, 0.0, 1.0)
+                    print(f"[Stance Debug] Agent {self.agent_id}: 立场不一致但强度不足，置信度下降: {old_conf:.3f} -> {self.current_confidence:.3f}")
         else:
             # 不坚定型Agent
+            print(f"[Stance Debug] Agent {self.agent_id}: 不坚定型Agent处理开始")
             if information_strength < THRESHOLD_PROCESS:
                 # 信息强度太低，立场随机扰动
                 disturbance = random.uniform(-0.05, 0.05)
+                old_stance = self.current_stance
                 self.current_stance = clamp(self.current_stance + disturbance, -1.0, 1.0)
+                print(f"[Stance Debug] Agent {self.agent_id}: 信息强度太低({information_strength}<{THRESHOLD_PROCESS})，立场扰动: {old_stance:.3f} -> {self.current_stance:.3f}")
                 return
             
             # 立场更新
             lr = information_strength * 0.3  # 学习率
+            old_stance = self.current_stance
             self.current_stance = clamp(self.current_stance * (1 - lr) + stance_score * lr, -1.0, 1.0)
+            print(f"[Stance Debug] Agent {self.agent_id}: 立场融合更新: lr={lr:.3f}, {old_stance:.3f} -> {self.current_stance:.3f}")
             
             # 置信度更新
-            if abs(self.current_stance - stance_score) < 0.2:
+            stance_diff = abs(self.current_stance - stance_score)
+            old_conf = self.current_confidence
+            if stance_diff < 0.2:
                 self.current_confidence = clamp(self.current_confidence + DELTA_CONF_SMALL, 0.0, 1.0)
+                print(f"[Stance Debug] Agent {self.agent_id}: 立场差异小({stance_diff:.3f}<0.2)，置信度提升: {old_conf:.3f} -> {self.current_confidence:.3f}")
             else:
                 self.current_confidence = clamp(self.current_confidence - DELTA_CONF_SMALL, 0.0, 1.0)
+                print(f"[Stance Debug] Agent {self.agent_id}: 立场差异大({stance_diff:.3f}>=0.2)，置信度下降: {old_conf:.3f} -> {self.current_confidence:.3f}")
 
     def check_blocking(self, post):
         """检查是否需要屏蔽用户"""
@@ -214,14 +333,59 @@ class Agent:
                 if user_id and user_id not in self.blocked_user_ids:
                     self.blocked_user_ids.append(user_id)
 
-    def generate_text(self):
+    def generate_text(self, skip_llm=False, agent_controller=None):
         """调用LLM生成文本"""
-        if not self.llm_api_key or not self.llm_endpoint:
-            print(f"[LLM] 未设置API KEY或endpoint，跳过LLM调用，返回空字符串。Agent: {self.agent_id}")
-            return ""
+        if skip_llm or not self.llm_api_key or not self.llm_endpoint:
+            if skip_llm:
+                print(f"[LLM] 跳过LLM文本生成，返回模板文本。Agent: {self.agent_id}")
+            else:
+                print(f"[LLM] 未设置API KEY或endpoint，跳过LLM调用，返回空字符串。Agent: {self.agent_id}")
+            
+            # 返回模板文本而不是空字符串
+            if skip_llm:
+                return f"[模拟发帖] {self.agent_id}表达{'正面' if self.current_emotion > 0 else '负面'}情绪，{'支持' if self.current_stance > 0 else '反对' if self.current_stance < 0 else '中性'}立场 (情绪:{self.current_emotion:.2f}, 立场:{self.current_stance:.2f})..."
+            else:
+                return ""
         
         print(f"[LLM] 调用 LLM 生成文本，Agent: {self.agent_id}, 情绪: {self.current_emotion}, 立场: {self.current_stance}")
-        prompt = f"""作为社交媒体智能体，你的特征：
+        
+        # 根据Agent类型选择不同的prompt
+        if self.role_type.value == "opinion_leader":
+            # 意见领袖使用专门的prompt模板
+            if agent_controller and hasattr(agent_controller, 'last_env_summary'):
+                from .opinion_leader_prompts import build_opinion_leader_post_prompt
+                prompt = build_opinion_leader_post_prompt(self, agent_controller.last_env_summary)
+            else:
+                # 如果没有环境摘要，使用简化版本
+                prompt = f"""你是一位在中国社交媒体上极具影响力的意见领袖。请基于你的当前状态撰写一篇社交媒体帖子。
+当前状态：
+- 立场：{self.current_stance:.2f}
+- 情绪：{self.current_emotion:.2f}
+- 置信度：{self.current_confidence:.2f}
+请生成一段符合意见领袖身份的帖子内容。"""
+        else:
+            # 普通Agent使用agent_prompt_template.txt模板
+            try:
+                with open('data/agent_prompt_template.txt', 'r', encoding='utf-8') as f:
+                    template = f.read()
+                
+                if agent_controller:
+                    # 使用agent_controller的build_agent_prompt方法
+                    prompt = agent_controller.build_agent_prompt(self, template)
+                else:
+                    # 简化版本
+                    prompt = f"""你是一名普通社交媒体用户，请基于你的当前状态生成帖子内容。
+当前状态：
+- 角色类型：{self.role_type.value}
+- 态度坚定性：{self.attitude_firmness}
+- 观点屏蔽度：{self.opinion_blocking}
+- 活跃度：{self.activity_level}
+- 情绪：{self.current_emotion}
+- 立场：{self.current_stance}
+请生成一段符合以上特征的社交媒体帖子内容。"""
+            except FileNotFoundError:
+                print(f"[Warning] 找不到agent_prompt_template.txt，使用简化prompt")
+                prompt = f"""作为社交媒体智能体，你的特征：
         - 角色类型：{self.role_type.value}
         - 态度坚定性：{self.attitude_firmness}
         - 观点屏蔽度：{self.opinion_blocking}
@@ -230,6 +394,23 @@ class Agent:
         - 情绪：{self.current_emotion}
         - 立场：{self.current_stance}
         请生成一段符合以上特征的社交媒体帖子内容。"""
+        
+        print(f"[LLM 发帖Prompt] Agent {self.agent_id}: 完整Prompt开始 ================")
+        print(prompt)
+        print(f"[LLM 发帖Prompt] Agent {self.agent_id}: 完整Prompt结束 ================")
+        print(f"[LLM Debug] Prompt长度: {len(prompt)} 字符")
+        
+        # Debug: 检查模板是否被正确替换
+        if "（请用实际内容替换）" in prompt:
+            print(f"[LLM Warning] Agent {self.agent_id}: 模板未被正确替换，仍包含占位符")
+        if "agent_id: 你的唯一标识符" in prompt:
+            print(f"[LLM Warning] Agent {self.agent_id}: 属性模板未被正确替换")
+        
+        # Debug: 检查是否包含实际的agent信息
+        if self.agent_id in prompt:
+            print(f"[LLM Info] Agent {self.agent_id}: 模板包含agent_id信息")
+        if f"current_emotion: {self.current_emotion:.3f}" in prompt:
+            print(f"[LLM Info] Agent {self.agent_id}: 模板包含当前情绪信息")
 
         try:
             response = requests.post(

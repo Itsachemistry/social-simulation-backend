@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent帖子红色渲染测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        
+        /* Agent帖子样式 */
+        .post-item {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #fff;
+        }
+        
+        .post-item.agent-post {
+            border-left: 4px solid #e53e3e !important;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%) !important;
+            box-shadow: 0 2px 8px rgba(229, 62, 62, 0.1) !important;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .user-id {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .agent-badge {
+            background: #e53e3e;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .post-content {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        /* 转播树节点样式模拟 */
+        .tree-demo {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .tree-node {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            position: relative;
+        }
+        
+        .tree-node.normal {
+            border: 2px solid #64b5f6;
+            background: white;
+            color: #1976d2;
+        }
+        
+        .tree-node.agent {
+            border: 3px solid #e53e3e;
+            background: #fff5f5;
+            color: #c62828;
+            font-weight: bold;
+            padding: 10px 15px;  /* 更大的padding */
+            font-size: 13px;     /* 稍大的字体 */
+        }
+        
+        .tree-node.supplementary {
+            border: 2px solid #4caf50;
+            background: #f1f8e9;
+            color: #2e7d32;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-card.agent-stats {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe7e7 100%);
+            border: 1px solid #ffcdd2;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .stat-value.agent-value {
+            color: #e53e3e;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        button.agent-button {
+            background-color: #e53e3e;
+        }
+        
+        button.agent-button:hover {
+            background-color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔴 Agent帖子红色渲染效果测试</h1>
+        
+        <div class="test-section">
+            <h3>📝 帖子列表渲染效果</h3>
+            
+            <!-- 普通帖子示例 -->
+            <div class="post-item">
+                <div class="user-info">
+                    <span class="user-id">普通用户123</span>
+                </div>
+                <div class="post-content">
+                    这是一个普通的微博帖子，展示了标准的显示样式。没有特殊的颜色标识。
+                </div>
+                <div class="post-meta">
+                    <span>2小时前</span>
+                    <span>👍 12 💬 5 🔄 3</span>
+                </div>
+            </div>
+            
+            <!-- Agent生成帖子示例 -->
+            <div class="post-item agent-post">
+                <div class="user-info">
+                    <span class="user-id">agent_004</span>
+                    <span class="agent-badge">🤖 AI</span>
+                </div>
+                <div class="post-content">
+                    央视终于介入调查了！希望这次能还原真相，别让媒体和医闹毁了医患信任。家属拒绝治疗还索要高额赔偿，这不是闹事是什么？
+                </div>
+                <div class="post-meta">
+                    <span>1小时前 (AI仿真生成)</span>
+                    <span>😊 0.6 📊 0.8 🎯 ['央视调查', '医患信任', '依法维权']</span>
+                </div>
+            </div>
+            
+            <!-- 另一个Agent帖子示例 -->
+            <div class="post-item agent-post">
+                <div class="user-info">
+                    <span class="user-id">agent_002</span>
+                    <span class="agent-badge">🤖 AI</span>
+                </div>
+                <div class="post-content">
+                    "纱布门"事件发展到现在，各方声音都很多。作为普通网友，我觉得还是要理性看待。医院和患者都有各自的难处...
+                </div>
+                <div class="post-meta">
+                    <span>3小时前 (AI仿真生成)</span>
+                    <span>😐 0.3 📊 0.1 🎯 ['理性看待', '法律途径', '医患关系']</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🌳 转播树节点渲染效果</h3>
+            <div class="tree-demo">
+                <p><strong>节点类型示例：</strong></p>
+                <div style="margin: 15px 0;">
+                    <span class="tree-node normal">普通节点</span>
+                    <span class="tree-node agent">🤖 Agent节点</span>
+                    <span class="tree-node supplementary">补充根节点</span>
+                </div>
+                <p style="font-size: 12px; color: #666; margin-top: 15px;">
+                    在转播树可视化中，Agent生成的帖子节点会显示为<strong style="color: #e53e3e;">鲜红色粗描边</strong>，便于区分AI仿真内容。
+                </p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 统计信息显示</h3>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value">4428</div>
+                    <div class="stat-label">原始帖子数</div>
+                </div>
+                <div class="stat-card agent-stats">
+                    <div class="stat-value agent-value">7</div>
+                    <div class="stat-label">Agent帖子数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4435</div>
+                    <div class="stat-label">总帖子数</div>
+                </div>
+                <div class="stat-card agent-stats">
+                    <div class="stat-value agent-value">63.6%</div>
+                    <div class="stat-label">融合成功率</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎛️ 功能按钮测试</h3>
+            <p>数据源选择按钮样式：</p>
+            <button>📊 仅原始数据</button>
+            <button class="agent-button">🤖 融合Agent仿真</button>
+            <br><br>
+            <button onclick="testAPI()">🔄 测试API调用</button>
+            <button onclick="toggleAgentDisplay()">👁️ 切换Agent显示</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 实时API测试</h3>
+            <div id="apiTestResult" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; margin-top: 10px; font-family: monospace; font-size: 12px;">
+                点击上方按钮测试API...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('apiTestResult');
+            resultDiv.textContent = '正在测试API...';
+            
+            try {
+                // 测试融合模式API
+                const response = await fetch('http://localhost:5000/api/visualization/tree?data_source=merged&agent_posts_file=agent_generated_posts_20250729_112026.json');
+                const data = await response.json();
+                
+                const stats = data.tree.meta;
+                resultDiv.innerHTML = `
+<strong>✅ API测试成功！</strong>
+
+<strong>融合数据统计：</strong>
+- 总帖子数: ${stats.total_posts}
+- Agent帖子数: ${stats.agent_posts_count}
+- 原始帖子数: ${stats.original_posts_count}
+- 树节点数: ${stats.total_nodes}
+- 根节点数: ${stats.displayed_trees}
+- 最大深度: ${stats.max_depth}
+- 数据源: ${stats.data_source}
+- Agent文件: ${stats.agent_posts_file}
+
+<strong>描述:</strong> ${stats.description}
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<strong style="color: #dc3545;">❌ API测试失败:</strong>\n${error.message}`;
+            }
+        }
+        
+        function toggleAgentDisplay() {
+            const agentPosts = document.querySelectorAll('.agent-post');
+            agentPosts.forEach(post => {
+                if (post.style.display === 'none') {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

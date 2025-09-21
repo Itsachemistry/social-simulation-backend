@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试前端点击问题</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .console { background: #f0f0f0; padding: 10px; margin: 10px 0; height: 300px; overflow-y: auto; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>前端API调试测试</h1>
+    
+    <button onclick="testAgentsAPI()">测试获取Agents API</button>
+    <button onclick="testStartSimulation()">测试启动仿真API</button>
+    <button onclick="clearConsole()">清空控制台</button>
+    
+    <div id="console" class="console"></div>
+
+    <script>
+        function log(message) {
+            const console = document.getElementById('console');
+            const time = new Date().toLocaleTimeString();
+            console.innerHTML += `[${time}] ${message}<br>`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('console').innerHTML = '';
+        }
+
+        async function testAgentsAPI() {
+            log('🔍 测试获取Agents API...');
+            try {
+                const response = await fetch('http://localhost:5000/api/agents');
+                log(`📡 状态码: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ 获取成功: ${JSON.stringify(data, null, 2)}`);
+                } else {
+                    log(`❌ 请求失败: ${response.statusText}`);
+                }
+            } catch (error) {
+                log(`💥 网络错误: ${error.message}`);
+            }
+        }
+
+        async function testStartSimulation() {
+            log('🚀 测试启动仿真API...');
+            
+            const testConfig = {
+                config: {
+                    llm_test_mode: true,
+                    enable_llm_full_monitoring: true,
+                    total_steps: 3,
+                    time_slices: 5
+                },
+                agent_configs: [
+                    {
+                        agent_id: "test_agent_1",
+                        name: "测试用户1",
+                        personality: "开朗活泼",
+                        network_influence: 0.5,
+                        content_preference: ["科技", "娱乐"]
+                    }
+                ]
+            };
+            
+            log(`📋 发送配置: ${JSON.stringify(testConfig, null, 2)}`);
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/simulation/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testConfig)
+                });
+                
+                log(`📡 状态码: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ 启动成功: ${JSON.stringify(data, null, 2)}`);
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ 启动失败: ${errorText}`);
+                }
+            } catch (error) {
+                log(`💥 网络错误: ${error.message}`);
+            }
+        }
+
+        // 页面加载时输出基本信息
+        window.onload = function() {
+            log('🌐 页面加载完成');
+            log(`📍 当前URL: ${window.location.href}`);
+            log('✅ 调试工具已就绪');
+        };
+    </script>
+</body>
+</html>

@@ -11,6 +11,8 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from api import create_app
+import api.agent_service
+print('AGENT_SERVICE_PATH:', api.agent_service.__file__)
 
 app = create_app()
 

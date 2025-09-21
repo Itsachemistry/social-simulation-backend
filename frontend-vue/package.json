@@ -1,0 +1,26 @@
+{
+  "name": "social-simulation-frontend-vue",
+  "version": "1.0.0",
+  "description": "社交仿真系统前端 - Vue版本",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview --port 8080"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.7.0",
+    "axios": "^1.6.0",
+    "chart.js": "^4.5.0",
+    "d3": "^7.8.5",
+    "flatpickr": "^4.6.13",
+    "vega": "^6.1.2",
+    "vega-embed": "^7.0.2",
+    "vega-lite": "^6.2.0",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "vite": "^5.0.0"
+  }
+}

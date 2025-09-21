@@ -1,0 +1,466 @@
+/* 从原CSS文件转换而来的Vue版本样式 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Microsoft YaHei", Arial, sans-serif;
+  margin: 0;
+  background: #f7f7f7;
+}
+
+#container {
+  display: flex;
+  height: 100vh;
+}
+
+#sidebar {
+  width: 350px;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: 100vh;
+}
+
+#time-selector-wrapper {
+  border: 3px solid #e0e0e0;
+  border-radius: 0;
+  padding: 8px 0;
+  margin-bottom: 12px;
+  background: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px;
+}
+
+#time-selector {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  background: none;
+}
+
+#time-selector input {
+  width: 140px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  background: #fff;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 6px 14px;
+  margin-bottom: 4px;
+  border-radius: 4px 4px 0 0;
+}
+
+.topic-title {
+  background: #7edfa0;
+  color: #fff;
+}
+
+.post-title {
+  background: #c1a07e;
+  color: #fff;
+}
+
+#topic-content {
+  min-height: 12vh;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+#post-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+/* 帖子卡片样式 */
+.post-item {
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
+  background: #eee;
+}
+
+.user-id {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.post-content {
+  color: #222;
+  font-size: 14px;
+  margin: 4px 0 6px 0;
+  line-height: 1.4;
+}
+
+.post-time {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 2px;
+}
+
+.post-actions-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-icon {
+  display: inline-flex;
+  align-items: center;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.action-icon:hover {
+  color: #1890ff;
+}
+
+/* 标签样式 */
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tag {
+  background-color: #e6f7ff;
+  color: #1976d2;
+  border: 1px solid #91d5ff;
+  padding: 5px 12px;
+  font-size: 13px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag:hover {
+  background-color: #bae7ff;
+  color: #333;
+}
+
+/* 搜索栏样式 */
+#search-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+#search-bar input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#search-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#search-btn:hover {
+  background: #1565c0;
+}
+
+/* 主区域样式 */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+#timeline-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  height: 120px;
+  margin-bottom: 16px;
+}
+
+#timeline {
+  width: 60%;
+  height: 100px;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+}
+
+#timeline-label {
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 8px;
+  color: #222;
+}
+
+#timeline-controls {
+  display: flex;
+  gap: 4px;
+  position: static;
+  margin-top: 0;
+}
+
+#timeline-controls button {
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin-top: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+#timeline-controls button:hover {
+  opacity: 0.8;
+}
+
+#timeline-controls .red { background: #e53935; color: #fff; }
+#timeline-controls .blue { background: #1976d2; color: #fff; }
+#timeline-controls .gray { background: #bdbdbd; color: #333; }
+#timeline-controls .darkgray { background: #424242; color: #fff; }
+
+/* 面板容器样式 */
+#function-checkbox {
+  margin-bottom: 10px;
+}
+
+#function-checkbox label {
+  margin-right: 16px;
+  font-size: 15px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#function-checkbox input[type="checkbox"] {
+  margin-right: 4px;
+}
+
+#function-panels {
+  display: flex;
+  gap: 16px;
+  flex-wrap: nowrap;
+  width: 100%;
+  flex: 1;
+  min-height: 600px;
+  overflow: hidden;
+}
+
+/* 面板基础样式 */
+.env-panel,
+/* 面板基础样式 */
+.env-panel,
+.agent-panel,
+.histogram-panel,
+.attitude-panel,
+.attitude-panel-vega,
+.wordcloud-panel,
+.tree-panel,
+.single-panel {
+  flex: 0 0 calc(33.333% - 11px);
+  width: calc(33.333% - 11px);
+  height: 100%;
+  min-width: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+/* 面板标签和输入框样式 */
+.env-panel label,
+.agent-panel label,
+.histogram-panel label,
+.attitude-panel label,
+.wordcloud-panel label,
+.tree-panel label,
+.single-panel label {
+  display: block;
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.env-panel input,
+.agent-panel input,
+.histogram-panel input,
+.attitude-panel input,
+.wordcloud-panel input,
+.tree-panel input,
+.single-panel input {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  font-size: 14px;
+}
+
+.env-panel button,
+.agent-panel button,
+.histogram-panel button,
+.attitude-panel button,
+.wordcloud-panel button,
+.tree-panel button,
+.single-panel button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.env-panel button:hover,
+.agent-panel button:hover,
+.histogram-panel button:hover,
+.attitude-panel button:hover,
+.wordcloud-panel button:hover,
+.tree-panel button:hover,
+.single-panel button:hover {
+  background: #1565c0;
+}
+
+/* 工具提示样式 */
+.tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1000;
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+/* 加载和错误状态样式 */
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  padding: 20px;
+  color: #e53935;
+  background: #ffebee;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-style: italic;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  #container {
+    flex-direction: column;
+  }
+  
+  #sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 40vh;
+  }
+  
+  #function-panels {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .env-panel,
+  .agent-panel,
+  .histogram-panel,
+  .attitude-panel,
+  .wordcloud-panel,
+  .tree-panel,
+  .single-panel {
+    flex: none;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+}
+
+/* Vue动画 */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+.slide-up-enter-active, .slide-up-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-up-enter-from {
+  transform: translateY(20px);
+}
+
+.slide-up-leave-to {
+  transform: translateY(-20px);
+}
+
+/* 隐藏flatpickr日期选择器的导航箭头 */
+.flatpickr-prev-month,
+.flatpickr-next-month,
+.flatpickr-prev-month svg,
+.flatpickr-next-month svg {
+  display: none !important;
+}
+
+/* 隐藏任何大型导航箭头元素 */
+.flatpickr-months .flatpickr-month {
+  padding: 0 20px; /* 增加一些内边距补偿箭头空间 */
+}

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据源选择测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .loading {
+            color: #007bff;
+            font-style: italic;
+        }
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-card {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 社交仿真引擎 - 数据源选择测试</h1>
+        
+        <div class="section">
+            <h3>📊 数据源配置</h3>
+            <div class="form-group">
+                <label for="dataSource">数据源模式:</label>
+                <select id="dataSource">
+                    <option value="">请选择数据源...</option>
+                </select>
+            </div>
+            <div class="form-group" id="agentFileGroup" style="display:none;">
+                <label for="agentFile">Agent仿真文件:</label>
+                <select id="agentFile">
+                    <option value="">请选择Agent仿真文件...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>时间范围筛选 (可选):</label>
+                <div class="time-inputs">
+                    <input type="datetime-local" id="startTime" placeholder="开始时间">
+                    <input type="datetime-local" id="endTime" placeholder="结束时间">
+                </div>
+            </div>
+            <button onclick="loadOptions()">🔄 加载配置选项</button>
+            <button onclick="loadTreeData()">🌳 加载转播树数据</button>
+            <button onclick="clearResults()">🗑️ 清空结果</button>
+        </div>
+
+        <div class="section">
+            <h3>📈 数据统计</h3>
+            <div id="statsContainer">
+                <p class="loading">请先加载转播树数据...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📝 API响应结果</h3>
+            <div id="result" class="result">等待API调用...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api/visualization';
+
+        let optionsData = null;
+
+        // 加载配置选项
+        async function loadOptions() {
+            const resultDiv = document.getElementById('result');
+            const dataSourceSelect = document.getElementById('dataSource');
+            const agentFileSelect = document.getElementById('agentFile');
+            
+            resultDiv.textContent = '正在加载配置选项...';
+            resultDiv.className = 'result loading';
+
+            try {
+                const response = await fetch(`${API_BASE}/options`);
+                const data = await response.json();
+                
+                optionsData = data;
+                
+                // 填充数据源选项
+                dataSourceSelect.innerHTML = '<option value="">请选择数据源...</option>';
+                data.data_source_options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option.value;
+                    optionElement.textContent = option.label;
+                    dataSourceSelect.appendChild(optionElement);
+                });
+
+                // 填充Agent文件选项
+                agentFileSelect.innerHTML = '<option value="">请选择Agent仿真文件...</option>';
+                data.agent_posts_files.forEach(file => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = file.value;
+                    optionElement.textContent = file.label;
+                    agentFileSelect.appendChild(optionElement);
+                });
+
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.className = 'result';
+                
+            } catch (error) {
+                resultDiv.textContent = `加载配置失败: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // 数据源变化处理
+        document.getElementById('dataSource').addEventListener('change', function(e) {
+            const agentFileGroup = document.getElementById('agentFileGroup');
+            if (e.target.value === 'merged') {
+                agentFileGroup.style.display = 'block';
+            } else {
+                agentFileGroup.style.display = 'none';
+            }
+        });
+
+        // 加载转播树数据
+        async function loadTreeData() {
+            const resultDiv = document.getElementById('result');
+            const statsContainer = document.getElementById('statsContainer');
+            const dataSource = document.getElementById('dataSource').value;
+            const agentFile = document.getElementById('agentFile').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+
+            if (!dataSource) {
+                alert('请先选择数据源模式');
+                return;
+            }
+
+            if (dataSource === 'merged' && !agentFile) {
+                alert('融合模式需要选择Agent仿真文件');
+                return;
+            }
+
+            resultDiv.textContent = '正在加载转播树数据...';
+            resultDiv.className = 'result loading';
+            statsContainer.innerHTML = '<p class="loading">数据加载中...</p>';
+
+            try {
+                let url = `${API_BASE}/tree?data_source=${dataSource}`;
+                if (agentFile) url += `&agent_posts_file=${agentFile}`;
+                if (startTime) url += `&start_time=${startTime}`;
+                if (endTime) url += `&end_time=${endTime}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // 显示统计信息
+                displayStats(data.tree.meta);
+                
+                // 显示完整响应（但只显示元数据，避免过大的数据）
+                const displayData = {
+                    tree_meta: data.tree.meta,
+                    root_nodes_count: data.tree.children.length,
+                    sample_root_nodes: data.tree.children.slice(0, 3).map(node => ({
+                        id: node.id,
+                        content: node.content,
+                        children_count: node.children ? node.children.length : 0,
+                        is_agent_generated: node.is_agent_generated || false
+                    }))
+                };
+                
+                resultDiv.textContent = JSON.stringify(displayData, null, 2);
+                resultDiv.className = 'result';
+                
+            } catch (error) {
+                resultDiv.textContent = `加载转播树数据失败: ${error.message}`;
+                resultDiv.className = 'result error';
+                statsContainer.innerHTML = '<p class="error">数据加载失败</p>';
+            }
+        }
+
+        // 显示统计信息
+        function displayStats(meta) {
+            const statsContainer = document.getElementById('statsContainer');
+            
+            let statsHtml = '<div class="stats">';
+            
+            // 基础统计
+            statsHtml += `
+                <div class="stat-card">
+                    <div class="stat-value">${meta.total_posts}</div>
+                    <div class="stat-label">总帖子数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${meta.total_nodes}</div>
+                    <div class="stat-label">树节点数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${meta.displayed_trees}</div>
+                    <div class="stat-label">根节点数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${meta.max_depth}</div>
+                    <div class="stat-label">最大深度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${meta.parent_child_relations}</div>
+                    <div class="stat-label">父子关系数</div>
+                </div>
+            `;
+
+            // 如果是融合模式，显示Agent统计
+            if (meta.data_source === 'merged') {
+                statsHtml += `
+                    <div class="stat-card" style="background: #e7ffe7;">
+                        <div class="stat-value">${meta.agent_posts_count}</div>
+                        <div class="stat-label">Agent帖子数</div>
+                    </div>
+                    <div class="stat-card" style="background: #e7ffe7;">
+                        <div class="stat-value">${meta.original_posts_count}</div>
+                        <div class="stat-label">原始帖子数</div>
+                    </div>
+                `;
+            }
+
+            statsHtml += '</div>';
+            
+            // 显示数据源信息
+            statsHtml += `
+                <div style="margin-top: 15px; padding: 10px; background: #f0f8ff; border-radius: 4px;">
+                    <strong>数据源:</strong> ${meta.data_source === 'original' ? '仅原始数据' : '融合Agent数据'}<br>
+                    ${meta.agent_posts_file ? `<strong>Agent文件:</strong> ${meta.agent_posts_file}<br>` : ''}
+                    <strong>描述:</strong> ${meta.description}
+                </div>
+            `;
+            
+            statsContainer.innerHTML = statsHtml;
+        }
+
+        // 清空结果
+        function clearResults() {
+            document.getElementById('result').textContent = '等待API调用...';
+            document.getElementById('result').className = 'result';
+            document.getElementById('statsContainer').innerHTML = '<p class="loading">请先加载转播树数据...</p>';
+        }
+
+        // 页面加载时自动加载配置选项
+        window.onload = function() {
+            loadOptions();
+        };
+    </script>
+</body>
+</html>

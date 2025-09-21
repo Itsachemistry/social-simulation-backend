@@ -267,3 +267,27 @@ time_slices/
 event_logs/
 interaction_records/ 
 data/check_tr_totalChildren.py
+
+# 前端相关文件
+/fronted/
+frontend-vue/node_modules/
+frontend-vue/dist/
+frontend-vue/.vite/
+frontend-vue/.env.local
+frontend-vue/.env.*.local
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

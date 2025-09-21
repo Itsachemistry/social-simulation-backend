@@ -229,9 +229,15 @@ def generate_context(chain):
     根据帖子链生成对话上下文文本。
     """
     context_lines = []
-    for idx, post in enumerate(chain[:-1]):
-        context_lines.append(f"[父帖子 {idx+1}]: {post.get('text', post.get('content', ''))}")
-    context_lines.append(f"[目标帖子]: \"{chain[-1].get('text', chain[-1].get('content', ''))}\"")
+    if len(chain) > 1:
+        # 有父帖子的情况
+        for idx, post in enumerate(chain[:-1]):
+            context_lines.append(f"[父帖子 {idx+1}]: {post.get('text', post.get('content', ''))}")
+        context_lines.append(f"[当前帖子]: \"{chain[-1].get('text', chain[-1].get('content', ''))}\"")
+    else:
+        # 只有一个帖子，没有上下文的情况
+        context_lines.append(f"[当前帖子]: \"{chain[0].get('text', chain[0].get('content', ''))}\"")
+        context_lines.append("(这是一个独立帖子，没有回复关系)")
     return '\n'.join(context_lines)
 
 def make_prompt(context_text, target_post, prompt_template):

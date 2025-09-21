@@ -1,0 +1,223 @@
+=== 详细日志记录开始 ===
+日志文件: simulation_log_20250731_120552.txt
+包含: 所有LLM Prompt、响应、Agent状态变化
+
+=== SIMULATION_METADATA_START ===
+{
+  "simulation_id": "sim_20250731_120552",
+  "name": "仿真_20250731_120552",
+  "start_time": "2025-07-31T12:05:53.073598",
+  "status": "running",
+  "total_time_slices": 4,
+  "agent_count": 4,
+  "posts_count": 564,
+  "config": {
+    "w_pop": 0.7,
+    "k": 2,
+    "skip_llm": false,
+    "posts_per_slice": 30
+  },
+  "agents": [
+    {
+      "id": "agent_001",
+      "role_type": "ordinary_user",
+      "initial_emotion": 0.0,
+      "initial_stance": 0.0,
+      "initial_confidence": 0.5,
+      "attitude_firmness": 0.4,
+      "opinion_blocking": 0.1,
+      "activity_level": 0.6
+    },
+    {
+      "id": "agent_002",
+      "role_type": "ordinary_user",
+      "initial_emotion": -0.2,
+      "initial_stance": -0.1,
+      "initial_confidence": 0.3,
+      "attitude_firmness": 0.3,
+      "opinion_blocking": 0.3,
+      "activity_level": 0.8
+    },
+    {
+      "id": "agent_003",
+      "role_type": "opinion_leader",
+      "initial_emotion": 0.3,
+      "initial_stance": 0.5,
+      "initial_confidence": 0.7,
+      "attitude_firmness": 0.8,
+      "opinion_blocking": 0.2,
+      "activity_level": 0.9
+    },
+    {
+      "id": "agent_004",
+      "role_type": "ordinary_user",
+      "initial_emotion": 0.1,
+      "initial_stance": 0.2,
+      "initial_confidence": 0.6,
+      "attitude_firmness": 0.5,
+      "opinion_blocking": 0.0,
+      "activity_level": 0.7
+    }
+  ],
+  "time_slices": [
+    {
+      "index": 0,
+      "time_range": "T00:00-T00:59",
+      "post_count": 30,
+      "description": "时间片 1"
+    },
+    {
+      "index": 1,
+      "time_range": "T01:00-T01:59",
+      "post_count": 30,
+      "description": "时间片 2"
+    },
+    {
+      "index": 2,
+      "time_range": "T02:00-T02:59",
+      "post_count": 30,
+      "description": "时间片 3"
+    },
+    {
+      "index": 3,
+      "time_range": "T03:00-T03:59",
+      "post_count": 30,
+      "description": "时间片 4"
+    }
+  ]
+}
+=== SIMULATION_METADATA_END ===
+
+
+--- 时间片 1/4 ---
+本时间片帖子数量: 30 (包含 0 条官方声明)
+活跃Agent数量: 4
+
+=== 开始Agent情绪更新和发帖判定 ===
+[LLM Config] 测试模式 - 启用Agent: ['agent_001', 'agent_002', 'agent_003', 'agent_004'], 启用时间片: [0, 1, 2, 3]
+[宏观简报] {'average_emotion': 0.049999999999999996, 'average_stance': 0.15000000000000002, 'agent_count': 4}
+[Leader] agent_003 读简报后状态: 情绪=0.287, 立场=0.500
+🤖 Agent agent_001 在时间片 0 使用LLM
+[Feed] Agent agent_001 候选池大小: 30 (k=2, x0=auto)
+    帖子1: id=4036716081432676, Score_Pop=0.038, Score_Rel=0.200, Final_Score=0.086, Sigmoid概率=0.443, ✔选中
+    帖子2: id=4036784096263919, Score_Pop=0.560, Score_Rel=0.400, Final_Score=0.512, Sigmoid概率=0.651, ✘未选中
+    帖子3: id=4037007263095724, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✔选中
+    帖子4: id=4037013675446399, Score_Pop=0.113, Score_Rel=0.400, Final_Score=0.199, Sigmoid概率=0.499, ✔选中
+    帖子5: id=4037016473197395, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.445, ✔选中
+    帖子6: id=4037037071873683, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✘未选中
+    帖子7: id=4037088459942071, Score_Pop=0.170, Score_Rel=0.400, Final_Score=0.239, Sigmoid概率=0.519, ✘未选中
+    帖子8: id=4037090738392104, Score_Pop=0.000, Score_Rel=0.800, Final_Score=0.240, Sigmoid概率=0.520, ✘未选中
+    帖子9: id=4037114661914029, Score_Pop=0.075, Score_Rel=0.400, Final_Score=0.173, Sigmoid概率=0.486, ✘未选中
+    帖子10: id=4037118331831237, Score_Pop=0.000, Score_Rel=0.700, Final_Score=0.210, Sigmoid概率=0.505, ✘未选中
+    帖子11: id=4037124792139040, Score_Pop=0.013, Score_Rel=0.500, Final_Score=0.159, Sigmoid概率=0.479, ✘未选中
+    帖子12: id=4037125542459730, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✘未选中
+    帖子13: id=4037126159400564, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✔选中
+    帖子14: id=4037128382063235, Score_Pop=0.283, Score_Rel=0.300, Final_Score=0.288, Sigmoid概率=0.544, ✘未选中
+    帖子15: id=4037130835022729, Score_Pop=0.013, Score_Rel=0.400, Final_Score=0.129, Sigmoid概率=0.464, ✔选中
+    帖子16: id=4037141966651655, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.445, ✘未选中
+    帖子17: id=4037148266670011, Score_Pop=0.201, Score_Rel=0.400, Final_Score=0.261, Sigmoid概率=0.530, ✘未选中
+    帖子18: id=4037149974179421, Score_Pop=0.189, Score_Rel=0.600, Final_Score=0.312, Sigmoid概率=0.556, ✘未选中
+    帖子19: id=4037152008120995, Score_Pop=0.019, Score_Rel=0.500, Final_Score=0.163, Sigmoid概率=0.481, ✔选中
+    帖子20: id=4037152763295775, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✔选中
+    帖子21: id=4037153069176321, Score_Pop=0.013, Score_Rel=0.700, Final_Score=0.219, Sigmoid概率=0.509, ✘未选中
+    帖子22: id=4037249505368724, Score_Pop=0.006, Score_Rel=0.300, Final_Score=0.094, Sigmoid概率=0.447, ✘未选中
+    帖子23: id=4037319461863054, Score_Pop=1.000, Score_Rel=0.400, Final_Score=0.820, Sigmoid概率=0.775, ✔选中
+    帖子24: id=4037324478023375, Score_Pop=0.000, Score_Rel=0.400, Final_Score=0.120, Sigmoid概率=0.460, ✘未选中
+    帖子25: id=4037325761439459, Score_Pop=0.000, Score_Rel=0.300, Final_Score=0.090, Sigmoid概率=0.445, ✘未选中
+    帖子26: id=4037326046850659, Score_Pop=0.000, Score_Rel=0.500, Final_Score=0.150, Sigmoid概率=0.475, ✔选中
+    帖子27: id=4037333135457250, Score_Pop=0.006, Score_Rel=0.400, Final_Score=0.124, Sigmoid概率=0.462, ✘未选中
+    帖子28: id=4037345017634878, Score_Pop=0.000, Score_Rel=0.900, Final_Score=0.270, Sigmoid概率=0.535, ✘未选中
+    帖子29: id=4037350071630678, Score_Pop=0.006, Score_Rel=0.500, Final_Score=0.154, Sigmoid概率=0.477, ✔选中
+    帖子30: id=4037385668283204, Score_Pop=0.094, Score_Rel=0.500, Final_Score=0.216, Sigmoid概率=0.508, ✔选中
+[LLM] Agent agent_001 正在调用LLM分析情绪...
+[LLM Prompt] [角色与目标]
+你是一个社交媒体用户，正在浏览关于山东"纱布门"事件的讨论。你需要根据你当前的情绪状态和立场倾向，以及你刚刚阅读的帖子内容和对话上下文，分析这条帖子对你情绪和立场的影响，并输出相应的情感和立场分值。
+
+## 1. 事件背景 (Event Background)
+事件名称: 山东"纱布门"事件
+
+时间与地点: 2016年8月，山东潍坊市妇幼保健院。
+
+事件经过:
+手术情况: 一名高危产妇（疤痕子宫、前置胎盘）在剖宫产术中因胎盘植入引发大出血，医生采用纱布填塞止血以保全子宫，但术后有纱布残留体内。
+
+知情权争议: 院方称术后已告知家属并获签字，但家属后续否认知情，且病历有涂改痕迹。
+
+后续发展: 产妇因腹痛滞留医院，家属要求高额赔偿并拒绝取出纱布的治疗方案。当地媒体报道此事，引发舆论对医院的指责。之后，央视报道澄清纱布填塞是紧急情况下的合理医疗手段，舆论出现反转。
+
+三方立场摘要:
+支持医院 (SUPPORT_HOSPITAL): 认为医生操作是为保全产妇生命和子宫，家属拒绝治疗并索赔是"医闹"行为。
+
+支持患者 (SUPPORT_PATIENT): 认为医院未尽到充分告知义务，且病历涂改可疑，纱布残留给患者带来巨大痛苦。
+
+中立/调解 (NEUTRAL_MEDIATING): 呼吁等待官方医疗鉴定，反对舆论审判，并关注更深层次的医患关系和纠纷解决机制问题。
+
+## 2. 对话上下文 (Conversational Context)
+这是一个关于"医疗事故"话题的讨论串。请注意帖子之间的回复关系。
+
+[当前帖子]: "【声明】|关于“产妇徐女士在潍坊市妇幼保健院生子后子宫内留有纱布”报道的说明 http://t.cn/RV14K8b"
+(这是一个独立帖子，没有回复关系)
+
+## 3. 你的当前状态 (Your Current State)
+作为一个社交媒体用户，你目前的状态是：
+
+- 当前情绪: 0.0 (范围-1到1，-1为极度负面，1为极度正面，0为中性)
+- 当前立场: 0.0 (范围-1到1，-1为极度支持患者，1为极度支持医院，0为中立)
+- 置信度: 0.5 (范围0到1，0为完全不确定，1为完全确定)
+- 角色类型: ordinary_user
+- 态度坚定性: 0.4 (越高越不容易改变立场)
+- 观点屏蔽度: 0.1 (越高越容易屏蔽不同观点)
+
+## 4. 你刚刚阅读的帖子 (Post You Just Read)
+帖子内容: 【声明】|关于“产妇徐女士在潍坊市妇幼保健院生子后子宫内留有纱布”报道的说明 http://t.cn/RV14K8b
+
+
+
+## 5. 你的任务 (Your Task)
+基于你的当前状态、对话上下文和刚刚阅读的帖子内容，分析这条帖子的内容倾向，并给出你认为合适的建议情绪值和建议立场值。注意：这些是建议值，最终的状态更新会由系统根据你的个人特质进行融合计算。
+
+考虑因素包括：
+1. 对话上下文：帖子所在的讨论链条如何影响你对当前帖子的理解
+2. 个人特质：你的态度坚定性和观点屏蔽度如何影响你的反应
+3. 情绪传导：帖子的情感色彩如何与你当前情绪相互作用
+4. 立场推理：帖子的论证和观点如何与你当前立场产生共鸣或冲突
+
+## 6. 输出格式与属性定义 (Output Format & Attribute Definitions)
+
+请输出一个JSON对象：
+
+{
+  "emotion_suggested": "浮点数，-1.0 到 1.0 之间",
+  "stance_suggested": "浮点数，-1.0 到 1.0 之间"
+}
+
+### emotion_suggested (建议情绪分值)
+数据类型: Float
+取值范围: -1.0 (极度负面) 到 1.0 (极度正面)，0.0 代表中立
+含义: 根据帖子内容和对话上下文，你认为一个处于你当前状态的用户应该产生什么样的情绪反应。考虑因素包括：
+- 帖子内容的情感色彩（正面、负面、中性）
+- 对话上下文中其他帖子的情感氛围
+- 帖子是否会引起共鸣或反感
+- 帖子的语言风格和表达方式
+- 你当前的情绪基线 (0.0) 作为参考
+
+### stance_suggested (建议立场分值)  
+数据类型: Float
+取值范围: -1.0 到 1.0 之间
+含义: 根据帖子内容和对话上下文，你认为应该倾向的立场方向。具体映射为：
+- -1.0 到 -0.3: 倾向支持患者方 (SUPPORT_PATIENT) - 认为医院有责任，患者是受害者
+- -0.3 到 0.3: 倾向中立/调解 (NEUTRAL_MEDIATING) - 呼吁理性分析，不偏不倚
+- 0.3 到 1.0: 倾向支持医院方 (SUPPORT_HOSPITAL) - 认为医生操作合理，批评"医闹"行为
+
+考虑因素包括：
+- 帖子明确或暗示的立场倾向
+- 对话上下文中的论证链条和观点发展
+- 帖子提供的论据和信息
+- 帖子的说服力和可信度
+- 你当前的立场基线 (0.0) 和态度坚定性 (0.4) 作为参考
+
+## 7. 请开始分析
+请仔细分析上述帖子内容和对话上下文，结合你的当前状态，输出最终的JSON结果。注意要体现出个人特质对情绪和立场变化的影响。
+
+[LLM Post] 帖子内容: '【声明】|关于“产妇徐女士在潍坊市妇幼保健院生子后子宫内留有纱布”报道的说明 http://t.cn/RV14K8b'
+[LLM Post] 帖子字段: ['uid', 'name', 'original_text', 'text', 'mid', 'pid', 't', 'popularity', 'emotion_score', 'stance_category', 'stance_confidence', 'information_strength', 'keywords', 'stance_score', 'children', 'parent_post_id', 'nesting_level', 'timestamp']

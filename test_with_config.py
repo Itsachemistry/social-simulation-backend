@@ -22,22 +22,16 @@ def create_test_agents():
         Agent('agent_003', RoleType.OPINION_LEADER, 0.8, 0.2, 0.9, 0.3, 0.5, 0.7),
         Agent('agent_004', RoleType.ORDINARY_USER, 0.5, 0.0, 0.7, 0.1, 0.2, 0.6)
     ]
+    
+    # 暂时不配置LLM，专注于完善prompt模板
+    # for agent in agents:
+    #     agent.configure_llm(
+    #         api_key="test_key",
+    #         endpoint="https://api.openai.com/v1/chat/completions",
+    #         model="gpt-3.5-turbo"
+    #     )
+    
     return agents
-
-def compute_macro_summary(agents):
-    emotion_sum = 0
-    stance_sum = 0
-    count = 0
-    for agent in agents:
-        status = agent.get_status()
-        emotion_sum += status['current_emotion']
-        stance_sum += status['current_stance']
-        count += 1
-    return {
-        'average_emotion': emotion_sum / count if count else 0,
-        'average_stance': stance_sum / count if count else 0,
-        'agent_count': count
-    }
 
 def simulate_leader_briefing_interaction(leader, macro_summary, time_slice_index):
     # 构造简报帖子
@@ -58,35 +52,14 @@ def simulate_leader_briefing_interaction(leader, macro_summary, time_slice_index
         leader.update_emotion_and_stance(briefing_post, time_slice_index=time_slice_index)
     return briefing_post
 
-def build_agent_prompt(agent, posts_read, prompt_template):
-    chain = posts_read + [{'content': '（此处为agent将要发言的内容）'}]
-    context_text = generate_context(chain)
-    target_post = '（此处为agent将要发言的内容）'
-    prompt = make_prompt(context_text, target_post, prompt_template)
-    return prompt
-
-def build_post_json(agent, content, all_posts_in_slice):
-    record = getattr(agent, 'most_influential_post_record', None)
-    parent_id = record['post_id'] if record else None
-    latest_ts = max([p.get('timestamp') for p in all_posts_in_slice if p.get('timestamp')], default=None)
-    if latest_ts:
-        dt = datetime.fromisoformat(str(latest_ts))
-        new_dt = dt + timedelta(seconds=1)
-        new_timestamp = new_dt.isoformat()
-    else:
-        new_timestamp = datetime.now().isoformat()
-    return {
-        'id': f"{agent.agent_id}_{new_timestamp}",
-        'parent_post_id': parent_id,
-        'author_id': agent.agent_id,
-        'content': content,
-        'timestamp': new_timestamp
-    }
-
 def main(w_pop=0.7, k=2, save_log=False):
     print("=== 社交模拟引擎测试（重构版）===")
     print("使用src中提供的标准接口，专注于测试核心算法")
     print(f"\n[参数] w_pop={w_pop}, k={k}")
+    
+    # 存储Agent生成的帖子
+    agent_generated_posts = []
+    
     # 1. 使用DataLoader加载原始帖子数据
     print("\n1. 加载原始帖子数据...")
     data_loader = DataLoader()
@@ -115,10 +88,11 @@ def main(w_pop=0.7, k=2, save_log=False):
     # 5. 时间片划分
     print("\n5. 时间片划分...")
     posts_per_timeslice = 30
-    num_timeslices = 4
+    num_timeslices = 4  # 恢复4个时间片测试发帖流程
     time_manager = TimeSliceManager(normalized_posts, posts_per_timeslice)
     print(f"✅ 时间片大小: {posts_per_timeslice}")
     print(f"✅ 总时间片数: {time_manager.total_slices}")
+    print(f"✅ 本次测试运行: {num_timeslices} 个时间片")
     # 6. 创建Agent控制器
     print("\n6. 创建Agent控制器...")
     agent_controller = AgentController(world_state, time_manager, w_pop=w_pop, k=k)
@@ -131,7 +105,7 @@ def main(w_pop=0.7, k=2, save_log=False):
     # 8. 运行模拟
     print("\n8. 开始模拟...")
     # 读取prompt模板
-    with open('data/promptdataprocess.txt', 'r', encoding='utf-8') as f:
+    with open('data/agent_prompt_template.txt', 'r', encoding='utf-8') as f:
         prompt_template = f.read()
     for timeslice in range(min(num_timeslices, time_manager.total_slices)):
         print(f"\n--- 时间片 {timeslice + 1} ---")
@@ -160,14 +134,7 @@ def main(w_pop=0.7, k=2, save_log=False):
         briefing_post, leader_statuses = agent_controller.leader_read_briefing(timeslice)
         for leader_id, leader_status in leader_statuses:
             print(f"[Leader] {leader_id} 读简报后状态: {leader_status}")
-        # === 新增：发言prompt构造和json帖子对象构造 ===
-        for agent in agent_controller.agents:
-            prompt = agent_controller.build_agent_prompt(agent, prompt_template)
-            print(f"[Prompt] {agent.agent_id} 发言prompt示例:\n{prompt}\n")
-            # 假设得到了content
-            content = f"这是{agent.agent_id}的发言内容"
-            post_json = agent_controller.build_post_json(agent, content, current_posts)
-            print(f"[Post JSON] {agent.agent_id} 发帖json: {post_json}")
+        
         print(f"\n时间片 {timeslice + 1} 结束，Agent状态:")
         for agent in agent_controller.agents:
             emotion_fluctuation = abs(agent.current_emotion - agent.last_emotion)
@@ -179,6 +146,46 @@ def main(w_pop=0.7, k=2, save_log=False):
                   f"本时间片阅读{agent_read_counts[agent.agent_id]}条帖子")
             if agent.should_post():
                 print(f"    -> 决定发帖！")
+                print(f"       情绪波动: {abs(agent.current_emotion - agent.last_emotion):.3f}")
+                print(f"       立场波动: {abs(agent.current_stance - agent.last_stance):.3f}")
+                
+                # 模拟LLM调用生成文本内容
+                try:
+                    # 使用现有的generate_text方法（跳过LLM调用，使用模拟内容）
+                    generated_content = agent.generate_text(skip_llm=True)
+                    print(f"    [Generated Content] {generated_content}")
+                    
+                    # 构造标准格式的帖子JSON（启用LLM标注以保持一致性）
+                    post_json = agent_controller.build_post_json(
+                        agent, 
+                        generated_content, 
+                        current_posts, 
+                        use_llm_annotation=True  # 启用LLM标注
+                    )
+                    print(f"    [Post JSON] {post_json}")
+                    
+                    # 将生成的帖子添加到存储列表
+                    agent_generated_posts.append({
+                        'timeslice': timeslice + 1,
+                        'agent_id': agent.agent_id,
+                        'post_data': post_json,
+                        'agent_state_when_posting': {
+                            'emotion': agent.current_emotion,
+                            'stance': agent.current_stance,
+                            'confidence': agent.current_confidence
+                        }
+                    })
+                    
+                    # 检查帖子JSON的关键字段是否完整
+                    required_fields = ['id', 'mid', 'author_id', 'content', 't']
+                    missing_fields = [f for f in required_fields if f not in post_json]
+                    if missing_fields:
+                        print(f"    [警告] 帖子JSON缺少字段: {missing_fields}")
+                    else:
+                        print(f"    [验证] 帖子JSON格式完整 ✅")
+                        
+                except Exception as e:
+                    print(f"    [错误] 发帖流程失败: {e}")
             else:
                 print(f"    -> 不发帖")
         # 新增：输出每个agent本时间片实际阅读的帖子数
@@ -190,7 +197,46 @@ def main(w_pop=0.7, k=2, save_log=False):
             if agent_list:
                 agent_str = ", ".join([f"{aid}(Final={fs:.3f},P={prob:.2f})" for aid, fs, prob in agent_list])
                 print(f"  帖子{pid}: 被 {len(agent_list)} 个Agent选中 -> {agent_str}")
+    
     print("\n=== 模拟完成 ===")
+    
+    # 总结Agent生成的帖子
+    if agent_generated_posts:
+        print(f"\n📝 Agent生成帖子统计:")
+        print(f"   总共生成 {len(agent_generated_posts)} 条帖子")
+        
+        # 按时间片分组统计
+        from collections import defaultdict
+        posts_by_timeslice = defaultdict(list)
+        for post_record in agent_generated_posts:
+            posts_by_timeslice[post_record['timeslice']].append(post_record)
+        
+        for ts, posts_in_ts in posts_by_timeslice.items():
+            print(f"\n   时间片 {ts}: {len(posts_in_ts)} 条帖子")
+            for post_record in posts_in_ts:
+                post_data = post_record['post_data']
+                agent_state = post_record['agent_state_when_posting']
+                print(f"     - {post_record['agent_id']}: {post_data['content'][:50]}...")
+                print(f"       ID: {post_data['id']}, 父帖: {post_data.get('pid', 'None')}")
+                print(f"       发帖时状态: 情绪={agent_state['emotion']:.3f}, 立场={agent_state['stance']:.3f}")
+        
+        # 保存Agent生成的帖子到文件
+        import json
+        with open('agent_generated_posts.json', 'w', encoding='utf-8') as f:
+            json.dump(agent_generated_posts, f, ensure_ascii=False, indent=2)
+        print(f"\n💾 Agent生成的帖子已保存到: agent_generated_posts.json")
+        
+        # 验证帖子数据格式
+        print(f"\n🔍 数据格式验证:")
+        sample_post = agent_generated_posts[0]['post_data']
+        required_fields = ['id', 'mid', 'author_id', 'content', 't']
+        for field in required_fields:
+            if field in sample_post:
+                print(f"   ✅ {field}: {sample_post[field]}")
+            else:
+                print(f"   ❌ 缺少字段: {field}")
+    else:
+        print(f"\n📝 本次模拟中没有Agent决定发帖")
 
 if __name__ == "__main__":
     import sys

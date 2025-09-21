@@ -3,6 +3,7 @@ from datetime import datetime
 import os
 import json
 
+print('=== agent_service.py loaded ===')
 agent_bp = Blueprint('agent', __name__)
 
 AGENT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
@@ -31,8 +32,11 @@ def get_post_time_range():
 #获取加载agents
 @agent_bp.route('/', methods=['GET'])
 def get_agents():
+    print('=== [get_agents] THIS IS AGENT SERVICE ===')
+    print(f'[get_agents] AGENT_CONFIG_PATH: {AGENT_CONFIG_PATH}')
     agents = load_agents()
-    return jsonify(agents)
+    print(f'[get_agents] loaded agents count: {len(agents)}')
+    return jsonify({'success': True, 'data': agents})
 
 @agent_bp.route('/list', methods=['GET'])
 def list_agents():
@@ -62,26 +66,31 @@ def list_agents():
 def add_agent():
     """新增一个agent"""
     new_agent = request.json
+    print(f'[add_agent] AGENT_CONFIG_PATH: {AGENT_CONFIG_PATH}')
     if not new_agent or 'agent_id' not in new_agent:
         return jsonify({'error': '缺少agent_id'}), 400
-    agents_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
+    agents_path = AGENT_CONFIG_PATH
     with open(agents_path, 'r', encoding='utf-8') as f:
         agents = json.load(f)
+    print(f'[add_agent] loaded agents count before add: {len(agents)}')
     # 检查重复
     if any(a['agent_id'] == new_agent['agent_id'] for a in agents):
         return jsonify({'error': 'agent_id已存在'}), 400
     agents.append(new_agent)
     with open(agents_path, 'w', encoding='utf-8') as f:
         json.dump(agents, f, ensure_ascii=False, indent=2)
+    print(f'[add_agent] loaded agents count after add: {len(agents)}')
     return jsonify({'status': 'success'})
 
 @agent_bp.route('/update/<agent_id>', methods=['PUT'])
 def update_agent(agent_id):
     """更新指定agent"""
     update_data = request.json
-    agents_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
+    print(f'[update_agent] AGENT_CONFIG_PATH: {AGENT_CONFIG_PATH}')
+    agents_path = AGENT_CONFIG_PATH
     with open(agents_path, 'r', encoding='utf-8') as f:
         agents = json.load(f)
+    print(f'[update_agent] loaded agents count before update: {len(agents)}')
     found = False
     for agent in agents:
         if agent['agent_id'] == agent_id:
@@ -92,17 +101,21 @@ def update_agent(agent_id):
         return jsonify({'error': '未找到该agent'}), 404
     with open(agents_path, 'w', encoding='utf-8') as f:
         json.dump(agents, f, ensure_ascii=False, indent=2)
+    print(f'[update_agent] loaded agents count after update: {len(agents)}')
     return jsonify({'status': 'success'})
 
 @agent_bp.route('/delete/<agent_id>', methods=['DELETE'])
 def delete_agent(agent_id):
     """删除指定agent"""
-    agents_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'agents.json')
+    print(f'[delete_agent] AGENT_CONFIG_PATH: {AGENT_CONFIG_PATH}')
+    agents_path = AGENT_CONFIG_PATH
     with open(agents_path, 'r', encoding='utf-8') as f:
         agents = json.load(f)
+    print(f'[delete_agent] loaded agents count before delete: {len(agents)}')
     new_agents = [a for a in agents if a['agent_id'] != agent_id]
     if len(new_agents) == len(agents):
         return jsonify({'error': '未找到该agent'}), 404
     with open(agents_path, 'w', encoding='utf-8') as f:
         json.dump(new_agents, f, ensure_ascii=False, indent=2)
+    print(f'[delete_agent] loaded agents count after delete: {len(new_agents)}')
     return jsonify({'status': 'success'}) 

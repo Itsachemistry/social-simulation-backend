@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 import json
 from collections import defaultdict
 import re
+from flask import current_app
+import os
 
 visualization_bp = Blueprint('visualization', __name__)
 
@@ -478,9 +480,33 @@ def get_posts_summary():
 
 @visualization_bp.route('/options', methods=['GET'])
 def get_visualization_options():
-    """获取可视化选项"""
+    print('[get_visualization_options] called')
+    
+    # 扫描Agent生成的帖子文件
+    agent_posts_files = []
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    
+    for filename in os.listdir(base_dir):
+        if filename.startswith('agent_generated_posts_') and filename.endswith('.json'):
+            # 提取时间戳（例如从 agent_generated_posts_20250729_112026.json 提取 20250729_112026）
+            timestamp = filename[len('agent_generated_posts_'):-5]  # 去掉前缀和.json后缀
+            agent_posts_files.append({
+                'value': filename,
+                'label': f'Agent仿真 {timestamp[:8]}-{timestamp[9:]}',
+                'timestamp': timestamp,
+                'filepath': os.path.join(base_dir, filename)
+            })
+    
+    # 按时间戳倒序排列（最新的在前）
+    agent_posts_files.sort(key=lambda x: x['timestamp'], reverse=True)
+    
     return jsonify({
         'status': 'success',
+        'data_source_options': [
+            {'value': 'original', 'label': '仅原始微博数据'},
+            {'value': 'merged', 'label': '融合Agent生成帖子'}
+        ],
+        'agent_posts_files': agent_posts_files,
         'sort_options': [
             {'value': 'time', 'label': '按时间'},
             {'value': 'popularity', 'label': '按热度'},
@@ -510,49 +536,554 @@ def get_visualization_options():
         }
     })
 
-@visualization_bp.route('/posts/repost_tree', methods=['POST'])
-def get_repost_tree():
-    """获取转播树结构"""
+# 工具函数：递归平铺所有children，去掉children字段
+
+def flatten_posts(posts):
+    flat = []
+    def _flatten(post):
+        post_copy = dict(post)
+        children = post_copy.pop('children', [])
+        flat.append(post_copy)
+        for child in children:
+            _flatten(child)
+    for p in posts:
+        _flatten(p)
+    return flat
+
+def merge_agent_posts_with_original(original_posts, agent_posts_file):
+    """
+    将Agent生成的帖子融合到原始帖子数据中
+    Agent帖子的pid指向原始帖子的mid，需要将Agent帖子作为对应原始帖子的子节点
+    """
+    print(f"[数据融合] 开始融合Agent帖子文件: {agent_posts_file}")
+    
+    # 读取Agent生成的帖子
+    if not os.path.exists(agent_posts_file):
+        print(f"[数据融合] Agent帖子文件不存在: {agent_posts_file}")
+        return original_posts
+    
     try:
-        data = request.json
-        if not data:
-            return jsonify({'error': '请求体不能为空'}), 400
-        simulation_id = data.get('simulation_id')
-        if not simulation_id:
-            return jsonify({'error': '缺少simulation_id参数'}), 400
-        from .simulation_service import simulation_manager
-        status = simulation_manager.get_simulation_status(simulation_id)
-        if not status or status['status'] != 'completed':
-            return jsonify({'error': '仿真不存在或未完成'}), 404
-        agent_generated_posts = status['results'].get('agent_generated_posts', [])
-        agent_states = status['results'].get('agent_states', {})
-        # TODO: 后续在此处合并原始数据
-        # 收集所有Agent的浏览过的post_id
-        viewed_map = {}  # post_id -> [agent_id, ...]
-        for agent_type, agents in agent_states.items():
-            for agent in agents:
-                for pid in agent.get("viewed_posts", []):
-                    if isinstance(pid, str):
-                        if pid not in viewed_map:
-                            viewed_map[pid] = []
-                        if isinstance(agent["agent_id"], str):
-                            viewed_map[pid].append(agent["agent_id"])
-        # 构建节点，增加is_agent_post和viewed_by_agents
-        nodes = {}
-        for p in agent_generated_posts:
-            node = dict(p)
-            node["children"] = []
-            node["is_agent_post"] = str(p.get("author_id", "")).startswith("agent_")
-            node["viewed_by_agents"] = viewed_map.get(p["id"], [])
-            nodes[p['id']] = node
-        root_nodes = []
-        for post in agent_generated_posts:
-            parent_id = post.get('parent_post_id')
-            if parent_id and parent_id in nodes:
-                nodes[parent_id]['children'].append(nodes[post['id']])
-            else:
-                root_nodes.append(nodes[post['id']])
-        tree = {'id': 'virtual_root', 'children': root_nodes}
-        return jsonify(tree)
+        with open(agent_posts_file, 'r', encoding='utf-8') as f:
+            agent_data = json.load(f)
+        
+        agent_posts = agent_data.get('agent_posts', [])
+        print(f"[数据融合] 读取到 {len(agent_posts)} 个Agent帖子")
+        
+        if not agent_posts:
+            return original_posts
+        
+        # 创建原始帖子的mid索引
+        mid_to_post = {}
+        
+        def build_index(posts):
+            for post in posts:
+                mid = post.get('mid') or post.get('id')
+                if mid:
+                    mid_to_post[mid] = post
+                # 递归处理子帖子
+                children = post.get('children', [])
+                if children:
+                    build_index(children)
+        
+        build_index(original_posts)
+        print(f"[数据融合] 构建了 {len(mid_to_post)} 个原始帖子的索引")
+        
+        # 将Agent帖子插入到对应的父帖子中
+        successful_merges = 0
+        orphaned_agents = []
+        
+        for agent_post in agent_posts:
+            pid = agent_post.get('pid')
+            
+            if not pid:
+                print(f"[数据融合] Agent帖子 {agent_post.get('id')} 没有pid，跳过")
+                orphaned_agents.append(agent_post)
+                continue
+            
+            # 查找对应的父帖子
+            parent_post = mid_to_post.get(pid)
+            if not parent_post:
+                print(f"[数据融合] 找不到pid={pid}对应的父帖子，Agent帖子 {agent_post.get('id')} 成为孤儿")
+                orphaned_agents.append(agent_post)
+                continue
+            
+            # 转换Agent帖子格式以兼容转发树结构
+            agent_post_converted = {
+                'id': agent_post.get('id'),
+                'mid': agent_post.get('mid'),
+                'pid': agent_post.get('pid'),
+                'uid': agent_post.get('author_id'),
+                'author_id': agent_post.get('author_id'),
+                'content': agent_post.get('content'),
+                'text': agent_post.get('content'),  # 兼容字段
+                't': agent_post.get('t'),
+                'timestamp': agent_post.get('timestamp'),
+                'reposts_count': 0,
+                'attitudes_count': 0,
+                'comments_count': 0,
+                'children': [],
+                # 保留Agent特有的字段
+                'emotion_score': agent_post.get('emotion_score'),
+                'stance_score': agent_post.get('stance_score'),
+                'information_strength': agent_post.get('information_strength'),
+                'keywords': agent_post.get('keywords', []),
+                'stance_category': agent_post.get('stance_category'),
+                'stance_confidence': agent_post.get('stance_confidence'),
+                'generation_info': agent_post.get('generation_info'),
+                'is_agent_generated': True  # 标记为Agent生成
+            }
+            
+            # 将Agent帖子添加到父帖子的children中
+            if 'children' not in parent_post:
+                parent_post['children'] = []
+            parent_post['children'].append(agent_post_converted)
+            successful_merges += 1
+            
+            print(f"[数据融合] 成功将Agent帖子 {agent_post.get('id')} 添加到父帖子 {pid} 的children中")
+        
+        print(f"[数据融合] 融合完成: 成功融合 {successful_merges} 个Agent帖子，{len(orphaned_agents)} 个孤儿帖子")
+        
+        # 如果有孤儿Agent帖子，可以选择添加到根级别或者创建一个特殊的根节点
+        if orphaned_agents:
+            print(f"[数据融合] 处理 {len(orphaned_agents)} 个孤儿Agent帖子")
+            # 这里可以根据需要决定如何处理孤儿帖子
+            # 暂时添加到原始帖子列表的末尾
+            for orphan in orphaned_agents:
+                orphan_converted = {
+                    'id': orphan.get('id'),
+                    'mid': orphan.get('mid'),
+                    'pid': '2',  # 设置为根节点
+                    'uid': orphan.get('author_id'),
+                    'author_id': orphan.get('author_id'),
+                    'content': orphan.get('content'),
+                    'text': orphan.get('content'),
+                    't': orphan.get('t'),
+                    'timestamp': orphan.get('timestamp'),
+                    'reposts_count': 0,
+                    'attitudes_count': 0,
+                    'comments_count': 0,
+                    'children': [],
+                    'emotion_score': orphan.get('emotion_score'),
+                    'stance_score': orphan.get('stance_score'),
+                    'information_strength': orphan.get('information_strength'),
+                    'keywords': orphan.get('keywords', []),
+                    'stance_category': orphan.get('stance_category'),
+                    'stance_confidence': orphan.get('stance_confidence'),
+                    'generation_info': orphan.get('generation_info'),
+                    'is_agent_generated': True,
+                    'is_orphaned': True
+                }
+                original_posts.append(orphan_converted)
+        
+        return original_posts
+        
     except Exception as e:
-        return jsonify({'error': f'生成转播树失败: {str(e)}'}), 500 
+        print(f"[数据融合] 融合过程中出错: {e}")
+        return original_posts
+
+@visualization_bp.route('/tree', methods=['GET'])
+def get_repost_tree():
+    """返回完整的转播树结构，展示所有微博的转发关系链（支持时间范围筛选和Agent帖子融合）"""
+    try:
+        # 获取参数
+        start_time = request.args.get('start_time')
+        end_time = request.args.get('end_time')
+        data_source = request.args.get('data_source', 'original')  # 'original' 或 'merged'
+        agent_posts_file = request.args.get('agent_posts_file')  # Agent帖子文件名
+        
+        print(f"[转播树] 请求参数: data_source={data_source}, agent_posts_file={agent_posts_file}")
+        
+        # 读取原始数据
+        data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'postdata.json')
+        if not os.path.exists(data_path):
+            return jsonify({'error': '未找到帖子数据文件'}), 404
+        
+        with open(data_path, 'r', encoding='utf-8') as f:
+            original_data = json.load(f)
+        
+        # 根据数据源选择进行数据处理
+        if data_source == 'merged' and agent_posts_file:
+            # 融合模式：将Agent帖子与原始数据融合
+            agent_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), agent_posts_file)
+            merged_data = merge_agent_posts_with_original(original_data, agent_file_path)
+            all_posts = flatten_posts(merged_data)
+            print(f"[转播树] 使用融合数据，总帖子数: {len(all_posts)}")
+        else:
+            # 原始模式：只使用原始数据
+            all_posts = flatten_posts(original_data)
+            print(f"[转播树] 使用原始数据，总帖子数: {len(all_posts)}")
+        
+        # 应用时间筛选
+        posts = all_posts
+        if start_time and end_time:
+            try:
+                start_timestamp = int(datetime.fromisoformat(start_time.replace('Z', '+00:00')).timestamp())
+                end_timestamp = int(datetime.fromisoformat(end_time.replace('Z', '+00:00')).timestamp())
+                posts = [p for p in all_posts if start_timestamp <= p.get('t', 0) <= end_timestamp]
+                print(f"[转播树] 时间筛选: {start_time} - {end_time}, 原始帖子数: {len(all_posts)}, 筛选后: {len(posts)}")
+            except Exception as e:
+                print(f"[转播树] 时间解析失败: {e}, 使用全部数据")
+                posts = all_posts
+        
+        # 构建完整的转播关系映射
+        post_details = {}    # 所有帖子详情
+        parent_child_map = {}  # parent_id -> [child_ids]
+        all_root_nodes = []   # 所有根节点（包括pid="2"的补充节点）
+        
+        for post in posts:
+            post_id = post.get('mid') or post.get('id')
+            if not post_id:
+                continue
+                
+        for post in posts:
+            post_id = post.get('mid') or post.get('id')
+            if not post_id:
+                continue
+                
+            # 构建基础帖子详情
+            content = (post.get('text', '') or post.get('content', ''))
+            truncated_content = content[:100] + '...' if len(content) > 100 else content
+            
+            post_detail = {
+                'id': post_id,
+                'content': truncated_content,
+                'author_id': post.get('uid') or post.get('author_id', ''),
+                'reposts_count': post.get('reposts_count', 0),
+                'attitudes_count': post.get('attitudes_count', 0),
+                'comments_count': post.get('comments_count', 0),
+                'timestamp': post.get('t', 0),
+                'children': []
+            }
+            
+            # 如果是Agent生成的帖子，添加额外信息
+            if post.get('is_agent_generated'):
+                post_detail.update({
+                    'is_agent_generated': True,
+                    'emotion_score': post.get('emotion_score'),
+                    'stance_score': post.get('stance_score'),
+                    'information_strength': post.get('information_strength'),
+                    'keywords': post.get('keywords', []),
+                    'stance_category': post.get('stance_category'),
+                    'stance_confidence': post.get('stance_confidence'),
+                    'generation_info': post.get('generation_info'),
+                    'is_orphaned': post.get('is_orphaned', False)
+                })
+            
+            post_details[post_id] = post_detail
+            
+            # 构建父子关系 - 包括所有关系
+            pid = post.get('pid')
+            if pid:
+                if pid == '2':
+                    # pid="2"是根节点，直接添加到根节点列表
+                    all_root_nodes.append(post_id)
+                elif pid != post_id:  # 排除自引用
+                    if pid not in parent_child_map:
+                        parent_child_map[pid] = []
+                    parent_child_map[pid].append(post_id)
+        
+        # 构建完整转播树 - 无任何限制
+        def build_complete_repost_tree(root_id, visited=None):
+            if visited is None:
+                visited = set()
+            
+            if root_id in visited or root_id not in post_details:
+                return None
+            
+            visited.add(root_id)
+            root_node = dict(post_details[root_id])
+            
+            # 获取所有转发这个微博的子微博
+            child_ids = parent_child_map.get(root_id, [])
+            root_node['direct_reposts'] = len(child_ids)  # 记录直接转发数
+            
+            # 递归构建所有子节点 - 无数量限制
+            children = []
+            for child_id in child_ids:
+                child_node = build_complete_repost_tree(child_id, visited.copy())
+                if child_node:
+                    children.append(child_node)
+            
+            # 按转发数和时间排序
+            children.sort(key=lambda x: (x.get('direct_reposts', 0), x.get('timestamp', 0)), reverse=True)
+            root_node['children'] = children
+            
+            return root_node
+        
+        # 构建所有转播树 - 显示所有根节点
+        tree_roots = []
+        
+        # 1. 处理pid="2"的根节点（补充节点）
+        for root_id in all_root_nodes:
+            root_tree = build_complete_repost_tree(root_id)
+            if root_tree:
+                # 标记为补充根节点
+                root_tree['is_supplementary_root'] = True
+                tree_roots.append(root_tree)
+        
+        # 2. 处理有转发但没有pid="2"的孤立节点
+        for post_id in post_details.keys():
+            if post_id not in all_root_nodes and post_id not in set().union(*parent_child_map.values()):
+                # 这是一个孤立的节点（既不是根节点，也不是别人的子节点）
+                if parent_child_map.get(post_id):  # 但它有子节点
+                    root_tree = build_complete_repost_tree(post_id)
+                    if root_tree:
+                        root_tree['is_isolated_root'] = True
+                        tree_roots.append(root_tree)
+        
+        # 按转发数排序所有根节点
+        tree_roots.sort(key=lambda x: x.get('direct_reposts', 0), reverse=True)
+        
+        # 计算统计信息
+        total_nodes = sum(len(json.dumps(root).split('"id":')) - 1 for root in tree_roots)
+        max_depth = 0
+        agent_posts_count = 0
+        
+        def calculate_depth_and_stats(node, depth=0):
+            nonlocal max_depth, agent_posts_count
+            max_depth = max(max_depth, depth)
+            if node.get('is_agent_generated'):
+                agent_posts_count += 1
+            for child in node.get('children', []):
+                calculate_depth_and_stats(child, depth + 1)
+        
+        for root in tree_roots:
+            calculate_depth_and_stats(root)
+        
+        # 构建元数据
+        meta_info = {
+            'total_posts': len(posts),
+            'total_nodes': total_nodes,
+            'max_depth': max_depth,
+            'parent_child_relations': sum(len(children) for children in parent_child_map.values()),
+            'supplementary_roots': len([r for r in tree_roots if r.get('is_supplementary_root')]),
+            'isolated_roots': len([r for r in tree_roots if r.get('is_isolated_root')]),
+            'displayed_trees': len(tree_roots),
+            'data_source': data_source,
+            'description': '完整转播树：显示所有节点和关系，包括补充根节点(pid=2)和孤立节点，支持缩放观察细节'
+        }
+        
+        # 如果是融合模式，添加Agent帖子的统计信息
+        if data_source == 'merged':
+            meta_info.update({
+                'agent_posts_count': agent_posts_count,
+                'agent_posts_file': agent_posts_file,
+                'original_posts_count': len(posts) - agent_posts_count
+            })
+        
+        tree = {
+            'id': 'complete_repost_tree_root',
+            'children': tree_roots,
+            'meta': meta_info
+        }
+        
+        return jsonify({'tree': tree})
+        
+    except Exception as e:
+        return jsonify({'error': f'生成完整转播树失败: {str(e)}'}), 500
+
+@visualization_bp.route('/posts', methods=['GET'])
+def get_all_posts():
+    """返回所有原始帖子数据（已平铺children）"""
+    try:
+        data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'postdata.json')
+        if not os.path.exists(data_path):
+            return jsonify({'error': '未找到帖子数据文件'}), 404
+        with open(data_path, 'r', encoding='utf-8') as f:
+            posts = json.load(f)
+        flat_posts = flatten_posts(posts)
+        return jsonify({'posts': flat_posts})
+    except Exception as e:
+        return jsonify({'error': f'读取帖子数据失败: {str(e)}'}), 500
+
+@visualization_bp.route('/histogram', methods=['GET'])
+def get_histogram():
+    """返回指定时间范围内的所有帖子，供前端直方图使用（已平铺children）"""
+    try:
+        start_time = request.args.get('start_time')
+        end_time = request.args.get('end_time')
+        data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'postdata.json')
+        if not os.path.exists(data_path):
+            return jsonify({'error': '未找到帖子数据文件'}), 404
+        with open(data_path, 'r', encoding='utf-8') as f:
+            posts = json.load(f)
+        flat_posts = flatten_posts(posts)
+        def parse_ts(ts):
+            if isinstance(ts, (int, float)):
+                return int(ts)
+            try:
+                return int(datetime.fromisoformat(ts).timestamp())
+            except Exception:
+                return int(ts) if str(ts).isdigit() else None
+        if start_time:
+            start_ts = parse_ts(start_time)
+        else:
+            start_ts = min(p.get('t', 0) for p in flat_posts)
+        if end_time:
+            end_ts = parse_ts(end_time)
+        else:
+            end_ts = max(p.get('t', 0) for p in flat_posts)
+        filtered = [p for p in flat_posts if start_ts <= p.get('t', 0) <= end_ts]
+        return jsonify({'posts': filtered})
+    except Exception as e:
+        return jsonify({'error': f'生成直方图数据失败: {str(e)}'}), 500
+
+@visualization_bp.route('/timeline', methods=['GET'])
+def get_timeline():
+    """返回分时间点聚合的帖子列表，支持hour/day粒度（已平铺children）"""
+    try:
+        start_time = request.args.get('start_time')
+        end_time = request.args.get('end_time')
+        interval = request.args.get('interval', 'hour')
+        data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'postdata.json')
+        if not os.path.exists(data_path):
+            return jsonify({'error': '未找到帖子数据文件'}), 404
+        with open(data_path, 'r', encoding='utf-8') as f:
+            posts = json.load(f)
+        flat_posts = flatten_posts(posts)
+        def parse_ts(ts):
+            if isinstance(ts, (int, float)):
+                return int(ts)
+            try:
+                return int(datetime.fromisoformat(ts).timestamp())
+            except Exception:
+                return int(ts) if str(ts).isdigit() else None
+        if start_time:
+            start_ts = parse_ts(start_time)
+        else:
+            start_ts = min(p.get('t', 0) for p in flat_posts)
+        if end_time:
+            end_ts = parse_ts(end_time)
+        else:
+            end_ts = max(p.get('t', 0) for p in flat_posts)
+        filtered = [p for p in flat_posts if start_ts <= p.get('t', 0) <= end_ts]
+        timeline_dict = {}
+        for p in filtered:
+            t = p.get('t', 0)
+            dt = datetime.fromtimestamp(t)
+            if interval == 'day':
+                group_key = datetime(dt.year, dt.month, dt.day).timestamp()
+            else:
+                group_key = datetime(dt.year, dt.month, dt.day, dt.hour).timestamp()
+            group_key = int(group_key)
+            if group_key not in timeline_dict:
+                timeline_dict[group_key] = []
+            timeline_dict[group_key].append(p)
+        timeline = []
+        for t_key in sorted(timeline_dict.keys()):
+            timeline.append({
+                't': t_key,
+                'hotness': None,
+                'posts': timeline_dict[t_key]
+            })
+        return jsonify({'timeline': timeline})
+    except Exception as e:
+        return jsonify({'error': f'生成时间轴数据失败: {str(e)}'}), 500 
+
+@visualization_bp.route('/attitude', methods=['GET'])
+def get_attitude():
+    """返回指定时间范围内的情绪/立场分析，支持hour/day"""
+    try:
+        start_time = request.args.get('start_time')
+        end_time = request.args.get('end_time')
+        unit = request.args.get('unit', 'hour')
+        # range参数暂不处理
+        data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'postdata.json')
+        if not os.path.exists(data_path):
+            return jsonify({'error': '未找到帖子数据文件'}), 404
+        with open(data_path, 'r', encoding='utf-8') as f:
+            posts = json.load(f)
+        flat_posts = flatten_posts(posts)
+        def parse_ts(ts):
+            if isinstance(ts, (int, float)):
+                return int(ts)
+            try:
+                return int(datetime.fromisoformat(ts).timestamp())
+            except Exception:
+                return int(ts) if str(ts).isdigit() else None
+        if start_time:
+            start_ts = parse_ts(start_time)
+        else:
+            start_ts = min(p.get('t', 0) for p in flat_posts)
+        if end_time:
+            end_ts = parse_ts(end_time)
+        else:
+            end_ts = max(p.get('t', 0) for p in flat_posts)
+        filtered = [p for p in flat_posts if start_ts <= p.get('t', 0) <= end_ts]
+        # 按小时分组
+        hourly = {}
+        for p in filtered:
+            t = p.get('t', 0)
+            dt = datetime.fromtimestamp(t)
+            hour_key = datetime(dt.year, dt.month, dt.day, dt.hour)
+            if hour_key not in hourly:
+                hourly[hour_key] = []
+            hourly[hour_key].append(p)
+        hourly_data = []
+        for k in sorted(hourly.keys()):
+            group = hourly[k]
+            if group:
+                # 过滤掉None值并计算平均值
+                emotion_scores = [p.get('emotion_score', 0) or 0 for p in group]
+                stance_scores = [p.get('stance_score', 0) or 0 for p in group]
+                avg_emotion = sum(emotion_scores) / len(emotion_scores) if emotion_scores else 0
+                avg_stance = sum(stance_scores) / len(stance_scores) if stance_scores else 0
+            else:
+                avg_emotion = 0
+                avg_stance = 0
+            hourly_data.append({
+                'timestamp': k.isoformat(),
+                'emotion': avg_emotion,
+                'stance': avg_stance
+            })
+        # 按天分组
+        daily = {}
+        for p in filtered:
+            t = p.get('t', 0)
+            dt = datetime.fromtimestamp(t)
+            day_key = datetime(dt.year, dt.month, dt.day)
+            if day_key not in daily:
+                daily[day_key] = []
+            daily[day_key].append(p)
+        daily_data = []
+        for k in sorted(daily.keys()):
+            group = daily[k]
+            if group:
+                # 过滤掉None值并计算平均值
+                emotion_scores = [p.get('emotion_score', 0) or 0 for p in group]
+                stance_scores = [p.get('stance_score', 0) or 0 for p in group]
+                avg_emotion = sum(emotion_scores) / len(emotion_scores) if emotion_scores else 0
+                avg_stance = sum(stance_scores) / len(stance_scores) if stance_scores else 0
+            else:
+                avg_emotion = 0
+                avg_stance = 0
+            daily_data.append({
+                'date': k.strftime('%Y-%m-%d'),
+                'emotion': avg_emotion,
+                'stance': avg_stance
+            })
+        return jsonify({'hourly_data': hourly_data, 'daily_data': daily_data})
+    except Exception as e:
+        return jsonify({'error': f'生成情绪/立场分析数据失败: {str(e)}'}), 500 
+
+@visualization_bp.route('/wordcloud', methods=['GET'])
+def get_wordcloud():
+    """统计所有帖子keywords字段，生成词云数据"""
+    try:
+        data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'postdata.json')
+        if not os.path.exists(data_path):
+            return jsonify({'error': '未找到帖子数据文件'}), 404
+        with open(data_path, 'r', encoding='utf-8') as f:
+            posts = json.load(f)
+        flat_posts = flatten_posts(posts)
+        word_count = {}
+        for p in flat_posts:
+            keywords = p.get('keywords', []) or []  # 处理None值
+            for kw in keywords:
+                if not kw:
+                    continue
+                word_count[kw] = word_count.get(kw, 0) + 1
+        words = [{"text": k, "frequency": v} for k, v in sorted(word_count.items(), key=lambda x: -x[1])]
+        return jsonify({"words": words})
+    except Exception as e:
+        return jsonify({'error': f'生成词云数据失败: {str(e)}'}), 500 
